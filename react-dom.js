@@ -1631,6 +1631,10 @@
             isRendering = false;
         }
     }
+    /**
+     * DONE current = fiber;
+     * @param {*} fiber 
+     */
     function setCurrentFiber(fiber) {
         {
             ReactDebugCurrentFrame$1.getCurrentStack = getCurrentFiberStackInDev;
@@ -2594,6 +2598,11 @@
         svg: SVG_NAMESPACE
     }; // Assumes there is no parent namespace.
 
+    /**
+     * 
+     * @param {*} type 
+     * @returns 
+     */
     function getIntrinsicNamespace(type) {
         switch (type) {
             case 'svg':
@@ -2606,6 +2615,13 @@
                 return HTML_NAMESPACE;
         }
     }
+
+    /**
+     * 
+     * @param {*} parentNamespace 
+     * @param {*} type 
+     * @returns 
+     */
     function getChildNamespace(parentNamespace, type) {
         if (parentNamespace == null || parentNamespace === HTML_NAMESPACE) {
             // No (or default) parent namespace: potential entry point.
@@ -7240,6 +7256,9 @@
             dlItemTagAutoclosing: null
         };
 
+        /**
+         * 根据tag返回祖先对象，通过current.tag 引用tag
+         */
         updatedAncestorInfo = function (oldInfo, tag) {
             var ancestorInfo = _assign({}, oldInfo || emptyAncestorInfo);
 
@@ -7546,6 +7565,11 @@
 
         return false;
     }
+    /**
+     * 
+     * @param {*} rootContainerInstance dom
+     * @returns 
+     */
     function getRootHostContext(rootContainerInstance) {
         var type;
         var namespace;
@@ -10460,6 +10484,9 @@
         endMark(label, markName, warning);
     };
 
+    /**
+     * DONE
+     */
     var shouldIgnoreFiber = function (fiber) {
         // Host components should be skipped in the timeline.
         // We could check typeof fiber.type, but does this work with RN?
@@ -10546,12 +10573,18 @@
             }
         }
     }
+    /**
+     * 
+     * @param {*} fiber 
+     * @returns 
+     */
     function startWorkTimer(fiber) {
         {
             if (!supportsUserTiming || shouldIgnoreFiber(fiber)) {
                 return;
-            } // If we pause, this is the fiber to unwind from.
+            }
 
+            // If we pause, this is the fiber to unwind from.
 
             currentFiber = fiber;
 
@@ -10796,6 +10829,11 @@
 
     var index = -1;
 
+    /**
+     * DONE
+     * @param {*} defaultValue 
+     * @returns 
+     */
     function createCursor(defaultValue) {
         return {
             current: defaultValue
@@ -10827,6 +10865,12 @@
         index--;
     }
 
+    /**
+     * 
+     * @param {*} cursor 
+     * @param {*} value 
+     * @param {*} fiber 
+     */
     function push(cursor, value, fiber) {
         index++;
         valueStack[index] = cursor.current;
@@ -10947,6 +10991,12 @@
         }
     }
 
+    /**
+     * DONE
+     * @param {*} fiber 
+     * @param {*} context 
+     * @param {*} didChange 
+     */
     function pushTopLevelContextObject(fiber, context, didChange) {
         {
             if (!(contextStackCursor.current === emptyContextObject)) {
@@ -14648,6 +14698,11 @@
         return rootInstance;
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     * @param {*} nextRootInstance 
+     */
     function pushHostContainer(fiber, nextRootInstance) {
         // Push current root instance onto the stack;
         // This allows us to reset root when portals are popped.
@@ -17424,6 +17479,10 @@
         return workInProgress.child;
     }
 
+    /**
+     * 
+     * @param {*} workInProgress 
+     */
     function pushHostRootContext(workInProgress) {
         var root = workInProgress.stateNode;
 
@@ -17437,7 +17496,16 @@
         pushHostContainer(workInProgress, root.containerInfo);
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function updateHostRoot(current, workInProgress, renderExpirationTime) {
+        debugger
+        //liqiang
         pushHostRootContext(workInProgress);
         var updateQueue = workInProgress.updateQueue;
 
@@ -18640,7 +18708,15 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function beginWork(current, workInProgress, renderExpirationTime) {
+        debugger
         var updateExpirationTime = workInProgress.expirationTime;
 
         {
@@ -22406,6 +22482,9 @@
     /** @noinline */
 
 
+    /**
+     * 
+     */
     function workLoopSync() {
         // Already timed out, so perform work without checking if we need to yield.
         while (workInProgress !== null) {
@@ -22422,7 +22501,14 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} unitOfWork 
+     * @returns 
+     */
     function performUnitOfWork(unitOfWork) {
+        //liqiang
+        debugger
         // The current, flushed, state of this fiber is the alternate. Ideally
         // nothing should rely on this, but relying on it here means that we don't
         // need an additional field on the work in progress.
@@ -23463,6 +23549,9 @@
     {
         var dummyFiber = null;
 
+        /**
+         * 
+         */
         beginWork$1 = function (current, unitOfWork, expirationTime) {
             // If a component throws an error, we replay it again in a synchronously
             // dispatched event, so that the debugger will treat it as an uncaught
@@ -24403,6 +24492,12 @@
         return fiber;
     } // Used for stashing WIP properties to replay failed work in DEV.
 
+    /**
+     * DONE 拷贝一份并返回
+     * @param {*} target 
+     * @param {*} source 
+     * @returns 
+     */
     function assignFiberPropertiesInDEV(target, source) {
         if (target === null) {
             // This Fiber's initial properties will always be overwritten.
