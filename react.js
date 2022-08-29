@@ -10,36 +10,54 @@
 'use strict';
 
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-        typeof define === 'function' && define.amd ? define(['exports'], factory) :
-            (global = global || self, factory(global.React = {}));
+    {
+        typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+            typeof define === 'function' && define.amd ? define(['exports'], factory) :
+                (global = global || self, factory(global.React = {}));
+    }
 }(this, (function (exports) {
     'use strict';
 
     var ReactVersion = '16.14.0';
+    {   //陌生单词列表
+        //suspense (对即将发生的事等的)担心; 焦虑; 兴奋; 悬念;
+        //faux:人造的，仿制的。
+        //addendum 补遗
+        //composite 合成物、合成的、混合成的
+        //shim 垫片、楔子
+    }
 
-    // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-    // nor polyfill, then a plain number is used for performance.
-    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-    var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
-    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
-    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
-    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-    var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
-    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-    var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
-    var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
-    var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
-    var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
-    var MAYBE_ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-    var FAUX_ITERATOR_SYMBOL = '@@iterator';
+
+    {   //全局Symbol相关
+        // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+        // nor polyfill, then a plain number is used for performance.
+        var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+        var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+        var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+        var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+        var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+        var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+        var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+        var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+        var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+        var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+        var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+        var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
+        var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+        var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+        var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
+        var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
+        var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
+        var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
+        var MAYBE_ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+        var FAUX_ITERATOR_SYMBOL = '@@iterator';
+    }
+
+    /**
+     * 返回给定对象的遍历器函数
+     * @param {*} maybeIterable 
+     * @returns 
+     */
     function getIteratorFn(maybeIterable) {
         if (maybeIterable === null || typeof maybeIterable !== 'object') {
             return null;
@@ -54,16 +72,18 @@
         return null;
     }
 
-    /*
-    object-assign
-    (c) Sindre Sorhus
-    @license MIT
-    */
-    /* eslint-disable no-unused-vars */
+
+    //Object.getOwnPropertySymbols() 方法返回一个给定对象自身的所有 Symbol 属性的数组
     var getOwnPropertySymbols = Object.getOwnPropertySymbols;
     var hasOwnProperty = Object.prototype.hasOwnProperty;
+    //此方法可以确定对象中指定的属性是否可以被 for...in 循环枚举，但是通过原型链继承的属性除外
     var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
+    /**
+     * DONE 将给定值转为对象Object(val)
+     * @param {*} val 
+     * @returns 
+     */
     function toObject(val) {
         if (val === null || val === undefined) {
             throw new TypeError('Object.assign cannot be called with null or undefined');
@@ -72,6 +92,10 @@
         return Object(val);
     }
 
+    /**
+     * DONE;判断是否可以使用原生的Object.assign方法。
+     * @returns 
+     */
     function shouldUseNative() {
         try {
             if (!Object.assign) {
@@ -116,6 +140,9 @@
         }
     }
 
+    /**
+     * DONE Object.assign 通用方法
+     */
     var objectAssign = shouldUseNative() ? Object.assign : function (target, source) {
         var from;
         var to = toObject(target);
@@ -143,38 +170,40 @@
         return to;
     };
 
-    /**
-     * Keeps track of the current dispatcher.
-     */
-    var ReactCurrentDispatcher = {
+    {//DONE ReactCurrentDispatcher/ReactCurrentBatchConfig/ReactCurrentOwner
         /**
-         * @internal
-         * @type {ReactComponent}
+         * Keeps track of the current dispatcher.
          */
-        current: null
-    };
+        var ReactCurrentDispatcher = {
+            /**
+             * @internal
+             * @type {ReactComponent}
+             */
+            current: null
+        };
 
-    /**
-     * Keeps track of the current batch's configuration such as how long an update
-     * should suspend for if it needs to.
-     */
-    var ReactCurrentBatchConfig = {
-        suspense: null
-    };
-
-    /**
-     * Keeps track of the current owner.
-     *
-     * The current owner is the component who should own any components that are
-     * currently being constructed.
-     */
-    var ReactCurrentOwner = {
         /**
-         * @internal
-         * @type {ReactComponent}
+         * Keeps track of the current batch's configuration such as how long an update
+         * should suspend for if it needs to.
          */
-        current: null
-    };
+        var ReactCurrentBatchConfig = {
+            suspense: null
+        };
+
+        /**
+         * Keeps track of the current owner.
+         *
+         * The current owner is the component who should own any components that are
+         * currently being constructed.
+         */
+        var ReactCurrentOwner = {
+            /**
+             * @internal
+             * @type {ReactComponent}
+             */
+            current: null
+        };
+    }
 
     var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
     function describeComponentFrame(name, source, ownerName) {
@@ -332,30 +361,28 @@
         current: false
     };
 
-    var ReactSharedInternals = {
-        ReactCurrentDispatcher: ReactCurrentDispatcher,
-        ReactCurrentBatchConfig: ReactCurrentBatchConfig,
-        ReactCurrentOwner: ReactCurrentOwner,
-        IsSomeRendererActing: IsSomeRendererActing,
-        // Used by renderers to avoid bundling object-assign twice in UMD bundles:
-        assign: objectAssign
-    };
+    {//DONE ReactSharedInternals
+        var ReactSharedInternals = {
+            ReactCurrentDispatcher: ReactCurrentDispatcher,
+            ReactCurrentBatchConfig: ReactCurrentBatchConfig,
+            ReactCurrentOwner: ReactCurrentOwner,
+            IsSomeRendererActing: IsSomeRendererActing,
+            // Used by renderers to avoid bundling object-assign twice in UMD bundles:
+            assign: objectAssign
+        };
 
-    {
-        objectAssign(ReactSharedInternals, {
-            // These should not be included in production.
-            ReactDebugCurrentFrame: ReactDebugCurrentFrame,
-            // Shim for React DOM 16.0.0 which still destructured (but not used) this.
-            // TODO: remove in React 17.0.
-            ReactComponentTreeHook: {}
-        });
+        {
+            objectAssign(ReactSharedInternals, {
+                // These should not be included in production.
+                ReactDebugCurrentFrame: ReactDebugCurrentFrame,
+                // Shim for React DOM 16.0.0 which still destructured (but not used) this.
+                // TODO: remove in React 17.0.
+                ReactComponentTreeHook: {}
+            });
+        }
     }
 
-    // by calls to these methods by a Babel plugin.
-    //
-    // In PROD (or in packages without access to React internals),
-    // they are left as they are instead.
-
+    //DONE
     function warn(format) {
         {
             for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -365,6 +392,7 @@
             printWarning('warn', format, args);
         }
     }
+    //DONE
     function error(format) {
         {
             for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
@@ -375,9 +403,8 @@
         }
     }
 
+    //DONE
     function printWarning(level, format, args) {
-        // When changing this logic, you might want to also
-        // update consoleWithStackDev.www.js as well.
         {
             var hasExistingStack = args.length > 0 && typeof args[args.length - 1] === 'string' && args[args.length - 1].indexOf('\n    in') === 0;
 
@@ -736,7 +763,7 @@
      * the class pattern, so do not use new to call it. Also, instanceof check
      * will not work. Instead test $$typeof field against Symbol.for('react.element') to check
      * if something is a React Element.
-     *
+     * DONE
      * @param {*} type
      * @param {*} props
      * @param {*} key
@@ -751,8 +778,6 @@
      * indicating filename, line number, and/or other information.
      * @internal
      */
-
-
     var ReactElement = function (type, key, ref, self, source, owner, props) {
         var element = {
             // This tag allows us to uniquely identify this as a React Element
@@ -807,10 +832,10 @@
         return element;
     };
     /**
+     * 
      * Create and return a new ReactElement of the given type.
      * See https://reactjs.org/docs/react-api.html#createelement
      */
-
     function createElement(type, config, children) {
         var propName; // Reserved names are extracted
 
@@ -1525,9 +1550,30 @@
         };
     }
 
+    /**
+     * DONE 判断React.createElement() 传入的第一个参数type是否是合法的元素类型
+     * @param {*} type 
+     * @returns 
+     */
     function isValidElementType(type) {
-        return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
-            type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
+        return typeof type === 'string'
+            || typeof type === 'function'
+            || type === REACT_FRAGMENT_TYPE
+            || type === REACT_CONCURRENT_MODE_TYPE
+            || type === REACT_PROFILER_TYPE
+            || type === REACT_STRICT_MODE_TYPE
+            || type === REACT_SUSPENSE_TYPE
+            || type === REACT_SUSPENSE_LIST_TYPE
+            || typeof type === 'object' && type !== null && (
+                type.$$typeof === REACT_LAZY_TYPE
+                || type.$$typeof === REACT_MEMO_TYPE
+                || type.$$typeof === REACT_PROVIDER_TYPE
+                || type.$$typeof === REACT_CONTEXT_TYPE
+                || type.$$typeof === REACT_FORWARD_REF_TYPE
+                || type.$$typeof === REACT_FUNDAMENTAL_TYPE
+                || type.$$typeof === REACT_RESPONDER_TYPE
+                || type.$$typeof === REACT_SCOPE_TYPE
+                || type.$$typeof === REACT_BLOCK_TYPE);
     }
 
     function memo(type, compare) {
@@ -1730,6 +1776,7 @@
     }
 
     function getDeclarationErrorAddendum() {
+
         if (ReactCurrentOwner.current) {
             var name = getComponentName(ReactCurrentOwner.current.type);
 
@@ -1741,6 +1788,7 @@
         return '';
     }
 
+    //DONE
     function getSourceInfoErrorAddendum(source) {
         if (source !== undefined) {
             var fileName = source.fileName.replace(/^.*[\\\/]/, '');
@@ -1751,6 +1799,7 @@
         return '';
     }
 
+    //DONE
     function getSourceInfoErrorAddendumForProps(elementProps) {
         if (elementProps !== null && elementProps !== undefined) {
             return getSourceInfoErrorAddendum(elementProps.__source);
@@ -1878,8 +1927,6 @@
      *
      * @param {ReactElement} element
      */
-
-
     function validatePropTypes(element) {
         {
             var type = element.type;
@@ -1945,10 +1992,10 @@
         }
     }
     function createElementWithValidation(type, props, children) {
-        var validType = isValidElementType(type); // We warn in this case but don't throw. We expect the element creation to
-        // succeed and there will likely be errors in render.
+        // 入口
+        var validType = isValidElementType(type);
 
-        if (!validType) {
+        if (!validType) {//type不合法时控制台输出错误信息
             var info = '';
 
             if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
@@ -1977,7 +2024,9 @@
             }
 
             {
-                error('React.createElement: type is invalid -- expected a string (for ' + 'built-in components) or a class/function (for composite ' + 'components) but got: %s.%s', typeString, info);
+                error('React.createElement: type is invalid -- expected a string (for '
+                    + 'built-in components) or a class/function (for composite '
+                    + 'components) but got: %s.%s', typeString, info);
             }
         }
 
@@ -2007,6 +2056,7 @@
 
         return element;
     }
+
     var didWarnAboutDeprecatedCreateFactory = false;
     function createFactoryWithValidation(type) {
         var validatedFactory = createElementWithValidation.bind(null, type);
@@ -2324,12 +2374,14 @@
     }
 
     // TODO: Use symbols?
-    var NoPriority = 0;
-    var ImmediatePriority = 1;
-    var UserBlockingPriority = 2;
-    var NormalPriority = 3;
-    var LowPriority = 4;
-    var IdlePriority = 5;
+    {
+        var NoPriority = 0;
+        var ImmediatePriority = 1;
+        var UserBlockingPriority = 2;
+        var NormalPriority = 3;
+        var LowPriority = 4;
+        var IdlePriority = 5;
+    }
 
     var runIdCounter = 0;
     var mainThreadIdCounter = 0;
@@ -2511,8 +2563,9 @@
 
     var taskIdCounter = 1; // Pausing the scheduler is useful for debugging.
     var currentTask = null;
-    var currentPriorityLevel = NormalPriority; // This is set while performing work, to prevent re-entrancy.
+    var currentPriorityLevel = NormalPriority;
 
+    // This is set while performing work, to prevent re-entrancy.
     var isPerformingWork = false;
     var isHostCallbackScheduled = false;
     var isHostTimeoutScheduled = false;
@@ -2852,6 +2905,10 @@
         task.callback = null;
     }
 
+    /**
+     * DONE 
+     * @returns 
+     */
     function unstable_getCurrentPriorityLevel() {
         return currentPriorityLevel;
     }
