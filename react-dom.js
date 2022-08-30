@@ -13825,12 +13825,12 @@
 
             error('Functions are not valid as a React child. This may happen if ' + 'you return a Component instead of <Component /> from render. ' + 'Or maybe you meant to call this function rather than return it.');
         }
-    } // This wrapper function exists because I expect to clone the code in each path
+    }
+
+    // This wrapper function exists because I expect to clone the code in each path
     // to be able to optimize each path individually by branching early. This needs
     // a compiler or we can do it manually. Helpers that don't need this branching
     // live outside of this function.
-
-
     function ChildReconciler(shouldTrackSideEffects) {
         function deleteChild(returnFiber, childToDelete) {
             if (!shouldTrackSideEffects) {
@@ -13903,6 +13903,13 @@
             return clone;
         }
 
+        /**
+         * 
+         * @param {*} newFiber 
+         * @param {*} lastPlacedIndex 
+         * @param {*} newIndex 
+         * @returns 
+         */
         function placeChild(newFiber, lastPlacedIndex, newIndex) {
             newFiber.index = newIndex;
 
@@ -14011,6 +14018,9 @@
             }
         }
 
+        /**
+         * 
+         */
         function createChild(returnFiber, newChild, expirationTime) {
             if (typeof newChild === 'string' || typeof newChild === 'number') {
                 // Text nodes don't have keys. If the previous node is implicitly keyed
@@ -14169,8 +14179,6 @@
         /**
          * Warns if there is a duplicate or missing key
          */
-
-
         function warnOnInvalidKey(child, knownKeys) {
             {
                 if (typeof child !== 'object' || child === null) {
@@ -14207,6 +14215,9 @@
             return knownKeys;
         }
 
+        /**
+         * 
+         */
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, expirationTime) {
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
@@ -16977,6 +16988,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function tryToClaimNextHydratableInstance(fiber) {
         if (!isHydrating) {
             return;
@@ -17738,6 +17752,9 @@
         return workInProgress.child;
     }
 
+    /**
+     * 
+     */
     function updateHostText(current, workInProgress) {
         if (current === null) {
             tryToClaimNextHydratableInstance(workInProgress);
@@ -22326,6 +22343,7 @@
                 stopFinishedWorkLoopTimer();
                 root.finishedWork = root.current.alternate;
                 root.finishedExpirationTime = expirationTime;
+                debugger
                 finishSyncRender(root);
             } // Before exiting, make sure there's a callback scheduled for the next
             // pending level.
@@ -22971,6 +22989,7 @@
      * 
      */
     function commitRoot(root) {
+        debugger
         var renderPriorityLevel = getCurrentPriorityLevel();
         runWithPriority$1(ImmediatePriority, commitRootImpl.bind(null, root, renderPriorityLevel));
         return null;
@@ -24742,6 +24761,13 @@
         fiber.expirationTime = expirationTime;
         return fiber;
     }
+    /**
+     * 
+     * @param {*} content 
+     * @param {*} mode 
+     * @param {*} expirationTime 
+     * @returns 
+     */
     function createFiberFromText(content, mode, expirationTime) {
         var fiber = createFiber(HostText, content, null, mode);
         fiber.expirationTime = expirationTime;
