@@ -26,6 +26,10 @@ class LikeButton extends React.Component {
 
 
 const domContainer = document.querySelector('#app');
+const ele = e('span', { style: { color: 'red' }, age: 18, name: 'liqiang' }, "i'm a span ", "i'm a span ");
 
-ReactDOM.render(e('span', null, 1), domContainer);
+function callbackOfReactDomRender() {
+    console.log('done')
+}
+ReactDOM.render(ele, domContainer, callbackOfReactDomRender);
 // ReactDOM.render(e(LikeButton), domContainer);

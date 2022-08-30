@@ -681,7 +681,13 @@
         didWarnAboutStringRefs = {};
     }
 
+    /**
+     * DONE 
+     * @param {*} config 
+     * @returns 
+     */
     function hasValidRef(config) {
+
         {
             if (hasOwnProperty$1.call(config, 'ref')) {
                 var getter = Object.getOwnPropertyDescriptor(config, 'ref').get;
@@ -695,6 +701,11 @@
         return config.ref !== undefined;
     }
 
+    /**
+     * 
+     * @param {*} config 
+     * @returns 
+     */
     function hasValidKey(config) {
         {
             if (hasOwnProperty$1.call(config, 'key')) {
@@ -831,10 +842,12 @@
 
         return element;
     };
+
     /**
-     * 
+     * DONE 真正的 React.createElement() 方法 
+     * 从config中拷贝自有属性到props中(比如style等)
+     * 将children 赋值给 props.children
      * Create and return a new ReactElement of the given type.
-     * See https://reactjs.org/docs/react-api.html#createelement
      */
     function createElement(type, config, children) {
         var propName; // Reserved names are extracted
@@ -861,17 +874,19 @@
             self = config.__self === undefined ? null : config.__self;
             source = config.__source === undefined ? null : config.__source; // Remaining properties are added to a new props object
 
+            //从config中拷贝自有属性到props中
             for (propName in config) {
                 if (hasOwnProperty$1.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
                     props[propName] = config[propName];
                 }
             }
-        } // Children can be more than one argument, and those are transferred onto
+        }
+
+        // Children can be more than one argument, and those are transferred onto
         // the newly allocated props object.
-
-
         var childrenLength = arguments.length - 2;
 
+        //将children 赋值给 props.children
         if (childrenLength === 1) {
             props.children = children;
         } else if (childrenLength > 1) {
@@ -1882,8 +1897,6 @@
      * @param {ReactNode} node Statically passed child of any type.
      * @param {*} parentType node's parent's type.
      */
-
-
     function validateChildKeys(node, parentType) {
         if (typeof node !== 'object') {
             return;
@@ -1991,6 +2004,13 @@
             setCurrentlyValidatingElement(null);
         }
     }
+    /**
+     * DONE React.createElement() 方法
+     * @param {*} type 
+     * @param {*} props 
+     * @param {*} children 
+     * @returns 
+     */
     function createElementWithValidation(type, props, children) {
         // 入口
         var validType = isValidElementType(type);

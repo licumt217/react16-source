@@ -286,7 +286,6 @@
      * @param {*} context The context to use when calling the function
      * @param {...*} args Arguments for function
      */
-
     function invokeGuardedCallback(name, func, context, a, b, c, d, e, f) {
         hasError = false;
         caughtError = null;
@@ -1624,6 +1623,9 @@
             return getStackByFiberInDevAndProd(current);
         }
     }
+    /**
+     * 
+     */
     function resetCurrentFiber() {
         {
             ReactDebugCurrentFrame$1.getCurrentStack = null;
@@ -2709,7 +2711,6 @@
      * @param {string} text
      * @internal
      */
-
     var setTextContent = function (node, text) {
         if (text) {
             var firstChild = node.firstChild;
@@ -6790,6 +6791,11 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} doc 
+     * @returns 
+     */
     function getActiveElement(doc) {
         doc = doc || (typeof document !== 'undefined' ? document : undefined);
 
@@ -6872,7 +6878,6 @@
      * @param {DOMElement} outerNode
      * @return {?object}
      */
-
     function getOffsets(outerNode) {
         var ownerDocument = outerNode.ownerDocument;
         var win = ownerDocument && ownerDocument.defaultView || window;
@@ -6913,7 +6918,6 @@
      *
      * Exported only for testing.
      */
-
     function getModernOffsetsFromPoints(outerNode, anchorNode, anchorOffset, focusNode, focusOffset) {
         var length = 0;
         var start = -1;
@@ -7071,6 +7075,11 @@
         return node && node.ownerDocument && containsNode(node.ownerDocument.documentElement, node);
     }
 
+    /**
+     * 
+     * @param {*} iframe 
+     * @returns 
+     */
     function isSameOriginFrame(iframe) {
         try {
             // Accessing the contentDocument of a HTMLIframeElement can cause the browser
@@ -7086,6 +7095,10 @@
         }
     }
 
+    /**
+     * 
+     * @returns 
+     */
     function getActiveElementDeep() {
         var win = window;
         var element = getActiveElement();
@@ -7114,12 +7127,14 @@
      * from https://html.spec.whatwg.org/#do-not-apply, looking at `selectionStart`
      * and `selectionEnd` rows.
      */
-
-
     function hasSelectionCapabilities(elem) {
         var nodeName = elem && elem.nodeName && elem.nodeName.toLowerCase();
         return nodeName && (nodeName === 'input' && (elem.type === 'text' || elem.type === 'search' || elem.type === 'tel' || elem.type === 'url' || elem.type === 'password') || nodeName === 'textarea' || elem.contentEditable === 'true');
     }
+    /**
+     * 
+     * @returns 
+     */
     function getSelectionInformation() {
         var focusedElem = getActiveElementDeep();
         return {
@@ -7176,7 +7191,6 @@
      * -@input: Look up selection bounds of this input
      * -@return {start: selectionStart, end: selectionEnd}
      */
-
     function getSelection(input) {
         var selection;
 
@@ -7615,14 +7629,28 @@
             };
         }
     }
+
+    /**
+     * 
+     * @param {*} instance 
+     * @returns 
+     */
     function getPublicInstance(instance) {
         return instance;
     }
+    /**
+     * 
+     * @param {*} containerInfo 
+     */
     function prepareForCommit(containerInfo) {
         eventsEnabled = isEnabled();
         selectionInformation = getSelectionInformation();
         setEnabled(false);
     }
+    /**
+     * 
+     * @param {*} containerInfo 
+     */
     function resetAfterCommit(containerInfo) {
         restoreSelection(selectionInformation);
         setEnabled(eventsEnabled);
@@ -7712,6 +7740,10 @@
 
         updateProperties(domElement, updatePayload, type, oldProps, newProps);
     }
+    /**
+     * 
+     * @param {*} domElement 
+     */
     function resetTextContent(domElement) {
         setTextContent(domElement, '');
     }
@@ -10417,6 +10449,12 @@
         performance.clearMarks(formatMarkName(markName));
     };
 
+    /**
+     * 
+     * @param {*} label 
+     * @param {*} markName 
+     * @param {*} warning 
+     */
     var endMark = function (label, markName, warning) {
         var formattedMarkName = formatMarkName(markName);
         var formattedLabel = formatLabel(label, warning);
@@ -10475,6 +10513,12 @@
         clearMark(markName);
     };
 
+    /**
+     * 
+     * @param {*} fiber 
+     * @param {*} phase 
+     * @param {*} warning 
+     */
     var endFiberMark = function (fiber, phase, warning) {
         var componentName = getComponentName(fiber.type) || 'Unknown';
         var debugID = fiber._debugID;
@@ -10490,6 +10534,7 @@
     var shouldIgnoreFiber = function (fiber) {
         // Host components should be skipped in the timeline.
         // We could check typeof fiber.type, but does this work with RN?
+
         switch (fiber.tag) {
             case HostRoot:
             case HostComponent:
@@ -10516,6 +10561,9 @@
         hasScheduledUpdateInCurrentPhase = false;
     };
 
+    /**
+     * 
+     */
     var pauseTimers = function () {
         // Stops all currently active measurements so that they can be resumed
         // if we continue in a later deferred loop from the same unit of work.
@@ -10554,6 +10602,9 @@
         }
     };
 
+    /**
+     * 
+     */
     function recordEffect() {
         {
             effectCountInCurrentCommit++;
@@ -10680,6 +10731,7 @@
      * @returns 
      */
     function startWorkLoopTimer(nextUnitOfWork) {
+
         {
             currentFiber = nextUnitOfWork;
 
@@ -10697,6 +10749,12 @@
             resumeTimers();
         }
     }
+    /**
+     * 
+     * @param {*} interruptedBy 
+     * @param {*} didCompleteRoot 
+     * @returns 
+     */
     function stopWorkLoopTimer(interruptedBy, didCompleteRoot) {
         {
             if (!supportsUserTiming) {
@@ -10723,6 +10781,10 @@
             endMark(label, '(React Tree Reconciliation)', warning);
         }
     }
+    /**
+     * 
+     * @returns 
+     */
     function startCommitTimer() {
         {
             if (!supportsUserTiming) {
@@ -10735,6 +10797,11 @@
             beginMark('(Committing Changes)');
         }
     }
+
+    /**
+     * 
+     * @returns 
+     */
     function stopCommitTimer() {
         {
             if (!supportsUserTiming) {
@@ -10756,6 +10823,10 @@
             endMark('(Committing Changes)', '(Committing Changes)', warning);
         }
     }
+    /**
+     * 
+     * @returns 
+     */
     function startCommitSnapshotEffectsTimer() {
         {
             if (!supportsUserTiming) {
@@ -10766,6 +10837,10 @@
             beginMark('(Committing Snapshot Effects)');
         }
     }
+    /**
+     * 
+     * @returns 
+     */
     function stopCommitSnapshotEffectsTimer() {
         {
             if (!supportsUserTiming) {
@@ -10777,6 +10852,10 @@
             endMark("(Committing Snapshot Effects: " + count + " Total)", '(Committing Snapshot Effects)', null);
         }
     }
+    /**
+     * 
+     * @returns 
+     */
     function startCommitHostEffectsTimer() {
         {
             if (!supportsUserTiming) {
@@ -10787,6 +10866,10 @@
             beginMark('(Committing Host Effects)');
         }
     }
+    /**
+     * 
+     * @returns 
+     */
     function stopCommitHostEffectsTimer() {
         {
             if (!supportsUserTiming) {
@@ -10798,6 +10881,9 @@
             endMark("(Committing Host Effects: " + count + " Total)", '(Committing Host Effects)', null);
         }
     }
+    /**
+     * 
+     */
     function startCommitLifeCyclesTimer() {
         {
             if (!supportsUserTiming) {
@@ -10808,6 +10894,10 @@
             beginMark('(Calling Lifecycle Methods)');
         }
     }
+    /**
+     * 
+     * @returns 
+     */
     function stopCommitLifeCyclesTimer() {
         {
             if (!supportsUserTiming) {
@@ -11395,7 +11485,6 @@
     function msToExpirationTime(ms) {
         // Always subtract from the offset so that we don't clash with the magic number for NoWork.
         return MAGIC_NUMBER_OFFSET - (ms / UNIT_SIZE | 0);
-
     }
     function expirationTimeToMs(expirationTime) {
         return (MAGIC_NUMBER_OFFSET - expirationTime) * UNIT_SIZE;
@@ -12134,6 +12223,9 @@
     var lastContextDependency = null;
     var lastContextWithAllBitsObserved = null;
     var isDisallowedContextReadInDEV = false;
+    /**
+     * 
+     */
     function resetContextDependencies() {
         // This is called right before React yields execution, to ensure `readContext`
         // cannot be called outside the render phase.
@@ -12419,6 +12511,13 @@
         };
         fiber.updateQueue = queue;
     }
+
+    /**
+     * 拷贝一份current.updateQueue 赋值给 workInProgress.updateQueue
+     * 这样的话两者的updateQueue引用不同，但是内部的属性比如shared引用相同
+     * @param {*} current 
+     * @param {*} workInProgress 
+     */
     function cloneUpdateQueue(current, workInProgress) {
         // Clone the update queue from current. Unless it's already a clone.
         var queue = workInProgress.updateQueue;
@@ -12519,6 +12618,9 @@
         }
     }
 
+    /**
+     * 将更新对象中的payload对象和prevState合并，返回新的state对象
+     */
     function getStateFromUpdate(workInProgress, queue, update, prevState, nextProps, instance) {
         switch (update.tag) {
             case ReplaceState:
@@ -12554,7 +12656,7 @@
                 }
             // Intentional fallthrough
 
-            case UpdateState:
+            case UpdateState://将更新对象中的payload对象和prevState合并，返回新的state对象
                 {
                     var _payload = update.payload;
                     var partialState;
@@ -12598,18 +12700,28 @@
         return prevState;
     }
 
+    /**
+     * 将更新队列的更新和旧的state合并，生成新的state；
+     * 设置 workInProgress.memoizedState = newState;等
+     * @param {*} workInProgress 
+     * @param {*} props 
+     * @param {*} instance 
+     * @param {*} renderExpirationTime 
+     */
     function processUpdateQueue(workInProgress, props, instance, renderExpirationTime) {
+
         // This is always non-null on a ClassComponent or HostRoot
         var queue = workInProgress.updateQueue;
         hasForceUpdate = false;
 
         {
             currentlyProcessingQueue = queue.shared;
-        } // The last rebase update that is NOT part of the base state.
+        }
 
+        // The last rebase update that is NOT part of the base state.
+        var baseQueue = queue.baseQueue;
 
-        var baseQueue = queue.baseQueue; // The last pending update that hasn't been processed yet.
-
+        // The last pending update that hasn't been processed yet.
         var pendingQueue = queue.shared.pending;
 
         if (pendingQueue !== null) {
@@ -12635,9 +12747,9 @@
                     currentQueue.baseQueue = pendingQueue;
                 }
             }
-        } // These values may change as we process the queue.
+        }
 
-
+        // These values may change as we process the queue.
         if (baseQueue !== null) {
             var first = baseQueue.next; // Iterate through the list of updates to compute the result.
 
@@ -12696,7 +12808,6 @@
                         // TODO: We should skip this update if it was already committed but currently
                         // we have no way of detecting the difference between a committed and suspended
                         // update here.
-
 
                         markRenderEventTimeAndConfig(updateExpirationTime, update.suspenseConfig); // Process this update.
 
@@ -13597,6 +13708,9 @@
 
     var isArray$1 = Array.isArray;
 
+    /**
+     * 
+     */
     function coerceRef(returnFiber, current, element) {
         var mixedRef = element.ref;
 
@@ -13817,6 +13931,9 @@
             }
         }
 
+        /**
+         * 
+         */
         function placeSingleChild(newFiber) {
             // This is simpler for the single child case. We only need to do a
             // placement for inserting new children.
@@ -14443,6 +14560,9 @@
             return created;
         }
 
+        /**
+         * 
+         */
         function reconcileSingleElement(returnFiber, currentFirstChild, element, expirationTime) {
             var key = element.key;
             var child = currentFirstChild;
@@ -14553,6 +14673,9 @@
         // children and the parent.
 
 
+        /**
+         * 
+         */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
             // This function is not recursive.
             // If the top level item is an array, we treat it as a set of children,
@@ -16676,6 +16799,9 @@
         return commitTime;
     }
 
+    /**
+     * 
+     */
     function recordCommitTime() {
 
         commitTime = now$1();
@@ -17012,6 +17138,9 @@
         return true;
     }
 
+    /**
+     * 
+     */
     function resetHydrationState() {
 
         hydrationParentFiber = null;
@@ -17041,6 +17170,10 @@
         didWarnAboutTailOptions = {};
     }
 
+
+    /**
+     * 
+     */
     function reconcileChildren(current, workInProgress, nextChildren, renderExpirationTime) {
         if (current === null) {
             // If this is a fresh new component that hasn't been rendered yet, we
@@ -17504,23 +17637,25 @@
      * @returns 
      */
     function updateHostRoot(current, workInProgress, renderExpirationTime) {
-        debugger
-        //liqiang
+
         pushHostRootContext(workInProgress);
         var updateQueue = workInProgress.updateQueue;
 
         if (!(current !== null && updateQueue !== null)) {
             {
-                throw Error("If the root does not have an updateQueue, we should have already bailed out. This error is likely caused by a bug in React. Please file an issue.");
+                throw Error("If the root does not have an updateQueue, we should have already bailed out." +
+                    +" This error is likely caused by a bug in React. Please file an issue.");
             }
         }
 
         var nextProps = workInProgress.pendingProps;
         var prevState = workInProgress.memoizedState;
         var prevChildren = prevState !== null ? prevState.element : null;
+
         cloneUpdateQueue(current, workInProgress);
         processUpdateQueue(workInProgress, nextProps, null, renderExpirationTime);
-        var nextState = workInProgress.memoizedState; // Caution: React DevTools currently depends on this property
+        var nextState = workInProgress.memoizedState;
+        // Caution: React DevTools currently depends on this property
         // being called "element".
 
         var nextChildren = nextState.element;
@@ -17554,8 +17689,7 @@
                 node = node.sibling;
             }
         } else {
-            // Otherwise reset hydration state in case we aborted and resumed another
-            // root.
+            // Otherwise reset hydration state in case we aborted and resumed another root.
             reconcileChildren(current, workInProgress, nextChildren, renderExpirationTime);
             resetHydrationState();
         }
@@ -18716,7 +18850,7 @@
      * @returns 
      */
     function beginWork(current, workInProgress, renderExpirationTime) {
-        debugger
+
         var updateExpirationTime = workInProgress.expirationTime;
 
         {
@@ -19932,6 +20066,12 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} finishedWork 
+     * @returns 
+     */
     function commitBeforeMutationLifeCycles(current, finishedWork) {
         switch (finishedWork.tag) {
             case FunctionComponent:
@@ -19956,16 +20096,25 @@
                             {
                                 if (finishedWork.type === finishedWork.elementType && !didWarnAboutReassigningProps) {
                                     if (instance.props !== finishedWork.memoizedProps) {
-                                        error('Expected %s props to match memoized props before ' + 'getSnapshotBeforeUpdate. ' + 'This might either be because of a bug in React, or because ' + 'a component reassigns its own `this.props`. ' + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
+                                        error('Expected %s props to match memoized props before '
+                                            + 'getSnapshotBeforeUpdate. '
+                                            + 'This might either be because of a bug in React, or because '
+                                            + 'a component reassigns its own `this.props`. '
+                                            + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
                                     }
 
                                     if (instance.state !== finishedWork.memoizedState) {
-                                        error('Expected %s state to match memoized state before ' + 'getSnapshotBeforeUpdate. ' + 'This might either be because of a bug in React, or because ' + 'a component reassigns its own `this.props`. ' + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
+                                        error('Expected %s state to match memoized state before '
+                                            + 'getSnapshotBeforeUpdate. '
+                                            + 'This might either be because of a bug in React, or because '
+                                            + 'a component reassigns its own `this.props`. '
+                                            + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
                                     }
                                 }
                             }
 
-                            var snapshot = instance.getSnapshotBeforeUpdate(finishedWork.elementType === finishedWork.type ? prevProps : resolveDefaultProps(finishedWork.type, prevProps), prevState);
+                            var snapshot = instance.getSnapshotBeforeUpdate(finishedWork.elementType === finishedWork.type
+                                ? prevProps : resolveDefaultProps(finishedWork.type, prevProps), prevState);
 
                             {
                                 var didWarnSet = didWarnAboutUndefinedSnapshotBeforeUpdate;
@@ -19973,7 +20122,8 @@
                                 if (snapshot === undefined && !didWarnSet.has(finishedWork.type)) {
                                     didWarnSet.add(finishedWork.type);
 
-                                    error('%s.getSnapshotBeforeUpdate(): A snapshot value (or null) ' + 'must be returned. You have returned undefined.', getComponentName(finishedWork.type));
+                                    error('%s.getSnapshotBeforeUpdate(): A snapshot value (or null) '
+                                        + 'must be returned. You have returned undefined.', getComponentName(finishedWork.type));
                                 }
                             }
 
@@ -20082,6 +20232,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function commitLifeCycles(finishedRoot, current, finishedWork, committedExpirationTime) {
         switch (finishedWork.tag) {
             case FunctionComponent:
@@ -20111,11 +20264,17 @@
                             {
                                 if (finishedWork.type === finishedWork.elementType && !didWarnAboutReassigningProps) {
                                     if (instance.props !== finishedWork.memoizedProps) {
-                                        error('Expected %s props to match memoized props before ' + 'componentDidMount. ' + 'This might either be because of a bug in React, or because ' + 'a component reassigns its own `this.props`. ' + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
+                                        error('Expected %s props to match memoized props before ' + 'componentDidMount. '
+                                            + 'This might either be because of a bug in React, or because '
+                                            + 'a component reassigns its own `this.props`. '
+                                            + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
                                     }
 
                                     if (instance.state !== finishedWork.memoizedState) {
-                                        error('Expected %s state to match memoized state before ' + 'componentDidMount. ' + 'This might either be because of a bug in React, or because ' + 'a component reassigns its own `this.props`. ' + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
+                                        error('Expected %s state to match memoized state before ' + 'componentDidMount. '
+                                            + 'This might either be because of a bug in React, or because '
+                                            + 'a component reassigns its own `this.props`. '
+                                            + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
                                     }
                                 }
                             }
@@ -20132,11 +20291,17 @@
                             {
                                 if (finishedWork.type === finishedWork.elementType && !didWarnAboutReassigningProps) {
                                     if (instance.props !== finishedWork.memoizedProps) {
-                                        error('Expected %s props to match memoized props before ' + 'componentDidUpdate. ' + 'This might either be because of a bug in React, or because ' + 'a component reassigns its own `this.props`. ' + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
+                                        error('Expected %s props to match memoized props before ' + 'componentDidUpdate. '
+                                            + 'This might either be because of a bug in React, or because '
+                                            + 'a component reassigns its own `this.props`. '
+                                            + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
                                     }
 
                                     if (instance.state !== finishedWork.memoizedState) {
-                                        error('Expected %s state to match memoized state before ' + 'componentDidUpdate. ' + 'This might either be because of a bug in React, or because ' + 'a component reassigns its own `this.props`. ' + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
+                                        error('Expected %s state to match memoized state before ' + 'componentDidUpdate. '
+                                            + 'This might either be because of a bug in React, or because '
+                                            + 'a component reassigns its own `this.props`. '
+                                            + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
                                     }
                                 }
                             }
@@ -20152,11 +20317,17 @@
                         {
                             if (finishedWork.type === finishedWork.elementType && !didWarnAboutReassigningProps) {
                                 if (instance.props !== finishedWork.memoizedProps) {
-                                    error('Expected %s props to match memoized props before ' + 'processing the update queue. ' + 'This might either be because of a bug in React, or because ' + 'a component reassigns its own `this.props`. ' + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
+                                    error('Expected %s props to match memoized props before ' + 'processing the update queue. '
+                                        + 'This might either be because of a bug in React, or because '
+                                        + 'a component reassigns its own `this.props`. '
+                                        + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
                                 }
 
                                 if (instance.state !== finishedWork.memoizedState) {
-                                    error('Expected %s state to match memoized state before ' + 'processing the update queue. ' + 'This might either be because of a bug in React, or because ' + 'a component reassigns its own `this.props`. ' + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
+                                    error('Expected %s state to match memoized state before ' + 'processing the update queue. '
+                                        + 'This might either be because of a bug in React, or because '
+                                        + 'a component reassigns its own `this.props`. '
+                                        + 'Please file an issue.', getComponentName(finishedWork.type) || 'instance');
                                 }
                             }
                         } // We could update instance props and state here,
@@ -20230,7 +20401,9 @@
 
                         if (typeof onRender === 'function') {
                             {
-                                onRender(finishedWork.memoizedProps.id, current === null ? 'mount' : 'update', finishedWork.actualDuration, finishedWork.treeBaseDuration, finishedWork.actualStartTime, getCommitTime(), finishedRoot.memoizedInteractions);
+                                onRender(finishedWork.memoizedProps.id, current === null
+                                    ? 'mount' : 'update', finishedWork.actualDuration, finishedWork.treeBaseDuration,
+                                    finishedWork.actualStartTime, getCommitTime(), finishedRoot.memoizedInteractions);
                             }
                         }
                     }
@@ -20342,6 +20515,10 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} current 
+     */
     function commitDetachRef(current) {
         var currentRef = current.ref;
 
@@ -20521,6 +20698,11 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     * @returns 
+     */
     function getHostParentFiber(fiber) {
         var parent = fiber.return;
 
@@ -20539,10 +20721,20 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     * @returns 
+     */
     function isHostParent(fiber) {
         return fiber.tag === HostComponent || fiber.tag === HostRoot || fiber.tag === HostPortal;
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     * @returns 
+     */
     function getHostSibling(fiber) {
         // We're going to search forward into the tree until we find a sibling host
         // node. Unfortunately, if multiple insertions are done in a row we have to
@@ -20591,6 +20783,10 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} finishedWork 
+     */
     function commitPlacement(finishedWork) {
 
 
@@ -20994,6 +21190,10 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} current 
+     */
     function commitResetTextContent(current) {
 
         resetTextContent(current.stateNode);
@@ -21400,7 +21600,7 @@
     }
 
     /**
-     * 
+     * @param fiber rootFiber
      */
     function computeExpirationForFiber(currentTime, fiber, suspenseConfig) {
         var mode = fiber.mode;
@@ -21485,7 +21685,7 @@
             return;
         }
 
-        checkForInterruption(fiber, expirationTime);
+        checkForInterruption(fiber, expirationTime);//初始化流程进不来
         recordScheduleUpdate();
 
         // TODO: computeExpirationForFiber also reads the priority. Pass the
@@ -21655,13 +21855,13 @@
         }
 
         return nextLevel;
-    } // Use this function to schedule a task for a root. There's only one task per
+    }
+
+    // Use this function to schedule a task for a root. There's only one task per
     // root; if a task was already scheduled, we'll check to make sure the
     // expiration time of the existing task is the same as the expiration time of
     // the next level that the root has work on. This function is called on every
     // update, and right before exiting a task.
-
-
     function ensureRootIsScheduled(root) {
         var lastExpiredTime = root.lastExpiredTime;
 
@@ -22054,7 +22254,6 @@
      * @param root -- fiberRoot
      */
     function performSyncWorkOnRoot(root) {
-        //liqiang
         // Check if there's expired work on this root. Otherwise, render at Sync.
         var lastExpiredTime = root.lastExpiredTime;
         var expirationTime = lastExpiredTime !== NoWork ? lastExpiredTime : Sync;
@@ -22074,9 +22273,10 @@
             startWorkOnPendingInteractions(root, expirationTime);
         }
 
+
+
         // If we have a work-in-progress fiber, it means there's still work to do in this root.
         if (workInProgress !== null) {
-            debugger
             //切换上下文为render上下文
             var prevExecutionContext = executionContext;
             executionContext |= RenderContext;
@@ -22084,11 +22284,10 @@
             var prevInteractions = pushInteractions(root);
             startWorkLoopTimer(workInProgress);
 
+
+
             do {
                 try {
-
-
-                    //liqiang
                     workLoopSync();
                     break;
                 } catch (thrownValue) {
@@ -22096,6 +22295,7 @@
                 }
             } while (true);
 
+            debugger
             resetContextDependencies();
             executionContext = prevExecutionContext;
             popDispatcher(prevDispatcher);
@@ -22137,6 +22337,10 @@
         return null;
     }
 
+    /**
+     * 
+     * @param {*} root 
+     */
     function finishSyncRender(root) {
         // Set this to null to indicate there's no in-progress render.
         workInProgressRoot = null;
@@ -22246,7 +22450,6 @@
         try {
             return fn(a);
         } finally {
-            debugger
             executionContext = prevExecutionContext;
 
             if (executionContext === NoContext) {
@@ -22307,6 +22510,7 @@
 
         workInProgressRoot = root;
         workInProgress = createWorkInProgress(root.current, null);
+
         renderExpirationTime$1 = expirationTime;
         workInProgressRootExitStatus = RootIncomplete;
         workInProgressRootFatalError = null;
@@ -22389,6 +22593,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function popDispatcher(prevDispatcher) {
         ReactCurrentDispatcher$1.current = prevDispatcher;
     }
@@ -22404,6 +22611,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function popInteractions(prevInteractions) {
         {
             __interactionsRef.current = prevInteractions;
@@ -22413,6 +22623,12 @@
     function markCommitTimeOfFallback() {
         globalMostRecentFallbackTime = now();
     }
+
+    /**
+     * 
+     * @param {*} expirationTime 
+     * @param {*} suspenseConfig 
+     */
     function markRenderEventTimeAndConfig(expirationTime, suspenseConfig) {
         if (expirationTime < workInProgressRootLatestProcessedExpirationTime && expirationTime > Idle) {
             workInProgressRootLatestProcessedExpirationTime = expirationTime;
@@ -22426,6 +22642,10 @@
             }
         }
     }
+
+    /**
+     * 
+     */
     function markUnprocessedUpdateTime(expirationTime) {
         if (expirationTime > workInProgressRootNextUnprocessedUpdateTime) {
             workInProgressRootNextUnprocessedUpdateTime = expirationTime;
@@ -22487,9 +22707,7 @@
      */
     function workLoopSync() {
         // Already timed out, so perform work without checking if we need to yield.
-        while (workInProgress !== null) {
-            workInProgress = performUnitOfWork(workInProgress);
-        }
+        while (workInProgress !== null) { workInProgress = performUnitOfWork(workInProgress); }
     }
     /** @noinline */
 
@@ -22503,12 +22721,10 @@
 
     /**
      * 
-     * @param {*} unitOfWork 
+     * @param {*} unitOfWork workInProgress
      * @returns 
      */
     function performUnitOfWork(unitOfWork) {
-        //liqiang
-        debugger
         // The current, flushed, state of this fiber is the alternate. Ideally
         // nothing should rely on this, but relying on it here means that we don't
         // need an additional field on the work in progress.
@@ -22522,6 +22738,8 @@
             next = beginWork$1(current, unitOfWork, renderExpirationTime$1);
             stopProfilerTimerIfRunningAndRecordDelta(unitOfWork, true);
         } else {
+
+
             next = beginWork$1(current, unitOfWork, renderExpirationTime$1);
         }
 
@@ -22670,6 +22888,11 @@
         return null;
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     * @returns 
+     */
     function getRemainingExpirationTime(fiber) {
         var updateExpirationTime = fiber.expirationTime;
         var childExpirationTime = fiber.childExpirationTime;
@@ -22744,12 +22967,18 @@
         completedWork.childExpirationTime = newChildExpirationTime;
     }
 
+    /**
+     * 
+     */
     function commitRoot(root) {
         var renderPriorityLevel = getCurrentPriorityLevel();
         runWithPriority$1(ImmediatePriority, commitRootImpl.bind(null, root, renderPriorityLevel));
         return null;
     }
 
+    /**
+     * 
+     */
     function commitRootImpl(root, renderPriorityLevel) {
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
@@ -23046,6 +23275,9 @@
         return null;
     }
 
+    /**
+     * 
+     */
     function commitBeforeMutationEffects() {
         while (nextEffect !== null) {
             var effectTag = nextEffect.effectTag;
@@ -23074,6 +23306,11 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} root 
+     * @param {*} renderPriorityLevel 
+     */
     function commitMutationEffects(root, renderPriorityLevel) {
         // TODO: Should probably move the bulk of this function to commitWork.
         while (nextEffect !== null) {
@@ -23159,6 +23396,11 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} root 
+     * @param {*} committedExpirationTime 
+     */
     function commitLayoutEffects(root, committedExpirationTime) {
         // TODO: Should probably move the bulk of this function to commitWork.
         while (nextEffect !== null) {
@@ -23483,6 +23725,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function flushRenderPhaseStrictModeWarningsInDEV() {
         {
             ReactStrictModeWarnings.flushLegacyContextWarning();
@@ -23493,6 +23738,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function stopFinishedWorkLoopTimer() {
         var didCompleteRoot = true;
         stopWorkLoopTimer(interruptedBy, didCompleteRoot);
@@ -23554,13 +23802,14 @@
          */
         beginWork$1 = function (current, unitOfWork, expirationTime) {
             // If a component throws an error, we replay it again in a synchronously
-            // dispatched event, so that the debugger will treat it as an uncaught
+            // dispatched event, so that the debug2ger will treat it as an uncaught
             // error See ReactErrorUtils for more information.
             // Before entering the begin phase, copy the work-in-progress onto a dummy
             // fiber. If beginWork throws, we'll use this to reset the state.
             var originalWorkInProgressCopy = assignFiberPropertiesInDEV(dummyFiber, unitOfWork);
 
             try {
+
                 return beginWork(current, unitOfWork, expirationTime);
             } catch (originalError) {
                 if (originalError !== null && typeof originalError === 'object' && typeof originalError.then === 'function') {
@@ -23801,6 +24050,11 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} root 
+     * @param {*} committedExpirationTime 
+     */
     function finishPendingInteractions(root, committedExpirationTime) {
 
         var earliestRemainingTimeAfterCommit = root.firstPendingTime;
@@ -23944,7 +24198,7 @@
     }
 
     /**
-     * 
+     * 初始化流程无操作
      * @param {*} root fiberRoot
      * @param {*} children 
      */
@@ -23953,6 +24207,11 @@
             onScheduleFiberRoot(root, children);
         }
     }
+    /**
+     * 
+     * @param {*} root 
+     * @param {*} expirationTime 
+     */
     function onCommitRoot(root, expirationTime) {
         if (typeof onCommitFiberRoot === 'function') {
             onCommitFiberRoot(root, expirationTime);
@@ -24164,7 +24423,7 @@
         workInProgress.child = current.child;
         workInProgress.memoizedProps = current.memoizedProps;
         workInProgress.memoizedState = current.memoizedState;
-        workInProgress.updateQueue = current.updateQueue;
+        workInProgress.updateQueue = current.updateQueue;//更新队列共享。
 
         // Clone the dependencies object. This is mutated during the render phase, so it cannot be shared with the current fiber.
         var currentDependencies = current.dependencies;
@@ -24291,8 +24550,20 @@
 
         return createFiber(HostRoot, null, null, mode);
     }
+
+    /**
+     * 
+     * @param {*} type 
+     * @param {*} key 
+     * @param {*} pendingProps 
+     * @param {*} owner 
+     * @param {*} mode 
+     * @param {*} expirationTime 
+     * @returns 
+     */
     function createFiberFromTypeAndProps(type, // React$ElementType
         key, pendingProps, owner, mode, expirationTime) {
+
         var fiber;
         var fiberTag = IndeterminateComponent; // The resolved type is set if we know what the final type will be. I.e. it's not lazy.
 
@@ -24403,6 +24674,10 @@
         fiber.expirationTime = expirationTime;
         return fiber;
     }
+
+    /**
+     * 
+     */
     function createFiberFromElement(element, mode, expirationTime) {
         var owner = null;
 
@@ -24658,6 +24933,12 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} root 
+     * @param {*} finishedExpirationTime 
+     * @param {*} remainingExpirationTime 
+     */
     function markRootFinishedAtTime(root, finishedExpirationTime, remainingExpirationTime) {
         // Update the range of pending times
         root.firstPendingTime = remainingExpirationTime; // Update the range of suspended times. Treat everything higher priority or
@@ -24780,7 +25061,7 @@
     /**
      * 1、创建更新对象update
      * 2、入栈更新 enqueueUpdate(rootFiber, update);
-     * @param {*} element 
+     * @param {*} element ReactElement
      * @param {*} container -fiberRoot
      * @param {*} parentComponent 
      * @param {*} callback 
@@ -24792,9 +25073,10 @@
         }
 
         var current$1 = container.current;//rootFiber
+        //获取 currentEventTime （已经经过了 msToExpirationTime(ms) 处理 ）
         var currentTime = requestCurrentTimeForUpdate();
 
-        {
+        {//jest
             // $FlowExpectedError - jest isn't a global, and isn't recognized outside of tests
             if ('undefined' !== typeof jest) {
                 warnIfUnmockedScheduler(current$1);
@@ -24803,8 +25085,9 @@
         }
 
         var suspenseConfig = requestCurrentSuspenseConfig();
+        //初始化流程时的过期时间 === Sync 
         var expirationTime = computeExpirationForFiber(currentTime, current$1, suspenseConfig);
-        var context = getContextForSubtree(parentComponent);
+        var context = getContextForSubtree(parentComponent);//初始化时是 {}
 
         if (container.context === null) {
             container.context = context;
@@ -24826,9 +25109,7 @@
         var update = createUpdate(expirationTime, suspenseConfig);
         // Caution: React DevTools currently depends on this property being called "element".
 
-        update.payload = {
-            element: element
-        };
+        update.payload = { element: element };
         callback = callback === undefined ? null : callback;
 
         if (callback !== null) {
@@ -24845,6 +25126,12 @@
         scheduleWork(current$1, expirationTime);
         return expirationTime;
     }
+
+    /**
+     * 
+     * @param {*} container 
+     * @returns 
+     */
     function getPublicRootInstance(container) {
         var containerFiber = container.current;
 
@@ -25128,7 +25415,11 @@
         return new ReactDOMBlockingRoot(container, LegacyRoot, options);
     }
 
-    //DONE
+    /**
+     * DONE dom 容器是否合法
+     * @param {*} node 
+     * @returns 
+     */
     function isValidContainer(node) {
         return !!(node && (
             node.nodeType === ELEMENT_NODE
@@ -25250,6 +25541,15 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} parentComponent 
+     * @param {*} children ReactDom.render()的第一个参数
+     * @param {*} container Dom容器
+     * @param {*} forceHydrate 
+     * @param {*} callback ReactDom.render()的第3个参数
+     * @returns 
+     */
     function legacyRenderSubtreeIntoContainer(parentComponent, children, container, forceHydrate, callback) {
         {
             topLevelUpdateWarnings(container);
@@ -25297,8 +25597,6 @@
             updateContainer(children, fiberRoot, parentComponent, callback);
         }
 
-        //111
-        debugger
 
         return getPublicRootInstance(fiberRoot);
     }
