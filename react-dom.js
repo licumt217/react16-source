@@ -20,6 +20,7 @@
         //legacy 遗产
         //simultaneous 同步的
         //Passive 消极的，被动的
+        // hazards 危险，危害
     }
 
     var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED; // Prevent newer renderers from RTE when used with older react package versions.
@@ -107,6 +108,9 @@
         }
     }
 
+    /**
+     * 
+     */
     var invokeGuardedCallbackImpl = function (name, func, context, a, b, c, d, e, f) {
         var funcArgs = Array.prototype.slice.call(arguments, 3);
 
@@ -2948,63 +2952,25 @@
 
     // Don't change these two values. They're used by React Dev Tools.
     {
-        var NoEffect =
-            /*              */
-            0;
-        var PerformedWork =
-            /*         */
-            1; // You can change the rest (and add more).
-
-        var Placement =
-            /*             */
-            2;
-        var Update =
-            /*                */
-            4;
-        var PlacementAndUpdate =
-            /*    */
-            6;
-        var Deletion =
-            /*              */
-            8;
-        var ContentReset =
-            /*          */
-            16;
-        var Callback =
-            /*              */
-            32;
-        var DidCapture =
-            /*            */
-            64;
-        var Ref =
-            /*                   */
-            128;
-        var Snapshot =
-            /*              */
-            256;
-        var Passive =
-            /*               */
-            512;
-        var Hydrating =
-            /*             */
-            1024;
-        var HydratingAndUpdate =
-            /*    */
-            1028; // Passive & Update & Callback & Ref & Snapshot
-
-        var LifecycleEffectMask =
-            /*   */
-            932; // Union of all host effects
-
-        var HostEffectMask =
-            /*        */
-            2047;
-        var Incomplete =
-            /*            */
-            2048;
-        var ShouldCapture =
-            /*         */
-            4096;
+        var NoEffect = 0;
+        var PerformedWork = 1;
+        // You can change the rest (and add more).
+        var Placement = 2;
+        var Update = 4;
+        var PlacementAndUpdate = 6;
+        var Deletion = 8;
+        var ContentReset = 16;
+        var Callback = 32;
+        var DidCapture = 64;
+        var Ref = 128;
+        var Snapshot = 256;
+        var Passive = 512;
+        var Hydrating = 1024;
+        var HydratingAndUpdate = 1028; // Passive & Update & Callback & Ref & Snapshot
+        var LifecycleEffectMask = 932; // Union of all host effects
+        var HostEffectMask = 2047;
+        var Incomplete = 2048;
+        var ShouldCapture = 4096;
     }
 
     var ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner;
@@ -4915,6 +4881,12 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} tagName 
+     * @param {*} props 
+     * @returns 
+     */
     function isCustomComponent(tagName, props) {
         if (tagName.indexOf('-') === -1) {
             return typeof props.is === 'string';
@@ -5914,6 +5886,11 @@
         legacyListenToEvent(registrationName, doc);
     }
 
+    /**
+     * 
+     * @param {*} rootContainerElement 
+     * @returns 
+     */
     function getOwnerDocumentFromRootContainer(rootContainerElement) {
         return rootContainerElement.nodeType === DOCUMENT_NODE ? rootContainerElement : rootContainerElement.ownerDocument;
     }
@@ -6004,6 +5981,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function createElement(type, props, rootContainerElement, parentNamespace) {
         var isCustomComponentTag; // We create tags in the namespace of their parent container, except HTML
         // tags get no namespace.
@@ -6084,6 +6064,12 @@
 
         return domElement;
     }
+    /**
+     * 
+     * @param {*} text 
+     * @param {*} rootContainerElement 
+     * @returns 
+     */
     function createTextNode(text, rootContainerElement) {
         return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text);
     }
@@ -6792,7 +6778,7 @@
     }
 
     /**
-     * 
+     * DONE 获取当前获取焦点的元素
      * @param {*} doc 
      * @returns 
      */
@@ -7129,7 +7115,14 @@
      */
     function hasSelectionCapabilities(elem) {
         var nodeName = elem && elem.nodeName && elem.nodeName.toLowerCase();
-        return nodeName && (nodeName === 'input' && (elem.type === 'text' || elem.type === 'search' || elem.type === 'tel' || elem.type === 'url' || elem.type === 'password') || nodeName === 'textarea' || elem.contentEditable === 'true');
+        return nodeName && (nodeName === 'input' && (
+            elem.type === 'text'
+            || elem.type === 'search'
+            || elem.type === 'tel'
+            || elem.type === 'url'
+            || elem.type === 'password')
+            || nodeName === 'textarea'
+            || elem.contentEditable === 'true');
     }
     /**
      * 
@@ -7149,7 +7142,6 @@
      * restore it. This is useful when performing operations that could remove dom
      * nodes and place them back in, resulting in focus being lost.
      */
-
     function restoreSelection(priorSelectionInformation) {
         var curFocusedElem = getActiveElementDeep();
         var priorFocusedElem = priorSelectionInformation.focusedElem;
@@ -7639,7 +7631,7 @@
         return instance;
     }
     /**
-     * 
+     * DONE
      * @param {*} containerInfo 
      */
     function prepareForCommit(containerInfo) {
@@ -7658,6 +7650,9 @@
 
         selectionInformation = null;
     }
+    /**
+     * 
+     */
     function createInstance(type, props, rootContainerInstance, hostContext, internalInstanceHandle) {
         var parentNamespace;
 
@@ -7680,6 +7675,11 @@
         updateFiberProps(domElement, props);
         return domElement;
     }
+    /**
+     * 
+     * @param {*} parentInstance 
+     * @param {*} child 
+     */
     function appendInitialChild(parentInstance, child) {
         parentInstance.appendChild(child);
     }
@@ -7706,6 +7706,14 @@
     function shouldDeprioritizeSubtree(type, props) {
         return !!props.hidden;
     }
+    /**
+     * 
+     * @param {*} text 
+     * @param {*} rootContainerInstance 
+     * @param {*} hostContext 
+     * @param {*} internalInstanceHandle 
+     * @returns 
+     */
     function createTextInstance(text, rootContainerInstance, hostContext, internalInstanceHandle) {
         {
             var hostContextDev = hostContext;
@@ -7753,6 +7761,10 @@
     function appendChild(parentInstance, child) {
         parentInstance.appendChild(child);
     }
+
+    /**
+     * 
+     */
     function appendChildToContainer(container, child) {
         var parentNode;
 
@@ -8152,6 +8164,11 @@
     function getFiberCurrentPropsFromNode$1(node) {
         return node[internalEventHandlersKey] || null;
     }
+    /**
+     * 
+     * @param {*} node 
+     * @param {*} props 
+     */
     function updateFiberProps(node, props) {
         node[internalEventHandlersKey] = props;
     }
@@ -10658,6 +10675,11 @@
             clearFiberMark(fiber, null);
         }
     }
+    /**
+     * 
+     * @param {*} fiber 
+     * @returns 
+     */
     function stopWorkTimer(fiber) {
         {
             if (!supportsUserTiming || shouldIgnoreFiber(fiber)) {
@@ -10782,7 +10804,7 @@
         }
     }
     /**
-     * 
+     * DONE 标记开始commit isCommitting = true;
      * @returns 
      */
     function startCommitTimer() {
@@ -11074,6 +11096,10 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     */
     function popTopLevelContextObject(fiber) {
         {
             pop(didPerformWorkStackCursor, fiber);
@@ -11342,6 +11368,9 @@
         }
     }
 
+    /**
+     * react优先级转为调度优先级。90-97类型的优先级转为 0-5数字优先级
+     */
     function reactPriorityToSchedulerPriority(reactPriorityLevel) {
         switch (reactPriorityLevel) {
             case ImmediatePriority:
@@ -11397,6 +11426,9 @@
             Scheduler_cancelCallback(callbackNode);
         }
     }
+    /**
+     * 
+     */
     function flushSyncCallbackQueue() {
         if (immediateQueueCallbackNode !== null) {
             var node = immediateQueueCallbackNode;
@@ -11407,7 +11439,11 @@
         flushSyncCallbackQueueImpl();
     }
 
+    /**
+     * 
+     */
     function flushSyncCallbackQueueImpl() {
+
         if (!isFlushingSyncQueue && syncQueue !== null) {
             // Prevent re-entrancy.
             isFlushingSyncQueue = true;
@@ -12870,6 +12906,11 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} callback 
+     * @param {*} context 
+     */
     function callCallback(callback, context) {
         if (!(typeof callback === 'function')) {
             {
@@ -12886,6 +12927,9 @@
     function checkHasForceUpdateAfterProcessing() {
         return hasForceUpdate;
     }
+    /**
+     * 
+     */
     function commitUpdateQueue(finishedWork, finishedQueue, instance) {
         // Commit the effects
         var effects = finishedQueue.effects;
@@ -14817,6 +14861,11 @@
     var contextFiberStackCursor = createCursor(NO_CONTEXT);
     var rootInstanceStackCursor = createCursor(NO_CONTEXT);
 
+    /**
+     * 
+     * @param {*} c 
+     * @returns 
+     */
     function requiredContext(c) {
         if (!(c !== NO_CONTEXT)) {
             {
@@ -14827,6 +14876,9 @@
         return c;
     }
 
+    /**
+     * 
+     */
     function getRootHostContainer() {
         var rootInstance = requiredContext(rootInstanceStackCursor.current);
         return rootInstance;
@@ -14856,6 +14908,10 @@
         push(contextStackCursor$1, nextRootContext, fiber);
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     */
     function popHostContainer(fiber) {
         pop(contextStackCursor$1, fiber);
         pop(contextFiberStackCursor, fiber);
@@ -14882,6 +14938,11 @@
         push(contextStackCursor$1, nextContext, fiber);
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     * @returns 
+     */
     function popHostContext(fiber) {
         // Do not pop unless this Fiber provided the current context.
         // pushHostContext() only pushes Fibers that provide unique contexts.
@@ -17109,6 +17170,11 @@
         hydrationParentFiber = parent;
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     * @returns 
+     */
     function popHydrationState(fiber) {
 
         if (fiber !== hydrationParentFiber) {
@@ -19186,7 +19252,9 @@
     var updateHostText$1;
 
     {
-        // Mutation mode
+        /**
+         * Mutation mode
+         */
         appendAllChildren = function (parent, workInProgress, needsVisibilityToggle, isHidden) {
             // We only have the top Fiber that was created but we need recurse down its
             // children to find all the terminal nodes.
@@ -19333,6 +19401,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function completeWork(current, workInProgress, renderExpirationTime) {
         var newProps = workInProgress.pendingProps;
 
@@ -19360,6 +19431,9 @@
                     return null;
                 }
 
+            /**
+             * 
+             */
             case HostRoot:
                 {
                     popHostContainer(workInProgress);
@@ -19387,6 +19461,9 @@
                     return null;
                 }
 
+            /**
+             * 
+             */
             case HostComponent:
                 {
                     popHostContext(workInProgress);
@@ -19449,6 +19526,9 @@
                     return null;
                 }
 
+            /**
+             * 
+             */
             case HostText:
                 {
                     var newText = newProps;
@@ -20806,7 +20886,6 @@
      */
     function commitPlacement(finishedWork) {
 
-
         var parentFiber = getHostParentFiber(finishedWork); // Note: these two variables *must* always be updated together.
 
         var parent;
@@ -20859,6 +20938,12 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} node 
+     * @param {*} before 
+     * @param {*} parent 
+     */
     function insertOrAppendPlacementNodeIntoContainer(node, before, parent) {
         var tag = node.tag;
         var isHost = tag === HostComponent || tag === HostText;
@@ -21840,6 +21925,9 @@
         return root;
     }
 
+    /**
+     * 
+     */
     function getNextRootExpirationTimeToWorkOn(root) {
         // Determines the next expiration time that the root should render, taking
         // into account levels that may be suspended, or levels that may have
@@ -22312,7 +22400,6 @@
                 }
             } while (true);
 
-            debugger
             resetContextDependencies();
             executionContext = prevExecutionContext;
             popDispatcher(prevDispatcher);
@@ -22343,7 +22430,6 @@
                 stopFinishedWorkLoopTimer();
                 root.finishedWork = root.current.alternate;
                 root.finishedExpirationTime = expirationTime;
-                debugger
                 finishSyncRender(root);
             } // Before exiting, make sure there's a callback scheduled for the next
             // pending level.
@@ -22773,6 +22859,11 @@
         return next;
     }
 
+    /**
+     * 
+     * @param {*} unitOfWork 
+     * @returns 
+     */
     function completeUnitOfWork(unitOfWork) {
         // Attempt to complete the current unit of work, then move to the next
         // sibling. If there are no more siblings, return to the parent fiber.
@@ -22917,6 +23008,9 @@
         return updateExpirationTime > childExpirationTime ? updateExpirationTime : childExpirationTime;
     }
 
+    /**
+     * 
+     */
     function resetChildExpirationTime(completedWork) {
         if (renderExpirationTime$1 !== Never && completedWork.childExpirationTime === Never) {
             // The children of this component are hidden. Don't bubble their
@@ -22989,7 +23083,6 @@
      * 
      */
     function commitRoot(root) {
-        debugger
         var renderPriorityLevel = getCurrentPriorityLevel();
         runWithPriority$1(ImmediatePriority, commitRootImpl.bind(null, root, renderPriorityLevel));
         return null;
@@ -23011,35 +23104,43 @@
 
         flushRenderPhaseStrictModeWarningsInDEV();
 
-        if (!((executionContext & (RenderContext | CommitContext)) === NoContext)) {
-            {
-                throw Error("Should not already be working.");
+        {//为了确保executionContext 不是RenderContext 或 CommitContext ，即当前未处于渲染阶段和commit阶段
+            if (!((executionContext & (RenderContext | CommitContext)) === NoContext)) {
+                {
+                    throw Error("Should not already be working.");
+                }
             }
         }
 
-        var finishedWork = root.finishedWork;
-        var expirationTime = root.finishedExpirationTime;
+        {//提取出 finishedWork 和 expirationTime，并重置 root.finishedWork 和 root.finishedExpirationTime
+            var finishedWork = root.finishedWork;
+            var expirationTime = root.finishedExpirationTime;
 
-        if (finishedWork === null) {
-            return null;
+            if (finishedWork === null) {
+                return null;
+            }
+
+            root.finishedWork = null;
+            root.finishedExpirationTime = NoWork;
         }
 
-        root.finishedWork = null;
-        root.finishedExpirationTime = NoWork;
-
-        if (!(finishedWork !== root.current)) {
-            {
-                throw Error("Cannot commit the same tree as before. This error is likely caused by a bug in React. Please file an issue.");
+        {//finishedWork 应该是workInProgress，即 root.current.alternate 
+            if (!(finishedWork !== root.current)) {
+                {
+                    throw Error("Cannot commit the same tree as before. This error is likely caused by a bug in React. Please file an issue.");
+                }
             }
-        } // commitRoot never returns a continuation; it always finishes synchronously.
-        // So we can clear these now to allow a new callback to be scheduled.
+        }
 
+        {// commitRoot never returns a continuation; it always finishes synchronously. So we can clear these now to allow a new callback to be scheduled.
+            root.callbackNode = null;
+            root.callbackExpirationTime = NoWork;
+            root.callbackPriority = NoPriority;
+            root.nextKnownPendingLevel = NoWork;
+        }
+        startCommitTimer();
 
-        root.callbackNode = null;
-        root.callbackExpirationTime = NoWork;
-        root.callbackPriority = NoPriority;
-        root.nextKnownPendingLevel = NoWork;
-        startCommitTimer(); // Update the first and last pending times on this root. The new first
+        // Update the first and last pending times on this root. The new first
         // pending time is whatever is left on the root fiber.
 
         var remainingExpirationTimeBeforeCommit = getRemainingExpirationTime(finishedWork);
@@ -23050,11 +23151,12 @@
             workInProgressRoot = null;
             workInProgress = null;
             renderExpirationTime$1 = NoWork;
-        } // This indicates that the last root we worked on is not the same one that
+        }
+
+        // This indicates that the last root we worked on is not the same one that
         // we're committing now. This most commonly happens when a suspended root
         // times out.
         // Get the list of effects.
-
 
         var firstEffect;
 
@@ -23079,7 +23181,9 @@
             executionContext |= CommitContext;
             var prevInteractions = pushInteractions(root); // Reset this to null before calling lifecycles
 
-            ReactCurrentOwner$2.current = null; // The commit phase is broken into several sub-phases. We do a separate pass
+            ReactCurrentOwner$2.current = null;
+
+            // The commit phase is broken into several sub-phases. We do a separate pass
             // of the effect list for each phase: all mutation effects come before all
             // layout effects, and so on.
             // The first phase a "before mutation" phase. We use this phase to read the
@@ -23140,12 +23244,14 @@
             } while (nextEffect !== null);
 
             stopCommitHostEffectsTimer();
-            resetAfterCommit(root.containerInfo); // The work-in-progress tree is now the current tree. This must come after
+            resetAfterCommit(root.containerInfo);
+            // The work-in-progress tree is now the current tree. This must come after
             // the mutation phase, so that the previous tree is still current during
             // componentWillUnmount, but before the layout phase, so that the finished
             // work is current during componentDidMount/Update.
 
-            root.current = finishedWork; // The next phase is the layout phase, where we call effects that read
+            root.current = finishedWork;
+            // The next phase is the layout phase, where we call effects that read
             // the host tree after it's been mutated. The idiomatic use case for this is
             // layout, but class component lifecycles also fire here for legacy reasons.
 
@@ -23172,8 +23278,9 @@
             } while (nextEffect !== null);
 
             stopCommitLifeCyclesTimer();
-            nextEffect = null; // Tell Scheduler to yield at the end of the frame, so the browser has an
-            // opportunity to paint.
+            nextEffect = null;
+
+            // Tell Scheduler to yield at the end of the frame, so the browser has an opportunity to paint.
 
             requestPaint();
 
@@ -23217,6 +23324,7 @@
             // clear this in flushPassiveEffects.
             nextEffect = firstEffect;
 
+            //清空链表
             while (nextEffect !== null) {
                 var nextNextEffect = nextEffect.nextEffect;
                 nextEffect.nextEffect = null;
@@ -23295,7 +23403,7 @@
     }
 
     /**
-     * 
+     * 处理Effect中有 Snapshot 和 Passive 的
      */
     function commitBeforeMutationEffects() {
         while (nextEffect !== null) {
@@ -24900,6 +25008,12 @@
         initializeUpdateQueue(uninitializedFiber);
         return root;
     }
+    /**
+     * 
+     * @param {*} root 
+     * @param {*} expirationTime 
+     * @returns 
+     */
     function isRootSuspendedAtTime(root, expirationTime) {
         var firstSuspendedTime = root.firstSuspendedTime;
         var lastSuspendedTime = root.lastSuspendedTime;
@@ -24967,9 +25081,9 @@
      */
     function markRootFinishedAtTime(root, finishedExpirationTime, remainingExpirationTime) {
         // Update the range of pending times
-        root.firstPendingTime = remainingExpirationTime; // Update the range of suspended times. Treat everything higher priority or
-        // equal to this update as unsuspended.
+        root.firstPendingTime = remainingExpirationTime;
 
+        // Update the range of suspended times. Treat everything higher priority or equal to this update as unsuspended.
         if (finishedExpirationTime <= root.lastSuspendedTime) {
             // The entire suspended range is now unsuspended.
             root.firstSuspendedTime = root.lastSuspendedTime = root.nextKnownPendingLevel = NoWork;

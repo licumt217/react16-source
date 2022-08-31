@@ -2739,6 +2739,12 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} priorityLevel 
+     * @param {*} eventHandler 
+     * @returns 
+     */
     function unstable_runWithPriority(priorityLevel, eventHandler) {
         switch (priorityLevel) {
             case ImmediatePriority:
