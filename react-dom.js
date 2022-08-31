@@ -1304,7 +1304,6 @@
      * @param {string} name
      * @param {*} value
      */
-
     function setValueForProperty(node, name, value, isCustomComponentTag) {
         var propertyInfo = getPropertyInfo(name);
 
@@ -4703,7 +4702,6 @@
      * @param {DOMElement} node
      * @param {object} styles
      */
-
     function setValueForStyles(node, styles) {
         var style = node.style;
 
@@ -4840,6 +4838,12 @@
         ReactDebugCurrentFrame$3 = ReactSharedInternals.ReactDebugCurrentFrame;
     }
 
+    /**
+     * 
+     * @param {*} tag 
+     * @param {*} props 
+     * @returns 
+     */
     function assertValidProps(tag, props) {
         if (!props) {
             return;
@@ -5910,6 +5914,9 @@
         node.onclick = noop;
     }
 
+    /**
+     * 
+     */
     function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
         for (var propKey in nextProps) {
             if (!nextProps.hasOwnProperty(propKey)) {
@@ -6073,6 +6080,13 @@
     function createTextNode(text, rootContainerElement) {
         return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text);
     }
+    /**
+     * 
+     * @param {*} domElement 
+     * @param {*} tag 
+     * @param {*} rawProps 
+     * @param {*} rootContainerElement 
+     */
     function setInitialProperties(domElement, tag, rawProps, rootContainerElement) {
         var isCustomComponentTag = isCustomComponent(tag, rawProps);
 
@@ -7560,6 +7574,12 @@
     var eventsEnabled = null;
     var selectionInformation = null;
 
+    /**
+     * 
+     * @param {*} type 
+     * @param {*} props 
+     * @returns 
+     */
     function shouldAutoFocusHostComponent(type, props) {
         switch (type) {
             case 'button':
@@ -7683,6 +7703,9 @@
     function appendInitialChild(parentInstance, child) {
         parentInstance.appendChild(child);
     }
+    /**
+     * 
+     */
     function finalizeInitialChildren(domElement, type, props, rootContainerInstance, hostContext) {
         setInitialProperties(domElement, type, props, rootContainerInstance);
         return shouldAutoFocusHostComponent(type, props);
@@ -7700,8 +7723,19 @@
 
         return diffProperties(domElement, type, oldProps, newProps, rootContainerInstance);
     }
+    /**
+     * 
+     * @param {*} type 
+     * @param {*} props 
+     * @returns 
+     */
     function shouldSetTextContent(type, props) {
-        return type === 'textarea' || type === 'option' || type === 'noscript' || typeof props.children === 'string' || typeof props.children === 'number' || typeof props.dangerouslySetInnerHTML === 'object' && props.dangerouslySetInnerHTML !== null && props.dangerouslySetInnerHTML.__html != null;
+        return type === 'textarea'
+            || type === 'option'
+            || type === 'noscript'
+            || typeof props.children === 'string'
+            || typeof props.children === 'number'
+            || typeof props.dangerouslySetInnerHTML === 'object' && props.dangerouslySetInnerHTML !== null && props.dangerouslySetInnerHTML.__html != null;
     }
     function shouldDeprioritizeSubtree(type, props) {
         return !!props.hidden;
@@ -10418,8 +10452,8 @@
     var reactEmoji = "\u269B";
     var warningEmoji = "\u26D4";
     var supportsUserTiming = typeof performance !== 'undefined' && typeof performance.mark === 'function' && typeof performance.clearMarks === 'function' && typeof performance.measure === 'function' && typeof performance.clearMeasures === 'function'; // Keep track of current fiber so that we know the path to unwind on pause.
-    // TODO: this looks the same as nextUnitOfWork in scheduler. Can we unify them?
 
+    // TODO: this looks the same as nextUnitOfWork in scheduler. Can we unify them?
     var currentFiber = null; // If we're in the middle of user code, which fiber and method is it?
     // Reusing `currentFiber` would be confusing for this because user code fiber
     // can change during commit phase too, but we don't need to unwind it (since
@@ -10546,10 +10580,10 @@
     };
 
     /**
-     * DONE
+     * DONE -- Host components should be skipped in the timeline.
      */
     var shouldIgnoreFiber = function (fiber) {
-        // Host components should be skipped in the timeline.
+
         // We could check typeof fiber.type, but does this work with RN?
 
         switch (fiber.tag) {
@@ -10749,7 +10783,7 @@
 
     /**
      * 
-     * @param {*} nextUnitOfWork 
+     * @param {*} nextUnitOfWork  currentFiber = nextUnitOfWork;
      * @returns 
      */
     function startWorkLoopTimer(nextUnitOfWork) {
@@ -11076,6 +11110,10 @@
         }
     }
 
+    /**
+     * 
+     * @returns 
+     */
     function hasContextChanged() {
         {
             return didPerformWorkStackCursor.current;
@@ -11338,7 +11376,7 @@
     };
 
     /**
-     * 
+     * 根据react.js 包中的优先级 返回dom包对应的优先级
      * @returns 
      */
     function getCurrentPriorityLevel() {
@@ -17252,7 +17290,7 @@
 
 
     /**
-     * 
+     * workInProgress.child = reconcileChildFibers 或 workInProgress.child = mountChildFibers();
      */
     function reconcileChildren(current, workInProgress, nextChildren, renderExpirationTime) {
         if (current === null) {
@@ -17496,6 +17534,11 @@
         return workInProgress.child;
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     */
     function markRef(current, workInProgress) {
         var ref = workInProgress.ref;
 
@@ -17732,7 +17775,9 @@
         var prevState = workInProgress.memoizedState;
         var prevChildren = prevState !== null ? prevState.element : null;
 
+        //拷贝一份current.updateQueue 赋值给 workInProgress.updateQueue 这样的话两者的updateQueue引用不同，但是内部的属性比如shared引用相同
         cloneUpdateQueue(current, workInProgress);
+        //将更新队列的更新和旧的state合并，生成新的state； 设置 workInProgress.memoizedState = newState;等
         processUpdateQueue(workInProgress, nextProps, null, renderExpirationTime);
         var nextState = workInProgress.memoizedState;
         // Caution: React DevTools currently depends on this property
@@ -17777,6 +17822,13 @@
         return workInProgress.child;
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function updateHostComponent(current, workInProgress, renderExpirationTime) {
         pushHostContext(workInProgress);
 
@@ -19146,12 +19198,21 @@
                     return updateClassComponent(current, workInProgress, _Component2, _resolvedProps, renderExpirationTime);
                 }
 
+            /**
+             * 
+             */
             case HostRoot:
                 return updateHostRoot(current, workInProgress, renderExpirationTime);
 
+            /**
+             * 
+             */
             case HostComponent:
                 return updateHostComponent(current, workInProgress, renderExpirationTime);
 
+            /**
+             * 
+             */
             case HostText:
                 return updateHostText(current, workInProgress);
 
@@ -19262,6 +19323,7 @@
 
             while (node !== null) {
                 if (node.tag === HostComponent || node.tag === HostText) {
+                    //将文本直接插入父元素dom
                     appendInitialChild(parent, node.stateNode);
                 } else if (node.tag === HostPortal); else if (node.child !== null) {
                     node.child.return = node;
@@ -19457,7 +19519,7 @@
                         }
                     }
 
-                    updateHostContainer(workInProgress);
+                    updateHostContainer(workInProgress);//noop 
                     return null;
                 }
 
@@ -19505,13 +19567,14 @@
                             }
                         } else {
                             var instance = createInstance(type, newProps, rootContainerInstance, currentHostContext, workInProgress);
+                            //将文本子节点直接插入父元素dom中
                             appendAllChildren(instance, workInProgress, false, false); // This needs to be set before we mount Flare event listeners
 
                             workInProgress.stateNode = instance;
+
                             // (eg DOM renderer supports auto-focus for certain elements).
                             // Make sure such renderers get scheduled for later work.
-
-
+                            //给instance （domElement）设置属性或style样式等
                             if (finalizeInitialChildren(instance, type, newProps, rootContainerInstance)) {
                                 markUpdate(workInProgress);
                             }
@@ -21788,7 +21851,7 @@
         }
 
         checkForInterruption(fiber, expirationTime);//初始化流程进不来
-        recordScheduleUpdate();
+        recordScheduleUpdate();//初始化进不来
 
         // TODO: computeExpirationForFiber also reads the priority. Pass the
         // priority as an argument to that function and this one.
@@ -21968,6 +22031,7 @@
     // the next level that the root has work on. This function is called on every
     // update, and right before exiting a task.
     function ensureRootIsScheduled(root) {
+        debugger
         var lastExpiredTime = root.lastExpiredTime;
 
         if (lastExpiredTime !== NoWork) {
@@ -22388,8 +22452,6 @@
             var prevDispatcher = pushDispatcher();
             var prevInteractions = pushInteractions(root);
             startWorkLoopTimer(workInProgress);
-
-
 
             do {
                 try {
@@ -23092,6 +23154,7 @@
      * 
      */
     function commitRootImpl(root, renderPriorityLevel) {
+        debugger
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
             // means `flushPassiveEffects` will sometimes result in additional
@@ -23250,6 +23313,7 @@
             // componentWillUnmount, but before the layout phase, so that the finished
             // work is current during componentDidMount/Update.
 
+            //更新 root.current 为 workInProgress 的最新值
             root.current = finishedWork;
             // The next phase is the layout phase, where we call effects that read
             // the host tree after it's been mutated. The idiomatic use case for this is
@@ -23277,6 +23341,7 @@
                 }
             } while (nextEffect !== null);
 
+            debugger
             stopCommitLifeCyclesTimer();
             nextEffect = null;
 
@@ -23308,6 +23373,7 @@
             stopCommitLifeCyclesTimer();
         }
 
+        debugger
         stopCommitTimer();
         var rootDidHavePassiveEffects = rootDoesHavePassiveEffects;
 
@@ -25477,7 +25543,7 @@
     }
 
     /**
-     * DONE 创建root,且 root._internalRoot = fiberRoot
+     * DONE 创建root,且 root._internalRoot = fiberRoot 。root是fiberRoot 的容器
      * @param {*} container 
      * @param {*} tag 
      * @param {*} options 
@@ -25701,6 +25767,7 @@
 
         if (!root) {//初始化流程
             // Initial mount
+            //新建fiberRoot / rootFiber 并和container 关联起来。
             root = container._reactRootContainer = legacyCreateRootFromDOMContainer(container, forceHydrate);
             fiberRoot = root._internalRoot;
 
@@ -25713,10 +25780,7 @@
                 };
             }
 
-            //liqiang
-
             // Initial mount should not be batched.
-            //12
             unbatchedUpdates(function () {
                 updateContainer(children, fiberRoot, parentComponent, callback);
             });
