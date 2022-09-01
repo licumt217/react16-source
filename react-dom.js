@@ -2977,9 +2977,9 @@
     // Don't change these two values. They're used by React Dev Tools.
     {
         var NoEffect = 0;
-        var PerformedWork = 1;
+        var PerformedWork = 1; // React DevTools reads this flag.
         // You can change the rest (and add more).
-        var Placement = 2;
+        var Placement = 2;//没有旧的，插入
         var Update = 4;
         var PlacementAndUpdate = 6;
         var Deletion = 8;
@@ -12854,6 +12854,7 @@
      * @param {*} renderExpirationTime 
      */
     function processUpdateQueue(workInProgress, props, instance, renderExpirationTime) {
+        debugger
 
         // This is always non-null on a ClassComponent or HostRoot
         var queue = workInProgress.updateQueue;
@@ -13998,6 +13999,9 @@
     // to be able to optimize each path individually by branching early. This needs
     // a compiler or we can do it manually. Helpers that don't need this branching
     // live outside of this function.
+    /**
+     * @param shouldTrackSideEffects 
+     */
     function ChildReconciler(shouldTrackSideEffects) {
         /**
          * 
@@ -14083,13 +14087,15 @@
         }
 
         /**
-         * 
+         * 标记 effectTag 为合适的值
+         * 没有current，就是插入 newFiber.effectTag = Placement;
          * @param {*} newFiber 
          * @param {*} lastPlacedIndex 
          * @param {*} newIndex 
          * @returns 
          */
         function placeChild(newFiber, lastPlacedIndex, newIndex) {
+            debugger
             newFiber.index = newIndex;
 
             if (!shouldTrackSideEffects) {
@@ -14110,7 +14116,7 @@
                     // This item can stay in place.
                     return oldIndex;
                 }
-            } else {
+            } else {//没有current，就是插入 newFiber.effectTag = Placement;
                 // This is an insertion.
                 newFiber.effectTag = Placement;
                 return lastPlacedIndex;
@@ -14399,6 +14405,7 @@
          * 
          */
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, expirationTime) {
+            debugger
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
             // with that model. If it ends up not being worth the tradeoffs, we can
@@ -14878,6 +14885,7 @@
          * @returns 
          */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
+            debugger
             // This function is not recursive.
             // If the top level item is an array, we treat it as a set of children,
             // not as a fragment. Nested arrays on the other hand will be treated as
@@ -17409,8 +17417,11 @@
 
     /**
      * workInProgress.child = reconcileChildFibers 或 workInProgress.child = mountChildFibers();
+     * current === null 意味着是新组建挂载，他的所有子树不用标记 effectTag，因为当前fiber 的effectTag已更新，所有后代会一起被更新。
+     * current !==null 意味着是更新，每个字节点都需要计算 effectTag。
      */
     function reconcileChildren(current, workInProgress, nextChildren, renderExpirationTime) {
+        debugger
         if (current === null) {
             // If this is a fresh new component that hasn't been rendered yet, we
             // won't update its child set by applying minimal side-effects. Instead,
@@ -17878,6 +17889,7 @@
      * @returns return workInProgress.child;
      */
     function updateHostRoot(current, workInProgress, renderExpirationTime) {
+        debugger
 
         pushHostRootContext(workInProgress);
         var updateQueue = workInProgress.updateQueue;
@@ -18137,6 +18149,7 @@
      * @returns 
      */
     function mountIndeterminateComponent(_current, workInProgress, Component, renderExpirationTime) {
+        debugger
         if (_current !== null) {
             // An indeterminate component only mounts if it suspended inside a non-
             // concurrent tree, in an inconsistent state. We want to treat it like
@@ -18181,9 +18194,9 @@
             // value 是执行函数组件后返回的 ReactElement元素
             value = renderWithHooks(null, workInProgress, Component, props, context, renderExpirationTime);
             setIsRendering(false);
-        } // React DevTools reads this flag.
+        }
 
-
+        // React DevTools reads this flag.
         workInProgress.effectTag |= PerformedWork;
 
         if (typeof value === 'object' && value !== null && typeof value.render === 'function' && value.$$typeof === undefined) {
@@ -19309,6 +19322,7 @@
 
 
         workInProgress.expirationTime = NoWork;
+        debugger
 
         switch (workInProgress.tag) {
             /**
@@ -19612,7 +19626,6 @@
      * 
      */
     function completeWork(current, workInProgress, renderExpirationTime) {
-        debugger
         var newProps = workInProgress.pendingProps;
 
         switch (workInProgress.tag) {
@@ -19644,7 +19657,6 @@
              */
             case HostRoot:
                 {
-                    debugger
                     popHostContainer(workInProgress);
                     popTopLevelContextObject(workInProgress);
                     var fiberRoot = workInProgress.stateNode;
@@ -19675,7 +19687,6 @@
              */
             case HostComponent:
                 {
-                    debugger
                     popHostContext(workInProgress);
                     var rootContainerInstance = getRootHostContainer();
                     var type = workInProgress.type;
@@ -23025,6 +23036,7 @@
     function workLoopSync() {
         // Already timed out, so perform work without checking if we need to yield.
         while (workInProgress !== null) {
+            debugger
             workInProgress = performUnitOfWork(workInProgress);
         }
     }
@@ -23081,7 +23093,7 @@
      * @returns 
      */
     function completeUnitOfWork(unitOfWork) {
-        debugger
+
         // Attempt to complete the current unit of work, then move to the next
         // sibling. If there are no more siblings, return to the parent fiber.
         workInProgress = unitOfWork;
