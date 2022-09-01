@@ -5940,7 +5940,7 @@
     }
 
     /**
-     * 给 dom 元素 设置内联文本 、style样式等
+     * 给 dom 元素 （设置内联文本） 、style样式等
      */
     function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
         for (var propKey in nextProps) {
@@ -12854,7 +12854,6 @@
      * @param {*} renderExpirationTime 
      */
     function processUpdateQueue(workInProgress, props, instance, renderExpirationTime) {
-        debugger
 
         // This is always non-null on a ClassComponent or HostRoot
         var queue = workInProgress.updateQueue;
@@ -14095,7 +14094,6 @@
          * @returns 
          */
         function placeChild(newFiber, lastPlacedIndex, newIndex) {
-            debugger
             newFiber.index = newIndex;
 
             if (!shouldTrackSideEffects) {
@@ -14405,7 +14403,6 @@
          * 
          */
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, expirationTime) {
-            debugger
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
             // with that model. If it ends up not being worth the tradeoffs, we can
@@ -14885,7 +14882,6 @@
          * @returns 
          */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
-            debugger
             // This function is not recursive.
             // If the top level item is an array, we treat it as a set of children,
             // not as a fragment. Nested arrays on the other hand will be treated as
@@ -17421,7 +17417,7 @@
      * current !==null 意味着是更新，每个字节点都需要计算 effectTag。
      */
     function reconcileChildren(current, workInProgress, nextChildren, renderExpirationTime) {
-        debugger
+
         if (current === null) {
             // If this is a fresh new component that hasn't been rendered yet, we
             // won't update its child set by applying minimal side-effects. Instead,
@@ -17889,7 +17885,6 @@
      * @returns return workInProgress.child;
      */
     function updateHostRoot(current, workInProgress, renderExpirationTime) {
-        debugger
 
         pushHostRootContext(workInProgress);
         var updateQueue = workInProgress.updateQueue;
@@ -17961,6 +17956,7 @@
      * @returns 
      */
     function updateHostComponent(current, workInProgress, renderExpirationTime) {
+
         pushHostContext(workInProgress);
 
         if (current === null) {
@@ -18149,7 +18145,6 @@
      * @returns 
      */
     function mountIndeterminateComponent(_current, workInProgress, Component, renderExpirationTime) {
-        debugger
         if (_current !== null) {
             // An indeterminate component only mounts if it suspended inside a non-
             // concurrent tree, in an inconsistent state. We want to treat it like
@@ -19322,7 +19317,6 @@
 
 
         workInProgress.expirationTime = NoWork;
-        debugger
 
         switch (workInProgress.tag) {
             /**
@@ -19733,7 +19727,7 @@
 
                             // (eg DOM renderer supports auto-focus for certain elements).
                             // Make sure such renderers get scheduled for later work.
-                            //给instance （domElement）设置属性或style样式等
+                            //给instance （domElement）设置属性或style样式等。也包括span p 等的文本内容！！！
                             if (finalizeInitialChildren(instance, type, newProps, rootContainerInstance)) {
                                 markUpdate(workInProgress);
                             }
@@ -22654,6 +22648,7 @@
                 stopFinishedWorkLoopTimer();
                 root.finishedWork = root.current.alternate;
                 root.finishedExpirationTime = expirationTime;
+                debugger
                 finishSyncRender(root);
             } // Before exiting, make sure there's a callback scheduled for the next
             // pending level.
@@ -23036,7 +23031,6 @@
     function workLoopSync() {
         // Already timed out, so perform work without checking if we need to yield.
         while (workInProgress !== null) {
-            debugger
             workInProgress = performUnitOfWork(workInProgress);
         }
     }
@@ -23056,7 +23050,6 @@
      * @returns 
      */
     function performUnitOfWork(unitOfWork) {
-        debugger
         // The current, flushed, state of this fiber is the alternate. Ideally
         // nothing should rely on this, but relying on it here means that we don't
         // need an additional field on the work in progress.
