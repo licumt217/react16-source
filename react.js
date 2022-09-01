@@ -324,6 +324,10 @@
 
     var ReactDebugCurrentFrame = {};
     var currentlyValidatingElement = null;
+    /**
+     * 
+     * @param {*} element 
+     */
     function setCurrentlyValidatingElement(element) {
         {
             currentlyValidatingElement = element;
@@ -744,7 +748,10 @@
                 if (!specialPropRefWarningShown) {
                     specialPropRefWarningShown = true;
 
-                    error('%s: `ref` is not a prop. Trying to access it will result ' + 'in `undefined` being returned. If you need to access the same ' + 'value within the child component, you should pass it as a different ' + 'prop. (https://fb.me/react-special-props)', displayName);
+                    error('%s: `ref` is not a prop. Trying to access it will result '
+                        + 'in `undefined` being returned. If you need to access the same '
+                        + 'value within the child component, you should pass it as a different '
+                        + 'prop. (https://fb.me/react-special-props)', displayName);
                 }
             }
         };
@@ -762,7 +769,12 @@
                 var componentName = getComponentName(ReactCurrentOwner.current.type);
 
                 if (!didWarnAboutStringRefs[componentName]) {
-                    error('Component "%s" contains the string ref "%s". ' + 'Support for string refs will be removed in a future major release. ' + 'This case cannot be automatically converted to an arrow function. ' + 'We ask you to manually fix this case by using useRef() or createRef() instead. ' + 'Learn more about using refs safely here: ' + 'https://fb.me/react-strict-mode-string-ref', getComponentName(ReactCurrentOwner.current.type), config.ref);
+                    error('Component "%s" contains the string ref "%s". '
+                        + 'Support for string refs will be removed in a future major release. '
+                        + 'This case cannot be automatically converted to an arrow function. '
+                        + 'We ask you to manually fix this case by using useRef() or createRef() instead. '
+                        + 'Learn more about using refs safely here: '
+                        + 'https://fb.me/react-strict-mode-string-ref', getComponentName(ReactCurrentOwner.current.type), config.ref);
 
                     didWarnAboutStringRefs[componentName] = true;
                 }
@@ -807,11 +819,12 @@
             // an external backing store so that we can freeze the whole object.
             // This can be replaced with a WeakMap once they are implemented in
             // commonly used development environments.
-            element._store = {}; // To make comparing ReactElements easier for testing purposes, we make
+            element._store = {};
+
+            // To make comparing ReactElements easier for testing purposes, we make
             // the validation flag non-enumerable (where possible, which should
             // include every environment we run tests in), so the test framework
             // ignores it.
-
             Object.defineProperty(element._store, 'validated', {
                 configurable: false,
                 enumerable: false,
@@ -1898,6 +1911,7 @@
      * @param {*} parentType node's parent's type.
      */
     function validateChildKeys(node, parentType) {
+
         if (typeof node !== 'object') {
             return;
         }
@@ -1978,10 +1992,9 @@
     }
     /**
      * Given a fragment, validate that it can only be provided with fragment props
+     * Fragment 只能设置key 和 children 属性
      * @param {ReactElement} fragment
      */
-
-
     function validateFragmentProps(fragment) {
         {
             setCurrentlyValidatingElement(fragment);
@@ -2019,7 +2032,8 @@
             var info = '';
 
             if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
-                info += ' You likely forgot to export your component from the file ' + "it's defined in, or you might have mixed up default and named imports.";
+                info += ' You likely forgot to export your component from the file '
+                    + "it's defined in, or you might have mixed up default and named imports.";
             }
 
             var sourceInfo = getSourceInfoErrorAddendumForProps(props);
@@ -2055,13 +2069,13 @@
 
         if (element == null) {
             return element;
-        } // Skip key warning if the type isn't valid since our key validation logic
+        }
+
+        // Skip key warning if the type isn't valid since our key validation logic
         // doesn't expect a non-string/function type and can throw confusing errors.
         // We don't want exception behavior to differ between dev and prod.
         // (Rendering will throw with a helpful message and as soon as the type is
         // fixed, the key warnings will appear.)
-
-
         if (validType) {
             for (var i = 2; i < arguments.length; i++) {
                 validateChildKeys(arguments[i], type);

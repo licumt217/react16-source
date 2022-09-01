@@ -1382,6 +1382,13 @@
     }
 
     var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
+    /**
+     * 
+     * @param {*} name 
+     * @param {*} source 
+     * @param {*} ownerName 
+     * @returns 
+     */
     function describeComponentFrame(name, source, ownerName) {
         var sourceInfo = '';
 
@@ -1487,6 +1494,9 @@
         return outerType.displayName || (functionName !== '' ? wrapperName + "(" + functionName + ")" : wrapperName);
     }
 
+    /**
+     * 
+     */
     function getComponentName(type) {
         if (type == null) {
             // Host root, text node or just invalid type.
@@ -1563,6 +1573,9 @@
 
     var ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
 
+    /**
+     * 
+     */
     function describeFiber(fiber) {
         switch (fiber.tag) {
             case HostRoot:
@@ -1587,6 +1600,11 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} workInProgress 
+     * @returns 
+     */
     function getStackByFiberInDevAndProd(workInProgress) {
         var info = '';
         var node = workInProgress;
@@ -1615,6 +1633,9 @@
 
         return null;
     }
+    /**
+     * 
+     */
     function getCurrentFiberStackInDev() {
         {
             if (current === null) {
@@ -1647,6 +1668,10 @@
             isRendering = false;
         }
     }
+    /**
+     * 
+     * @param {*} rendering 
+     */
     function setIsRendering(rendering) {
         {
             isRendering = rendering;
@@ -2709,7 +2734,7 @@
      * Set the textContent property of a node. For text updates, it's faster
      * to set the `nodeValue` of the Text node directly instead of using
      * `.textContent` which will remove the existing node and create a new one.
-     *
+     * p 标签 span 标签等设置标签内容
      * @param {DOMElement} node
      * @param {string} text
      * @internal
@@ -5915,7 +5940,7 @@
     }
 
     /**
-     * 
+     * 给 dom 元素 设置内联文本 、style样式等
      */
     function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
         for (var propKey in nextProps) {
@@ -5925,7 +5950,7 @@
 
             var nextProp = nextProps[propKey];
 
-            if (propKey === STYLE) {
+            if (propKey === STYLE) {//给dom元素设置style样式相关
                 {
                     if (nextProp) {
                         // Freeze the next style object so that we can assume it won't be
@@ -5933,8 +5958,6 @@
                         Object.freeze(nextProp);
                     }
                 } // Relies on `updateStylesByID` not mutating `styleUpdates`.
-
-
                 setValueForStyles(domElement, nextProp);
             } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
                 var nextHtml = nextProp ? nextProp[HTML$1] : undefined;
@@ -5942,7 +5965,7 @@
                 if (nextHtml != null) {
                     setInnerHTML(domElement, nextHtml);
                 }
-            } else if (propKey === CHILDREN) {
+            } else if (propKey === CHILDREN) { //p 标签 span 标签等设置标签内容
                 if (typeof nextProp === 'string') {
                     // Avoid setting initial textContent when the text is empty. In IE11 setting
                     // textContent on a <textarea> will cause the placeholder to not
@@ -5956,7 +5979,9 @@
                 } else if (typeof nextProp === 'number') {
                     setTextContent(domElement, '' + nextProp);
                 }
-            } else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING); else if (propKey === AUTOFOCUS); else if (registrationNameModules.hasOwnProperty(propKey)) {
+            } else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING);
+            else if (propKey === AUTOFOCUS);
+            else if (registrationNameModules.hasOwnProperty(propKey)) {
                 if (nextProp != null) {
                     if (typeof nextProp !== 'function') {
                         warnForInvalidEventListener(propKey, nextProp);
@@ -6059,12 +6084,15 @@
             domElement = ownerDocument.createElementNS(namespaceURI, type);
         }
 
-        {
+        {//字符串非标准html标签时（比如胡乱写个xxx），在此报错！
             if (namespaceURI === HTML_NAMESPACE$1) {
-                if (!isCustomComponentTag && Object.prototype.toString.call(domElement) === '[object HTMLUnknownElement]' && !Object.prototype.hasOwnProperty.call(warnedUnknownTags, type)) {
+                if (!isCustomComponentTag && Object.prototype.toString.call(domElement) === '[object HTMLUnknownElement]'
+                    && !Object.prototype.hasOwnProperty.call(warnedUnknownTags, type)) {
                     warnedUnknownTags[type] = true;
 
-                    error('The tag <%s> is unrecognized in this browser. ' + 'If you meant to render a React component, start its name with ' + 'an uppercase letter.', type);
+                    error('The tag <%s> is unrecognized in this browser. '
+                        + 'If you meant to render a React component, start its name with '
+                        + 'an uppercase letter.', type);
                 }
             }
         }
@@ -7828,6 +7856,9 @@
     function insertBefore(parentInstance, child, beforeChild) {
         parentInstance.insertBefore(child, beforeChild);
     }
+    /**
+     * 
+     */
     function insertInContainerBefore(container, child, beforeChild) {
         if (container.nodeType === COMMENT_NODE) {
             container.parentNode.insertBefore(child, beforeChild);
@@ -10496,6 +10527,9 @@
         performance.mark(formatMarkName(markName));
     };
 
+    /**
+     * 
+     */
     var clearMark = function (markName) {
         performance.clearMarks(formatMarkName(markName));
     };
@@ -10522,10 +10556,16 @@
         performance.clearMeasures(formattedLabel);
     };
 
+    /**
+     * 
+     */
     var getFiberMarkName = function (label, debugID) {
         return label + " (#" + debugID + ")";
     };
 
+    /**
+     * 
+     */
     var getFiberLabel = function (componentName, isMounted, phase) {
         if (phase === null) {
             // These are composite component total time measurements.
@@ -10555,6 +10595,11 @@
         return true;
     };
 
+    /**
+     * 
+     * @param {*} fiber 
+     * @param {*} phase 
+     */
     var clearFiberMark = function (fiber, phase) {
         var componentName = getComponentName(fiber.type) || 'Unknown';
         var debugID = fiber._debugID;
@@ -10697,6 +10742,11 @@
             fiber._debugIsCurrentlyTiming = true;
         }
     }
+    /**
+     * 
+     * @param {*} fiber 
+     * @returns 
+     */
     function cancelWorkTimer(fiber) {
         {
             if (!supportsUserTiming || shouldIgnoreFiber(fiber)) {
@@ -11049,6 +11099,13 @@
 
     var previousContext = emptyContextObject;
 
+    /**
+     * 
+     * @param {*} workInProgress 
+     * @param {*} Component 
+     * @param {*} didPushOwnContextIfProvider 
+     * @returns 
+     */
     function getUnmaskedContext(workInProgress, Component, didPushOwnContextIfProvider) {
         {
             if (didPushOwnContextIfProvider && isContextProvider(Component)) {
@@ -11071,6 +11128,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function getMaskedContext(workInProgress, unmaskedContext) {
         {
             var type = workInProgress.type;
@@ -11869,6 +11929,11 @@
             resolveFamily = handler;
         }
     };
+    /**
+     * 
+     * @param {*} type 
+     * @returns 
+     */
     function resolveFunctionForHotReloading(type) {
         {
             if (resolveFamily === null) {
@@ -12481,6 +12546,12 @@
             fiber = nextFiber;
         }
     }
+
+    /**
+     * 
+     * @param {*} workInProgress 
+     * @param {*} renderExpirationTime 
+     */
     function prepareToReadContext(workInProgress, renderExpirationTime) {
         currentlyRenderingFiber = workInProgress;
         lastContextDependency = null;
@@ -13879,6 +13950,9 @@
         return mixedRef;
     }
 
+    /**
+     * 
+     */
     function throwOnInvalidObjectType(returnFiber, newChild) {
         if (returnFiber.type !== 'textarea') {
             var addendum = '';
@@ -13889,15 +13963,24 @@
 
             {
                 {
-                    throw Error("Objects are not valid as a React child (found: " + (Object.prototype.toString.call(newChild) === '[object Object]' ? 'object with keys {' + Object.keys(newChild).join(', ') + '}' : newChild) + ")." + addendum);
+                    throw Error("Objects are not valid as a React child (found: "
+                        + (Object.prototype.toString.call(newChild) === '[object Object]'
+                            ? 'object with keys {' + Object.keys(newChild).join(', ') + '}'
+                            : newChild) + ")." + addendum);
                 }
             }
         }
     }
 
+    /**
+     * 
+     */
     function warnOnFunctionType() {
         {
-            var currentComponentErrorInfo = 'Functions are not valid as a React child. This may happen if ' + 'you return a Component instead of <Component /> from render. ' + 'Or maybe you meant to call this function rather than return it.' + getCurrentFiberStackInDev();
+            var currentComponentErrorInfo = 'Functions are not valid as a React child. This may happen if '
+                + 'you return a Component instead of <Component /> from render. '
+                + 'Or maybe you meant to call this function rather than return it.'
+                + getCurrentFiberStackInDev();
 
             if (ownerHasFunctionTypeWarning[currentComponentErrorInfo]) {
                 return;
@@ -13905,7 +13988,9 @@
 
             ownerHasFunctionTypeWarning[currentComponentErrorInfo] = true;
 
-            error('Functions are not valid as a React child. This may happen if ' + 'you return a Component instead of <Component /> from render. ' + 'Or maybe you meant to call this function rather than return it.');
+            error('Functions are not valid as a React child. This may happen if '
+                + 'you return a Component instead of <Component /> from render. '
+                + 'Or maybe you meant to call this function rather than return it.');
         }
     }
 
@@ -13914,6 +13999,12 @@
     // a compiler or we can do it manually. Helpers that don't need this branching
     // live outside of this function.
     function ChildReconciler(shouldTrackSideEffects) {
+        /**
+         * 
+         * @param {*} returnFiber 
+         * @param {*} childToDelete 
+         * @returns 
+         */
         function deleteChild(returnFiber, childToDelete) {
             if (!shouldTrackSideEffects) {
                 // Noop.
@@ -13938,6 +14029,12 @@
             childToDelete.effectTag = Deletion;
         }
 
+        /**
+         * 
+         * @param {*} returnFiber 
+         * @param {*} currentFirstChild 
+         * @returns 
+         */
         function deleteRemainingChildren(returnFiber, currentFirstChild) {
             if (!shouldTrackSideEffects) {
                 // Noop.
@@ -14104,6 +14201,7 @@
          * 
          */
         function createChild(returnFiber, newChild, expirationTime) {
+            //return createFiberFromText(): fiber
             if (typeof newChild === 'string' || typeof newChild === 'number') {
                 // Text nodes don't have keys. If the previous node is implicitly keyed
                 // we can continue to replace it without aborting even if it is not a text
@@ -14386,6 +14484,7 @@
                 return resultingFirstChild;
             }
 
+            //将数组中的所有子元素，依次创建fiber，并通过sibing串联起来，并返回第一个子fiber
             if (oldFiber === null) {
                 // If we don't have any more existing children we can choose a fast path
                 // since the rest will all be insertions.
@@ -14633,6 +14732,9 @@
             return resultingFirstChild;
         }
 
+        /**
+         * return createFiberFromText(textContent, returnFiber.mode, expirationTime);
+         */
         function reconcileSingleTextNode(returnFiber, currentFirstChild, textContent, expirationTime) {
             // There's no need to check for keys on text nodes since we don't have a
             // way to define them.
@@ -14761,13 +14863,19 @@
             var created = createFiberFromPortal(portal, returnFiber.mode, expirationTime);
             created.return = returnFiber;
             return created;
-        } // This API will tag the children with the side-effect of the reconciliation
-        // itself. They will be added to the side-effect list as we pass through the
-        // children and the parent.
+        }
+
 
 
         /**
-         * 
+         * This API will tag the children with the side-effect of the reconciliation
+         * itself. They will be added to the side-effect list as we pass through the
+         * children and the parent.
+         * @param {*} returnFiber 
+         * @param {*} currentFirstChild 
+         * @param {*} newChild 
+         * @param {*} expirationTime 
+         * @returns 
          */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
             // This function is not recursive.
@@ -14779,6 +14887,7 @@
             // We treat the ambiguous cases above the same.
             var isUnkeyedTopLevelFragment = typeof newChild === 'object' && newChild !== null && newChild.type === REACT_FRAGMENT_TYPE && newChild.key === null;
 
+            //透过fragment直接拿他的children。
             if (isUnkeyedTopLevelFragment) {
                 newChild = newChild.props.children;
             } // Handle object types
@@ -14808,6 +14917,7 @@
                 return reconcileChildrenIterator(returnFiber, currentFirstChild, newChild, expirationTime);
             }
 
+            //ReactDom.render()第一个参数是对象时，报错；
             if (isObject) {
                 throwOnInvalidObjectType(returnFiber, newChild);
             }
@@ -14834,24 +14944,22 @@
                                 }
                             }
                         }
-                    // Intentionally fall through to the next case, which handles both
-                    // functions and classes
-                    // eslint-disable-next-lined no-fallthrough
-
-                    case FunctionComponent:
+                    case FunctionComponent://函数组件没有返回值
                         {
                             var Component = returnFiber.type;
 
                             {
                                 {
-                                    throw Error((Component.displayName || Component.name || 'Component') + "(...): Nothing was returned from render. This usually means a return statement is missing. Or, to render nothing, return null.");
+                                    throw Error((Component.displayName || Component.name || 'Component')
+                                        + "(...): Nothing was returned from render. This usually means a return statement is missing. Or, to render nothing, return null.");
                                 }
                             }
                         }
                 }
-            } // Remaining cases are all treated as empty.
+            }
 
-
+            // Remaining cases are all treated as empty.
+            //true false 直接丢弃不渲染。
             return deleteRemainingChildren(returnFiber, currentFirstChild);
         }
 
@@ -15267,7 +15375,9 @@
             // Don't bother comparing lengths in prod because these arrays should be
             // passed inline.
             if (nextDeps.length !== prevDeps.length) {
-                error('The final argument passed to %s changed size between renders. The ' + 'order and size of this array must remain constant.\n\n' + 'Previous: %s\n' + 'Incoming: %s', currentHookNameInDev, "[" + prevDeps.join(', ') + "]", "[" + nextDeps.join(', ') + "]");
+                error('The final argument passed to %s changed size between renders. The '
+                    + 'order and size of this array must remain constant.\n\n' + 'Previous: %s\n'
+                    + 'Incoming: %s', currentHookNameInDev, "[" + prevDeps.join(', ') + "]", "[" + nextDeps.join(', ') + "]");
             }
         }
 
@@ -15282,6 +15392,9 @@
         return true;
     }
 
+    /**
+     * 函数组件的话在此调用函数
+     */
     function renderWithHooks(current, workInProgress, Component, props, secondArg, nextRenderExpirationTime) {
         renderExpirationTime = nextRenderExpirationTime;
         currentlyRenderingFiber$1 = workInProgress;
@@ -15321,6 +15434,7 @@
             }
         }
 
+        //函数组件的话在此调用函数。函数返回的所有的ReactElement的_owner指向当前fiber。
         var children = Component(props, secondArg); // Check if there was a render phase update
 
         if (workInProgress.expirationTime === renderExpirationTime) {
@@ -16926,6 +17040,10 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} fiber 
+     */
     function stopProfilerTimerIfRunning(fiber) {
 
         profilerStartTime = -1;
@@ -17753,11 +17871,11 @@
     }
 
     /**
-     * 
+     * 将更新队列的更新和旧的state合并，生成新的state； 设置 workInProgress.memoizedState = newState;等
      * @param {*} current 
      * @param {*} workInProgress 
      * @param {*} renderExpirationTime 
-     * @returns 
+     * @returns return workInProgress.child;
      */
     function updateHostRoot(current, workInProgress, renderExpirationTime) {
 
@@ -17785,6 +17903,7 @@
 
         var nextChildren = nextState.element;
 
+        //null 
         if (nextChildren === prevChildren) {
             // If the state is the same as before, that's a bailout because we had
             // no work that expires at this time.
@@ -17871,7 +17990,7 @@
     }
 
     /**
-     * 
+     * 直接返回null，不做任何处理
      */
     function updateHostText(current, workInProgress) {
         if (current === null) {
@@ -18009,6 +18128,14 @@
         return finishClassComponent(null, workInProgress, Component, true, hasContext, renderExpirationTime);
     }
 
+    /**
+     * 
+     * @param {*} _current 
+     * @param {*} workInProgress 
+     * @param {*} Component 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function mountIndeterminateComponent(_current, workInProgress, Component, renderExpirationTime) {
         if (_current !== null) {
             // An indeterminate component only mounts if it suspended inside a non-
@@ -18033,11 +18160,12 @@
         var value;
 
         {
-            if (Component.prototype && typeof Component.prototype.render === 'function') {
+            if (Component.prototype && typeof Component.prototype.render === 'function') {//类组件
                 var componentName = getComponentName(Component) || 'Unknown';
 
                 if (!didWarnAboutBadClass[componentName]) {
-                    error("The <%s /> component appears to have a render method, but doesn't extend React.Component. " + 'This is likely to cause errors. Change %s to extend React.Component instead.', componentName, componentName);
+                    error("The <%s /> component appears to have a render method, but doesn't extend React.Component. "
+                        + 'This is likely to cause errors. Change %s to extend React.Component instead.', componentName, componentName);
 
                     didWarnAboutBadClass[componentName] = true;
                 }
@@ -18048,7 +18176,9 @@
             }
 
             setIsRendering(true);
+            //将当前 workInProgress  设置到全局变量，方便后续执行函数组件时，在ReactElement的 _owner属性中建立关联
             ReactCurrentOwner$1.current = workInProgress;
+            // value 是执行函数组件后返回的 ReactElement元素
             value = renderWithHooks(null, workInProgress, Component, props, context, renderExpirationTime);
             setIsRendering(false);
         } // React DevTools reads this flag.
@@ -18119,6 +18249,11 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} workInProgress 
+     * @param {*} Component 
+     */
     function validateFunctionComponentInDev(workInProgress, Component) {
         {
             if (Component) {
@@ -18885,6 +19020,13 @@
         didReceiveUpdate = true;
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function bailoutOnAlreadyFinishedWork(current, workInProgress, renderExpirationTime) {
         cancelWorkTimer(workInProgress);
 
@@ -19169,6 +19311,9 @@
         workInProgress.expirationTime = NoWork;
 
         switch (workInProgress.tag) {
+            /**
+             * 函数组件进入此
+             */
             case IndeterminateComponent:
                 {
                     return mountIndeterminateComponent(current, workInProgress, workInProgress.type, renderExpirationTime);
@@ -19467,6 +19612,7 @@
      * 
      */
     function completeWork(current, workInProgress, renderExpirationTime) {
+        debugger
         var newProps = workInProgress.pendingProps;
 
         switch (workInProgress.tag) {
@@ -19498,6 +19644,7 @@
              */
             case HostRoot:
                 {
+                    debugger
                     popHostContainer(workInProgress);
                     popTopLevelContextObject(workInProgress);
                     var fiberRoot = workInProgress.stateNode;
@@ -19528,6 +19675,7 @@
              */
             case HostComponent:
                 {
+                    debugger
                     popHostContext(workInProgress);
                     var rootContainerInstance = getRootHostContainer();
                     var type = workInProgress.type;
@@ -21020,6 +21168,7 @@
                 appendChildToContainer(parent, stateNode);
             }
         } else if (tag === HostPortal); else {
+            //函数组件对应的fiber，将所有的子元素插入dom
             var child = node.child;
 
             if (child !== null) {
@@ -22031,7 +22180,7 @@
     // the next level that the root has work on. This function is called on every
     // update, and right before exiting a task.
     function ensureRootIsScheduled(root) {
-        debugger
+
         var lastExpiredTime = root.lastExpiredTime;
 
         if (lastExpiredTime !== NoWork) {
@@ -22462,6 +22611,8 @@
                 }
             } while (true);
 
+
+
             resetContextDependencies();
             executionContext = prevExecutionContext;
             popDispatcher(prevDispatcher);
@@ -22873,7 +23024,9 @@
      */
     function workLoopSync() {
         // Already timed out, so perform work without checking if we need to yield.
-        while (workInProgress !== null) { workInProgress = performUnitOfWork(workInProgress); }
+        while (workInProgress !== null) {
+            workInProgress = performUnitOfWork(workInProgress);
+        }
     }
     /** @noinline */
 
@@ -22891,6 +23044,7 @@
      * @returns 
      */
     function performUnitOfWork(unitOfWork) {
+        debugger
         // The current, flushed, state of this fiber is the alternate. Ideally
         // nothing should rely on this, but relying on it here means that we don't
         // need an additional field on the work in progress.
@@ -22927,6 +23081,7 @@
      * @returns 
      */
     function completeUnitOfWork(unitOfWork) {
+        debugger
         // Attempt to complete the current unit of work, then move to the next
         // sibling. If there are no more siblings, return to the parent fiber.
         workInProgress = unitOfWork;
@@ -23154,7 +23309,6 @@
      * 
      */
     function commitRootImpl(root, renderPriorityLevel) {
-        debugger
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
             // means `flushPassiveEffects` will sometimes result in additional
@@ -23341,7 +23495,6 @@
                 }
             } while (nextEffect !== null);
 
-            debugger
             stopCommitLifeCyclesTimer();
             nextEffect = null;
 
@@ -23373,7 +23526,6 @@
             stopCommitLifeCyclesTimer();
         }
 
-        debugger
         stopCommitTimer();
         var rootDidHavePassiveEffects = rootDoesHavePassiveEffects;
 
@@ -24532,6 +24684,9 @@
         return new FiberNode(tag, pendingProps, key, mode);
     };
 
+    /**
+     * 是否类组件
+     */
     function shouldConstruct(Component) {
         var prototype = Component.prototype;
         return !!(prototype && prototype.isReactComponent);
@@ -24763,7 +24918,7 @@
         var resolvedType = type;
 
         if (typeof type === 'function') {
-            if (shouldConstruct(type)) {
+            if (shouldConstruct(type)) {//类组件
                 fiberTag = ClassComponent;
 
                 {
