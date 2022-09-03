@@ -118,7 +118,6 @@
     var invokeGuardedCallbackImpl = function (name, func, context, a, b, c, d, e, f) {
         var funcArgs = Array.prototype.slice.call(arguments, 3);
 
-        debugger
         try {
             func.apply(context, funcArgs);
         } catch (error) {
@@ -151,7 +150,6 @@
             var fakeNode = document.createElement('react');
 
             var invokeGuardedCallbackDev = function (name, func, context, a, b, c, d, e, f) {
-                debugger
                 // If document doesn't exist we know for sure we will crash in this method
                 // when we call document.createEvent(). However this can cause confusing
                 // errors: https://github.com/facebookincubator/create-react-app/issues/3482
@@ -188,7 +186,7 @@
                 var funcArgs = Array.prototype.slice.call(arguments, 3);
 
                 function callCallback() {
-                    debugger
+
                     // We immediately remove the callback from event listeners so that
                     // nested `invokeGuardedCallback` calls do not clash. Otherwise, a
                     // nested call would trigger the fake event handlers of any call higher
@@ -316,7 +314,6 @@
     function invokeGuardedCallback(name, func, context, a, b, c, d, e, f) {
         hasError = false;
         caughtError = null;
-        debugger
         invokeGuardedCallbackImpl$1.apply(reporter, arguments);
     }
     /**
@@ -330,7 +327,6 @@
      * @param {...*} args Arguments for function
      */
     function invokeGuardedCallbackAndCatchFirstError(name, func, context, a, b, c, d, e, f) {
-        debugger
         invokeGuardedCallback.apply(this, arguments);
 
         if (hasError) {
@@ -417,7 +413,6 @@
      * @param {*} inst Internal component instance
      */
     function executeDispatch(event, listener, inst) {
-        debugger
         var type = event.type || 'unknown-event';
         event.currentTarget = getNodeFromInstance(inst);
         invokeGuardedCallbackAndCatchFirstError(type, listener, undefined, event);
