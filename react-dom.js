@@ -118,6 +118,7 @@
     var invokeGuardedCallbackImpl = function (name, func, context, a, b, c, d, e, f) {
         var funcArgs = Array.prototype.slice.call(arguments, 3);
 
+        debugger
         try {
             func.apply(context, funcArgs);
         } catch (error) {
@@ -150,6 +151,7 @@
             var fakeNode = document.createElement('react');
 
             var invokeGuardedCallbackDev = function (name, func, context, a, b, c, d, e, f) {
+                debugger
                 // If document doesn't exist we know for sure we will crash in this method
                 // when we call document.createEvent(). However this can cause confusing
                 // errors: https://github.com/facebookincubator/create-react-app/issues/3482
@@ -186,6 +188,7 @@
                 var funcArgs = Array.prototype.slice.call(arguments, 3);
 
                 function callCallback() {
+                    debugger
                     // We immediately remove the callback from event listeners so that
                     // nested `invokeGuardedCallback` calls do not clash. Otherwise, a
                     // nested call would trigger the fake event handlers of any call higher
@@ -313,6 +316,7 @@
     function invokeGuardedCallback(name, func, context, a, b, c, d, e, f) {
         hasError = false;
         caughtError = null;
+        debugger
         invokeGuardedCallbackImpl$1.apply(reporter, arguments);
     }
     /**
@@ -325,8 +329,8 @@
      * @param {*} context The context to use when calling the function
      * @param {...*} args Arguments for function
      */
-
     function invokeGuardedCallbackAndCatchFirstError(name, func, context, a, b, c, d, e, f) {
+        debugger
         invokeGuardedCallback.apply(this, arguments);
 
         if (hasError) {
@@ -373,7 +377,7 @@
     var getInstanceFromNode = null;
     var getNodeFromInstance = null;
     /**
-     * 
+     * DONE
      * @param {*} getFiberCurrentPropsFromNodeImpl 
      * @param {*} getInstanceFromNodeImpl 
      * @param {*} getNodeFromInstanceImpl 
@@ -407,13 +411,13 @@
     }
     /**
      * Dispatch the event to the listener.
+     * 真正的用户事件执行
      * @param {SyntheticEvent} event SyntheticEvent to handle
      * @param {function} listener Application-level callback
      * @param {*} inst Internal component instance
      */
-
-
     function executeDispatch(event, listener, inst) {
+        debugger
         var type = event.type || 'unknown-event';
         event.currentTarget = getNodeFromInstance(inst);
         invokeGuardedCallbackAndCatchFirstError(type, listener, undefined, event);
@@ -421,8 +425,8 @@
     }
     /**
      * Standard/simple iteration through an event's collected dispatches.
+     * 真正的用户的事件回调在这里执行
      */
-
     function executeDispatchesInOrder(event) {
         var dispatchListeners = event._dispatchListeners;
         var dispatchInstances = event._dispatchInstances;
@@ -484,7 +488,6 @@
     /**
      * Injectable mapping from names to event plugin modules.
      */
-
     var namesToPlugins = {};
 
     /**
@@ -530,15 +533,17 @@
             }
         }
     }
+
     /**
      * Publishes an event so that it can be dispatched by the supplied plugin.
-     *
+     * 项目启动后真正的注册相关事件
      * @param {object} dispatchConfig Dispatch configuration for the event.
      * @param {object} PluginModule Plugin publishing the event.
      * @return {boolean} True if the event was successfully published.
      * @private
      */
     function publishEventForPlugin(dispatchConfig, pluginModule, eventName) {
+
         if (!!eventNameDispatchConfigs.hasOwnProperty(eventName)) {
             {
                 throw Error("EventPluginRegistry: More than one plugin attempted to publish the same event name, `" + eventName + "`.");
@@ -564,6 +569,7 @@
 
         return false;
     }
+
     /**
      * Publishes a registration name that is used to identify dispatched events.
      *
@@ -597,23 +603,18 @@
     /**
      * Ordered list of injected plugins.
      */
-
-
     var plugins = [];
     /**
      * Mapping from event name to dispatch config
      */
-
     var eventNameDispatchConfigs = {};
     /**
      * Mapping from registration name to plugin module
      */
-
     var registrationNameModules = {};
     /**
      * Mapping from registration name to event name
      */
-
     var registrationNameDependencies = {};
     /**
      * Mapping from lowercase registration names to the properly cased version,
@@ -621,7 +622,6 @@
      * only in true.
      * @type {Object}
      */
-
     var possibleRegistrationNames = {}; // Trust the developer to only use possibleRegistrationNames in true
 
     /**
@@ -637,9 +637,8 @@
             {
                 throw Error("EventPluginRegistry: Cannot inject event plugin ordering more than once. You are likely trying to load more than one copy of React.");
             }
-        } // Clone the ordering so it cannot be dynamically mutated.
-
-
+        }
+        // Clone the ordering so it cannot be dynamically mutated.
         eventPluginOrder = Array.prototype.slice.call(injectedEventPluginOrder);
         recomputePluginOrdering();
     }
@@ -693,6 +692,11 @@
     var restoreTarget = null;
     var restoreQueue = null;
 
+    /**
+     * 
+     * @param {*} target 
+     * @returns 
+     */
     function restoreStateOfTarget(target) {
         // We perform this translation at the end of the event loop so that we
         // always receive the correct fiber here
@@ -738,9 +742,18 @@
             restoreTarget = target;
         }
     }
+    /**
+     * 
+     * @returns 
+     */
     function needsStateRestore() {
         return restoreTarget !== null || restoreQueue !== null;
     }
+
+    /**
+     * 
+     * @returns 
+     */
     function restoreStateIfNeeded() {
         if (!restoreTarget) {
             return;
@@ -776,6 +789,15 @@
         return fn(bookkeeping);
     };
 
+    /**
+     * 
+     * @param {*} fn 
+     * @param {*} a 
+     * @param {*} b 
+     * @param {*} c 
+     * @param {*} d 
+     * @returns 
+     */
     var discreteUpdatesImpl = function (fn, a, b, c, d) {
         return fn(a, b, c, d);
     };
@@ -786,6 +808,9 @@
     var isInsideEventHandler = false;
     var isBatchingEventUpdates = false;
 
+    /**
+     * 
+     */
     function finishEventHandler() {
         // Here we wait until all updates have propagated, which is important
         // when using controlled components within layers:
@@ -818,6 +843,13 @@
             finishEventHandler();
         }
     }
+    /**
+     * 
+     * @param {*} fn 
+     * @param {*} a 
+     * @param {*} b 
+     * @returns 
+     */
     function batchedEventUpdates(fn, a, b) {
         if (isBatchingEventUpdates) {
             // If we are currently inside another batch, we need to wait until it
@@ -833,7 +865,17 @@
             isBatchingEventUpdates = false;
             finishEventHandler();
         }
-    } // This is for the React Flare event system
+    }
+
+    /**
+     * This is for the React Flare event system
+     * @param {*} fn 
+     * @param {*} a 
+     * @param {*} b 
+     * @param {*} c 
+     * @param {*} d 
+     * @returns 
+     */
     function discreteUpdates(fn, a, b, c, d) {
         var prevIsInsideEventHandler = isInsideEventHandler;
         isInsideEventHandler = true;
@@ -848,6 +890,10 @@
             }
         }
     }
+    /**
+     * 
+     * @param {*} timeStamp 
+     */
     function flushDiscreteUpdatesIfNeeded(timeStamp) {
         // event.timeStamp isn't overly reliable due to inconsistencies in
         // how different browsers have historically provided the time stamp.
@@ -2840,6 +2886,11 @@
     function unsafeCastStringToDOMTopLevelType(topLevelType) {
         return topLevelType;
     }
+    /**
+     * 
+     * @param {*} topLevelType 
+     * @returns 
+     */
     function unsafeCastDOMTopLevelTypeToString(topLevelType) {
         return topLevelType;
     }
@@ -3028,6 +3079,11 @@
         TOP_ERROR, TOP_LOADED_DATA, TOP_LOADED_METADATA, TOP_LOAD_START, TOP_PAUSE, TOP_PLAY, TOP_PLAYING, TOP_PROGRESS, TOP_RATE_CHANGE,
         TOP_SEEKED, TOP_SEEKING, TOP_STALLED, TOP_SUSPEND, TOP_TIME_UPDATE, TOP_VOLUME_CHANGE, TOP_WAITING];
 
+    /**
+     * 
+     * @param {*} topLevelType 
+     * @returns 
+     */
     function getRawEventName(topLevelType) {
         return unsafeCastDOMTopLevelTypeToString(topLevelType);
     }
@@ -3574,7 +3630,6 @@
      * @param {object} nativeEvent Native browser event.
      * @return {DOMEventTarget} Target node.
      */
-
     function getEventTarget(nativeEvent) {
         // Fallback to nativeEvent.srcElement for IE9
         // https://github.com/facebook/react/issues/12506
@@ -3679,6 +3734,10 @@
     var CALLBACK_BOOKKEEPING_POOL_SIZE = 10;
     var callbackBookkeepingPool = [];
 
+    /**
+     * 
+     * @param {*} instance 
+     */
     function releaseTopLevelCallbackBookKeeping(instance) {
         instance.topLevelType = null;
         instance.nativeEvent = null;
@@ -3691,6 +3750,14 @@
     } // Used to store ancestor hierarchy in top level callback
 
 
+    /**
+     * 
+     * @param {*} topLevelType 
+     * @param {*} nativeEvent 
+     * @param {*} targetInst 
+     * @param {*} eventSystemFlags 
+     * @returns 
+     */
     function getTopLevelCallbackBookKeeping(topLevelType, nativeEvent, targetInst, eventSystemFlags) {
         if (callbackBookkeepingPool.length) {
             var instance = callbackBookkeepingPool.pop();
@@ -3714,8 +3781,6 @@
      * passed-in instance (for use when entire React trees are nested within each
      * other). If React trees are not nested, returns null.
      */
-
-
     function findRootContainerNode(inst) {
         if (inst.tag === HostRoot) {
             return inst.stateNode.containerInfo;
@@ -3742,8 +3807,6 @@
      * @return {*} An accumulation of synthetic events.
      * @internal
      */
-
-
     function extractPluginEvents(topLevelType, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags) {
         var events = null;
 
@@ -3763,11 +3826,23 @@
         return events;
     }
 
+    /**
+     * 
+     * @param {*} topLevelType 
+     * @param {*} targetInst 
+     * @param {*} nativeEvent 
+     * @param {*} nativeEventTarget 
+     * @param {*} eventSystemFlags 
+     */
     function runExtractedPluginEventsInBatch(topLevelType, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags) {
         var events = extractPluginEvents(topLevelType, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags);
         runEventsInBatch(events);
     }
 
+    /**
+     * 
+     * @param {*} bookKeeping 
+     */
     function handleTopLevel(bookKeeping) {
         var targetInst = bookKeeping.targetInst; // Loop through the hierarchy, in case there's any nested components.
         // It's important that we build the array of ancestors before calling any
@@ -3813,6 +3888,13 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} topLevelType 
+     * @param {*} eventSystemFlags 
+     * @param {*} nativeEvent 
+     * @param {*} targetInst 
+     */
     function dispatchEventForLegacyPluginEventSystem(topLevelType, eventSystemFlags, nativeEvent, targetInst) {
         var bookKeeping = getTopLevelCallbackBookKeeping(topLevelType, nativeEvent, targetInst, eventSystemFlags);
 
@@ -3824,6 +3906,7 @@
             releaseTopLevelCallbackBookKeeping(bookKeeping);
         }
     }
+
     /**
      * We listen for bubbled touch events on the document object.
      *
@@ -3845,7 +3928,6 @@
      * @param {string} registrationName Name of listener (e.g. `onClick`).
      * @param {object} mountAt Container where to mount the listener
      */
-
     function legacyListenToEvent(registrationName, mountAt) {
         var listenerMap = getListenerMapForElement(mountAt);
         var dependencies = registrationNameDependencies[registrationName];
@@ -3855,6 +3937,12 @@
             legacyListenToTopLevelEvent(dependency, mountAt, listenerMap);
         }
     }
+    /**
+     * 
+     * @param {*} topLevelType 
+     * @param {*} mountAt 
+     * @param {*} listenerMap 
+     */
     function legacyListenToTopLevelEvent(topLevelType, mountAt, listenerMap) {
         if (!listenerMap.has(topLevelType)) {
             switch (topLevelType) {
@@ -4290,6 +4378,12 @@
         }
     }
 
+    /**
+     * 原生事件监听
+     * @param {*} element 
+     * @param {*} eventType 
+     * @param {*} listener 
+     */
     function addEventBubbleListener(element, eventType, listener) {
         element.addEventListener(eventType, listener, false);
     }
@@ -4463,8 +4557,14 @@
     // Not used by SimpleEventPlugin
     processTopEventPairsByPriority(otherDiscreteEvents, DiscreteEvent);
 
+    /**
+     * 
+     * @param {*} topLevelType 
+     * @returns 
+     */
     function getEventPriorityForPluginSystem(topLevelType) {
-        var priority = eventPriorities.get(topLevelType); // Default to a ContinuousEvent. Note: we might
+        var priority = eventPriorities.get(topLevelType);
+        // Default to a ContinuousEvent. Note: we might
         // want to warn if we can't detect the priority
         // for the event.
 
@@ -4482,6 +4582,11 @@
     function isEnabled() {
         return _enabled;
     }
+    /**
+     * 
+     * @param {*} topLevelType 
+     * @param {*} element 
+     */
     function trapBubbledEvent(topLevelType, element) {
         trapEventForPluginEventSystem(element, topLevelType, false);
     }
@@ -4489,6 +4594,12 @@
         trapEventForPluginEventSystem(element, topLevelType, true);
     }
 
+    /**
+     * 
+     * @param {*} container 
+     * @param {*} topLevelType 
+     * @param {*} capture 
+     */
     function trapEventForPluginEventSystem(container, topLevelType, capture) {
         var listener;
 
@@ -4516,6 +4627,13 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} topLevelType 
+     * @param {*} eventSystemFlags 
+     * @param {*} container 
+     * @param {*} nativeEvent 
+     */
     function dispatchDiscreteEvent(topLevelType, eventSystemFlags, container, nativeEvent) {
         flushDiscreteUpdatesIfNeeded(nativeEvent.timeStamp);
         discreteUpdates(dispatchEvent, topLevelType, eventSystemFlags, container, nativeEvent);
@@ -4525,6 +4643,9 @@
         runWithPriority(UserBlockingPriority, dispatchEvent.bind(null, topLevelType, eventSystemFlags, container, nativeEvent));
     }
 
+    /**
+     * 
+     */
     function dispatchEvent(topLevelType, eventSystemFlags, container, nativeEvent) {
         if (!_enabled) {
             return;
@@ -4565,8 +4686,16 @@
         {
             dispatchEventForLegacyPluginEventSystem(topLevelType, eventSystemFlags, nativeEvent, null);
         }
-    } // Attempt dispatching an event. Returns a SuspenseInstance or Container if it's blocked.
+    }
 
+    /**
+     * Attempt dispatching an event. Returns a SuspenseInstance or Container if it's blocked.
+     * @param {*} topLevelType 
+     * @param {*} eventSystemFlags 
+     * @param {*} container 
+     * @param {*} nativeEvent 
+     * @returns 
+     */
     function attemptToDispatchEvent(topLevelType, eventSystemFlags, container, nativeEvent) {
         // TODO: Warn if _enabled is false.
         var nativeEventTarget = getEventTarget(nativeEvent);
@@ -6140,7 +6269,9 @@
 
             error('Extra attributes from the server: %s', names);
         };
-
+        /**
+         * 事件处理器必须是函数
+         */
         warnForInvalidEventListener = function (registrationName, listener) {
             if (listener === false) {
                 error('Expected `%s` listener to be a function, instead got `false`.\n\n'
@@ -6149,7 +6280,9 @@
             } else {
                 error('Expected `%s` listener to be a function, instead got a value of `%s` type.', registrationName, typeof listener);
             }
-        }; // Parse the HTML and read it back to normalize the HTML string so that it
+        };
+
+        // Parse the HTML and read it back to normalize the HTML string so that it
         // can be used for comparison.
 
 
@@ -6166,6 +6299,11 @@
         };
     }
 
+    /**
+     * 
+     * @param {*} rootContainerElement 
+     * @param {*} registrationName 
+     */
     function ensureListeningTo(rootContainerElement, registrationName) {
         var isDocumentOrFragment = rootContainerElement.nodeType === DOCUMENT_NODE || rootContainerElement.nodeType === DOCUMENT_FRAGMENT_NODE;
         var doc = isDocumentOrFragment ? rootContainerElement : rootContainerElement.ownerDocument;
@@ -6197,7 +6335,7 @@
     }
 
     /**
-     * 给 dom 元素 （设置内联文本） 、style样式等
+     * 给 dom 元素 （设置内联文本） 、style样式等。如果dom元素的属性中有事件监听，则在此处给顶层元素绑定事件监听。
      */
     function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
         for (var propKey in nextProps) {
@@ -6238,7 +6376,7 @@
                 }
             } else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING);
             else if (propKey === AUTOFOCUS);
-            else if (registrationNameModules.hasOwnProperty(propKey)) {
+            else if (registrationNameModules.hasOwnProperty(propKey)) {//给顶级元素注册事件监听。
                 if (nextProp != null) {
                     if (typeof nextProp !== 'function') {
                         warnForInvalidEventListener(propKey, nextProp);
@@ -7982,7 +8120,6 @@
         var parentNamespace;
 
         {
-            debugger
             // TODO: take namespace into account when validating.
             var hostContextDev = hostContext;
             validateDOMNesting(type, null, hostContextDev.ancestorInfo);
@@ -8972,7 +9109,6 @@
      * @param {DOMEventTarget} nativeEventTarget Target node.
      */
     function SyntheticEvent(dispatchConfig, targetInst, nativeEvent, nativeEventTarget) {
-        debugger
         {
             // these have a getter/setter for warnings
             delete this.nativeEvent;
@@ -10806,6 +10942,7 @@
                     EventConstructor = SyntheticEvent;
                     break;
             }
+
 
             var event = EventConstructor.getPooled(dispatchConfig, targetInst, nativeEvent, nativeEventTarget);
             accumulateTwoPhaseDispatches(event);
@@ -19715,7 +19852,6 @@
      * @returns 
      */
     function beginWork(current, workInProgress, renderExpirationTime) {
-        debugger
 
         var updateExpirationTime = workInProgress.expirationTime;
 
@@ -20268,7 +20404,6 @@
              */
             case HostComponent:
                 {
-                    debugger
                     popHostContext(workInProgress);
                     var rootContainerInstance = getRootHostContainer();
                     var type = workInProgress.type;
@@ -23269,7 +23404,6 @@
                 stopFinishedWorkLoopTimer();
                 root.finishedWork = root.current.alternate;
                 root.finishedExpirationTime = expirationTime;
-                debugger
                 finishSyncRender(root);
             } // Before exiting, make sure there's a callback scheduled for the next
             // pending level.
@@ -23290,6 +23424,10 @@
         workInProgressRoot = null;
         commitRoot(root);
     }
+    /**
+     * 
+     * @returns 
+     */
     function flushDiscreteUpdates() {
         // TODO: Should be able to flush inside batchedUpdates, but not inside `act`.
         // However, `act` uses `batchedUpdates`, so there's no way to distinguish
@@ -23308,15 +23446,17 @@
             return;
         }
 
-        flushPendingDiscreteUpdates(); // If the discrete updates scheduled passive effects, flush them now so that
-        // they fire before the next serial event.
-
+        flushPendingDiscreteUpdates();
+        // If the discrete updates scheduled passive effects, flush them now so that they fire before the next serial event.
         flushPassiveEffects();
     }
     function syncUpdates(fn, a, b, c) {
         return runWithPriority$1(ImmediatePriority, fn.bind(null, a, b, c));
     }
 
+    /**
+     * 
+     */
     function flushPendingDiscreteUpdates() {
         if (rootsWithPendingDiscreteUpdates !== null) {
             // For each root with pending discrete updates, schedule a callback to
@@ -23672,8 +23812,6 @@
      */
     function performUnitOfWork(unitOfWork) {
 
-        debugger
-
         // The current, flushed, state of this fiber is the alternate. Ideally
         // nothing should rely on this, but relying on it here means that we don't
         // need an additional field on the work in progress.
@@ -23710,8 +23848,6 @@
      * @returns 
      */
     function completeUnitOfWork(unitOfWork) {
-
-        debugger
 
         // Attempt to complete the current unit of work, then move to the next
         // sibling. If there are no more siblings, return to the parent fiber.
@@ -25998,6 +26134,11 @@
             root.lastExpiredTime = NoWork;
         }
     }
+    /**
+     * 
+     * @param {*} root 
+     * @param {*} expirationTime 
+     */
     function markRootExpiredAtTime(root, expirationTime) {
         var lastExpiredTime = root.lastExpiredTime;
 

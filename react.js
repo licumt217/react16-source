@@ -2465,7 +2465,13 @@
     var SchedulerSuspendEvent = 7;
     var SchedulerResumeEvent = 8;
 
+    /**
+     * 
+     * @param {*} entries 
+     * @returns 
+     */
     function logEvent(entries) {
+        debugger
         if (eventLog !== null) {
             var offset = eventLogIndex;
             eventLogIndex += entries.length;
@@ -2496,6 +2502,10 @@
         eventLog = new Int32Array(eventLogBuffer);
         eventLogIndex = 0;
     }
+    /**
+     * 
+     * @returns 
+     */
     function stopLoggingProfilingEvents() {
         var buffer = eventLogBuffer;
         eventLogSize = 0;
@@ -2527,8 +2537,14 @@
             }
         }
     }
+    /**
+     * 
+     * @param {*} task 
+     * @param {*} ms 
+     */
     function markTaskCanceled(task, ms) {
         {
+            debugger
             profilingState[QUEUE_SIZE]--;
 
             if (eventLog !== null) {
@@ -2939,7 +2955,12 @@
         return peek(taskQueue);
     }
 
+    /**
+     * 
+     * @param {*} task 
+     */
     function unstable_cancelCallback(task) {
+        debugger
         {
             if (task.isQueued) {
                 var currentTime = getCurrentTime();
