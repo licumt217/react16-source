@@ -5,21 +5,22 @@ const e = React.createElement;
 const Fragment = React.Fragment;
 
 class LikeButton extends React.Component {
-    constructor (props) {
-        super(props);
-        this.state = { liked: false };
-    }
+    // constructor (props) {
+    //     super(props);
+    //     // this.state = { liked: false };
+    // }
 
     render() {
 
 
-        if (this.state.liked) {
-            return 'You liked this.';
-        }
+        // if (this.state.liked) {
+        //     return 'You liked this.';
+        // }
 
         return e(
             'button',
-            { onClick: () => this.setState({ liked: true }) },
+            { onClick: () => alert(1) },
+            // { onClick: () => this.setState({ liked: true }) },
             'Like'
         );
     }
@@ -71,12 +72,12 @@ const myTest = e(Fragment, null, child1, child2, child3);
 
 
 const domContainer = document.querySelector('#app');
-// const ele = e('span', { style: { color: 'red' }, age: 18, name: 'liqiang' }, "i'm a span ", "i'm a span ");
+const ele = e('span', { onClick: () => { alert(1) } }, "点击我！！！");
 // const ele = e(hone)
 // const ele = e(hone)
 
 function callbackOfReactDomRender() {
     console.log('done')
 }
-ReactDOM.render(myTest, domContainer, callbackOfReactDomRender);
+ReactDOM.render(ele, domContainer, callbackOfReactDomRender);
 // ReactDOM.render(e(LikeButton), domContainer);

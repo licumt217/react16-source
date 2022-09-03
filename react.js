@@ -447,6 +447,12 @@
 
     var didWarnStateUpdateForUnmountedComponent = {};
 
+    /**
+     * 
+     * @param {*} publicInstance 
+     * @param {*} callerName 
+     * @returns 
+     */
     function warnNoop(publicInstance, callerName) {
         {
             var _constructor = publicInstance.constructor;
@@ -457,7 +463,10 @@
                 return;
             }
 
-            error("Can't call %s on a component that is not yet mounted. " + 'This is a no-op, but it might indicate a bug in your application. ' + 'Instead, assign to `this.state` directly or define a `state = {};` ' + 'class property with the desired state in the %s component.', callerName, componentName);
+            error("Can't call %s on a component that is not yet mounted. "
+                + 'This is a no-op, but it might indicate a bug in your application. '
+                + 'Instead, assign to `this.state` directly or define a `state = {};` '
+                + 'class property with the desired state in the %s component.', callerName, componentName);
 
             didWarnStateUpdateForUnmountedComponent[warningKey] = true;
         }
@@ -465,8 +474,6 @@
     /**
      * This is the abstract API for an update queue.
      */
-
-
     var ReactNoopUpdateQueue = {
         /**
          * Checks whether or not this composite component is mounted.
@@ -537,22 +544,21 @@
     {
         Object.freeze(emptyObject);
     }
+
     /**
      * Base class helpers for the updating state of a component.
      */
-
-
     function Component(props, context, updater) {
         this.props = props;
-        this.context = context; // If a component has string refs, we will assign a different object later.
-
-        this.refs = emptyObject; // We initialize the default updater but the real one gets injected by the
-        // renderer.
-
+        this.context = context;
+        // If a component has string refs, we will assign a different object later.
+        this.refs = emptyObject;
+        // We initialize the default updater but the real one gets injected by the renderer.
         this.updater = updater || ReactNoopUpdateQueue;
     }
 
     Component.prototype.isReactComponent = {};
+
     /**
      * Sets a subset of the state. Always use this to mutate
      * state. You should treat `this.state` as immutable.
@@ -578,7 +584,6 @@
      * @final
      * @protected
      */
-
     Component.prototype.setState = function (partialState, callback) {
         if (!(typeof partialState === 'object' || typeof partialState === 'function' || partialState == null)) {
             {
@@ -602,8 +607,6 @@
      * @final
      * @protected
      */
-
-
     Component.prototype.forceUpdate = function (callback) {
         this.updater.enqueueForceUpdate(this, callback, 'forceUpdate');
     };
@@ -612,8 +615,6 @@
      * we would like to deprecate them, we're not going to move them over to this
      * modern base class. Instead, we define a getter that warns if it's accessed.
      */
-
-
     {
         var deprecatedAPIs = {
             isMounted: ['isMounted', 'Instead, make sure to clean up subscriptions and pending requests in ' + 'componentWillUnmount to prevent memory leaks.'],
@@ -1623,7 +1624,10 @@
 
         if (!(dispatcher !== null)) {
             {
-                throw Error("Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.");
+                throw Error("Invalid hook call. Hooks can only be called inside of the body of a function component." +
+                    +" This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer" +
+                    +" (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app" +
+                    +"\nSee https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.");
             }
         }
 
@@ -1635,7 +1639,9 @@
 
         {
             if (unstable_observedBits !== undefined) {
-                error('useContext() second argument is reserved for future ' + 'use in React. Passing it is not supported. ' + 'You passed: %s.%s', unstable_observedBits, typeof unstable_observedBits === 'number' && Array.isArray(arguments[2]) ? '\n\nDid you call array.map(useContext)? ' + 'Calling Hooks inside a loop is not supported. ' + 'Learn more at https://fb.me/rules-of-hooks' : '');
+                error('useContext() second argument is reserved for future ' + 'use in React. Passing it is not supported. '
+                    + 'You passed: %s.%s', unstable_observedBits, typeof unstable_observedBits === 'number' && Array.isArray(arguments[2])
+                    ? '\n\nDid you call array.map(useContext)? ' + 'Calling Hooks inside a loop is not supported. ' + 'Learn more at https://fb.me/rules-of-hooks' : '');
             } // TODO: add a more generic warning for invalid values.
 
 
@@ -1644,7 +1650,8 @@
                 // and nobody should be using this in existing code.
 
                 if (realContext.Consumer === Context) {
-                    error('Calling useContext(Context.Consumer) is not supported, may cause bugs, and will be ' + 'removed in a future major release. Did you mean to call useContext(Context) instead?');
+                    error('Calling useContext(Context.Consumer) is not supported, may cause bugs, and will be '
+                        + 'removed in a future major release. Did you mean to call useContext(Context) instead?');
                 } else if (realContext.Provider === Context) {
                     error('Calling useContext(Context.Provider) is not supported. ' + 'Did you mean to call useContext(Context) instead?');
                 }
@@ -2211,12 +2218,14 @@
 
             if (typeof requestAnimationFrame !== 'function') {
                 // Using console['error'] to evade Babel and ESLint
-                console['error']("This browser doesn't support requestAnimationFrame. " + 'Make sure that you load a ' + 'polyfill in older browsers. https://fb.me/react-polyfills');
+                console['error']("This browser doesn't support requestAnimationFrame. "
+                    + 'Make sure that you load a ' + 'polyfill in older browsers. https://fb.me/react-polyfills');
             }
 
             if (typeof cancelAnimationFrame !== 'function') {
                 // Using console['error'] to evade Babel and ESLint
-                console['error']("This browser doesn't support cancelAnimationFrame. " + 'Make sure that you load a ' + 'polyfill in older browsers. https://fb.me/react-polyfills');
+                console['error']("This browser doesn't support cancelAnimationFrame. "
+                    + 'Make sure that you load a ' + 'polyfill in older browsers. https://fb.me/react-polyfills');
             }
         }
 
