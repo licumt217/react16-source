@@ -3108,7 +3108,7 @@
      * instance (key) and the internal representation (value). This allows public
      * methods to accept the user facing instance as an argument and map them back
      * to internal methods.
-     *
+     * 根据类实例返回对应的fiber
      * Note that this module is currently shared and assumed to be stateless.
      * If this becomes an actual Map, that will break.
      */
@@ -11902,10 +11902,11 @@
         }
     }
 
-    var fakeCallbackNode = {}; // Except for NoPriority, these correspond to Scheduler priorities. We use
+    var fakeCallbackNode = {};
+
+    // Except for NoPriority, these correspond to Scheduler priorities. We use
     // ascending numbers so we can compare them like numbers. They start at 90 to
     // avoid clashing with Scheduler's priorities.
-
     {
         var ImmediatePriority = 99;
         var UserBlockingPriority$1 = 98;
@@ -12007,11 +12008,17 @@
         var priorityLevel = reactPriorityToSchedulerPriority(reactPriorityLevel);
         return Scheduler_scheduleCallback(priorityLevel, callback, options);
     }
+    /**
+     * 
+     * @param {*} callback 
+     * @returns 
+     */
     function scheduleSyncCallback(callback) {
         // Push this callback into an internal queue. We'll flush these either in
         // the next tick, or earlier if something calls `flushSyncCallbackQueue`.
         if (syncQueue === null) {
-            syncQueue = [callback]; // Flush the queue in the next tick, at the earliest.
+            syncQueue = [callback];
+            // Flush the queue in the next tick, at the earliest.
 
             immediateQueueCallbackNode = Scheduler_scheduleCallback(Scheduler_ImmediatePriority, flushSyncCallbackQueueImpl);
         } else {
@@ -12117,11 +12124,13 @@
 
     /**
      * DONE 这里为什么要除以10呢，原因是可以抹平10ms以内的误差，前后很近的两次更新，计算出的 expirationTime 是一样的，有利于批量更新
+     * ((ms / UNIT_SIZE) | 0)这个操作，其实是抹平了ms ~ (ms + UNIT_SIZE - 1)这个范围的差值，让ms ~ (ms + UNIT_SIZE - 1)通过这个公式都能得到相同的数字
      * |0 是取整的意思。
      */
     function msToExpirationTime(ms) {
+        const llll = MAGIC_NUMBER_OFFSET - (ms / UNIT_SIZE | 0);
         // Always subtract from the offset so that we don't clash with the magic number for NoWork.
-        return MAGIC_NUMBER_OFFSET - (ms / UNIT_SIZE | 0);
+        return llll
     }
     function expirationTimeToMs(expirationTime) {
         return (MAGIC_NUMBER_OFFSET - expirationTime) * UNIT_SIZE;
@@ -12162,6 +12171,9 @@
     function computeInteractiveExpiration(currentTime) {
         return computeExpirationBucket(currentTime, HIGH_PRIORITY_EXPIRATION, HIGH_PRIORITY_BATCH_SIZE);
     }
+    /**
+     * 
+     */
     function inferPriorityFromExpirationTime(currentTime, expirationTime) {
         if (expirationTime === Sync) {
             return ImmediatePriority;
@@ -13959,8 +13971,7 @@
     }
 
     /**
-     * instance.updater = classComponentUpdater;
-     * workInProgress.stateNode = instance;
+     * 将类实例instance 设置为类组件fiber的stateNode属性；给实例的updater 属性赋值 classComponentUpdater
      * @param {*} workInProgress 
      * @param {*} instance 
      */
@@ -14038,6 +14049,7 @@
 
         var instance = new ctor(props, context);
         var state = workInProgress.memoizedState = instance.state !== null && instance.state !== undefined ? instance.state : null;
+        //将类实例instance 设置为类组件fiber的stateNode属性；给实例的updater 属性赋值 classComponentUpdater
         adoptClassInstance(workInProgress, instance);
 
         {
@@ -18440,6 +18452,7 @@
                 workInProgress.effectTag |= Placement;
             }
             // In the initial pass we might need to construct the instance.
+            //构造 class 组件 的实例instance，并给instance设置 updater属性对象，包含enqueueForceUpdate,enqueueSetState等方法
             constructClassInstance(workInProgress, Component, nextProps);
             mountClassInstance(workInProgress, Component, nextProps, renderExpirationTime);
             shouldUpdate = true;
@@ -18450,6 +18463,7 @@
             shouldUpdate = updateClassInstance(current, workInProgress, Component, nextProps, renderExpirationTime);
         }
 
+        //执行类组件的render方法，并执行reconcileChildren（），返回workInProgress.child.
         var nextUnitOfWork = finishClassComponent(current, workInProgress, Component, shouldUpdate, hasContext, renderExpirationTime);
 
         {
@@ -22642,9 +22656,13 @@
     /**
      * DONE 根据渲染阶段返回对应的currentEventTime，根据now()转化成的过期时间。
      * 已去掉了10ms误差
+     * 随着时间的推移，这个函数的返回值会越来越小。
      * @returns 
      */
     function requestCurrentTimeForUpdate() {
+
+        console.log('.............')
+        // debugger
         if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
             // We're inside React, so it's fine to read the actual time.
             return msToExpirationTime(now());
@@ -22899,7 +22917,9 @@
 
         if (lastExpiredTime !== NoWork) {
             return lastExpiredTime;
-        } // "Pending" refers to any update that hasn't committed yet, including if it
+        }
+
+        // "Pending" refers to any update that hasn't committed yet, including if it
         // suspended. The "suspended" range is therefore a subset.
 
 
@@ -22931,7 +22951,6 @@
     // the next level that the root has work on. This function is called on every
     // update, and right before exiting a task.
     function ensureRootIsScheduled(root) {
-
         var lastExpiredTime = root.lastExpiredTime;
 
         if (lastExpiredTime !== NoWork) {
@@ -22956,7 +22975,6 @@
             return;
         } // TODO: If this is an update, we already read the current time. Pass the
         // time as an argument.
-
 
         var currentTime = requestCurrentTimeForUpdate();
         var priorityLevel = inferPriorityFromExpirationTime(currentTime, expirationTime);
@@ -23399,6 +23417,7 @@
                 stopFinishedWorkLoopTimer();
                 root.finishedWork = root.current.alternate;
                 root.finishedExpirationTime = expirationTime;
+
                 finishSyncRender(root);
             } // Before exiting, make sure there's a callback scheduled for the next
             // pending level.
@@ -26281,6 +26300,7 @@
         }
 
         var update = createUpdate(expirationTime, suspenseConfig);
+
         // Caution: React DevTools currently depends on this property being called "element".
 
         update.payload = { element: element };

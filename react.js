@@ -2334,6 +2334,11 @@
         };
     }
 
+    /**
+     * 
+     * @param {*} heap 
+     * @param {*} node 
+     */
     function push(heap, node) {
         var index = heap.length;
         heap.push(node);
@@ -2360,6 +2365,13 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} heap 
+     * @param {*} node 
+     * @param {*} i 
+     * @returns 
+     */
     function siftUp(heap, node, i) {
         var index = i;
 
@@ -2410,6 +2422,12 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} a 
+     * @param {*} b 
+     * @returns 
+     */
     function compare(a, b) {
         // Compare sort index first, then task id.
         var diff = a.sortIndex - b.sortIndex;
@@ -2471,7 +2489,6 @@
      * @returns 
      */
     function logEvent(entries) {
-        debugger
         if (eventLog !== null) {
             var offset = eventLogIndex;
             eventLogIndex += entries.length;
@@ -2544,7 +2561,6 @@
      */
     function markTaskCanceled(task, ms) {
         {
-            debugger
             profilingState[QUEUE_SIZE]--;
 
             if (eventLog !== null) {
@@ -2849,6 +2865,11 @@
         };
     }
 
+    /**
+     * 
+     * @param {*} priorityLevel 
+     * @returns 
+     */
     function timeoutForPriorityLevel(priorityLevel) {
         switch (priorityLevel) {
             case ImmediatePriority:
@@ -2869,6 +2890,13 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} priorityLevel 
+     * @param {*} callback 
+     * @param {*} options 
+     * @returns 
+     */
     function unstable_scheduleCallback(priorityLevel, callback, options) {
         var currentTime = getCurrentTime();
         var startTime;
@@ -2960,7 +2988,6 @@
      * @param {*} task 
      */
     function unstable_cancelCallback(task) {
-        debugger
         {
             if (task.isQueued) {
                 var currentTime = getCurrentTime();
