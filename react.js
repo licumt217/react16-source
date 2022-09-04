@@ -2148,6 +2148,7 @@
     var getCurrentTime;
     var forceFrameRate;
 
+    debugger
     if ( // If Scheduler runs in a non-DOM environment, it falls back to a naive
         // implementation using setTimeout.
         typeof window === 'undefined' || // Check if MessageChannel is supported, too.
@@ -2313,6 +2314,7 @@
         channel.port1.onmessage = performWorkUntilDeadline;
 
         requestHostCallback = function (callback) {
+            debugger
             scheduledHostCallback = callback;
 
             if (!isMessageLoopRunning) {
@@ -2322,12 +2324,14 @@
         };
 
         requestHostTimeout = function (callback, ms) {
+            debugger
             taskTimeoutID = _setTimeout(function () {
                 callback(getCurrentTime());
             }, ms);
         };
 
         cancelHostTimeout = function () {
+            debugger
             _clearTimeout(taskTimeoutID);
 
             taskTimeoutID = -1;
@@ -2447,12 +2451,18 @@
     var runIdCounter = 0;
     var mainThreadIdCounter = 0;
     var profilingStateSize = 4;
+    debugger
     var sharedProfilingBuffer =  // $FlowFixMe Flow doesn't know about SharedArrayBuffer
         typeof SharedArrayBuffer === 'function' ? new SharedArrayBuffer(profilingStateSize * Int32Array.BYTES_PER_ELEMENT) : // $FlowFixMe Flow doesn't know about ArrayBuffer
             typeof ArrayBuffer === 'function' ? new ArrayBuffer(profilingStateSize * Int32Array.BYTES_PER_ELEMENT) : null // Don't crash the init path on IE9
         ;
-    var profilingState = sharedProfilingBuffer !== null ? new Int32Array(sharedProfilingBuffer) : []; // We can't read this but it helps save bytes for null checks
+    /**
+     * 
+     */
+    debugger
+    var profilingState = sharedProfilingBuffer !== null ? new Int32Array(sharedProfilingBuffer) : [];
 
+    // We can't read this but it helps save bytes for null checks
     var PRIORITY = 0;
     var CURRENT_TASK_ID = 1;
     var CURRENT_RUN_ID = 2;
@@ -2531,7 +2541,13 @@
         eventLogIndex = 0;
         return buffer;
     }
+    /**
+     * 
+     * @param {*} task 
+     * @param {*} ms 
+     */
     function markTaskStart(task, ms) {
+        debugger
         {
             profilingState[QUEUE_SIZE]++;
 
@@ -2543,8 +2559,15 @@
             }
         }
     }
+
+    /**
+     * 
+     * @param {*} task 
+     * @param {*} ms 
+     */
     function markTaskCompleted(task, ms) {
         {
+            debugger
             profilingState[PRIORITY] = NoPriority;
             profilingState[CURRENT_TASK_ID] = 0;
             profilingState[QUEUE_SIZE]--;
@@ -2579,7 +2602,13 @@
             }
         }
     }
+    /**
+     * 
+     * @param {*} task 
+     * @param {*} ms 
+     */
     function markTaskRun(task, ms) {
+        debugger
         {
             runIdCounter++;
             profilingState[PRIORITY] = task.priorityLevel;
@@ -2591,7 +2620,13 @@
             }
         }
     }
+    /**
+     * 
+     * @param {*} task 
+     * @param {*} ms 
+     */
     function markTaskYield(task, ms) {
+        debugger
         {
             profilingState[PRIORITY] = NoPriority;
             profilingState[CURRENT_TASK_ID] = 0;
@@ -2602,7 +2637,12 @@
             }
         }
     }
+    /**
+     * 
+     * @param {*} ms 
+     */
     function markSchedulerSuspended(ms) {
+        debugger
         {
             mainThreadIdCounter++;
 
@@ -2611,7 +2651,12 @@
             }
         }
     }
+    /**
+     * 
+     * @param {*} ms 
+     */
     function markSchedulerUnsuspended(ms) {
+        debugger
         {
             if (eventLog !== null) {
                 logEvent([SchedulerResumeEvent, ms * 1000, mainThreadIdCounter]);
@@ -2645,7 +2690,13 @@
     var isHostCallbackScheduled = false;
     var isHostTimeoutScheduled = false;
 
+    /**
+     * 
+     * @param {*} currentTime 
+     * @returns 
+     */
     function advanceTimers(currentTime) {
+        debugger
         // Check for tasks that are no longer delayed and add them to the queue.
         var timer = peek(timerQueue);
 
@@ -2690,7 +2741,14 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} hasTimeRemaining 
+     * @param {*} initialTime 
+     * @returns 
+     */
     function flushWork(hasTimeRemaining, initialTime) {
+        debugger
         {
             markSchedulerUnsuspended(initialTime);
         } // We'll need a host callback the next time work is scheduled.
@@ -2737,7 +2795,14 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} hasTimeRemaining 
+     * @param {*} initialTime 
+     * @returns 
+     */
     function workLoop(hasTimeRemaining, initialTime) {
+        debugger
         var currentTime = initialTime;
         advanceTimers(currentTime);
         currentTask = peek(taskQueue);
@@ -2898,6 +2963,7 @@
      * @returns 
      */
     function unstable_scheduleCallback(priorityLevel, callback, options) {
+        debugger
         var currentTime = getCurrentTime();
         var startTime;
         var timeout;

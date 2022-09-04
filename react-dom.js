@@ -201,6 +201,7 @@
                         window.event = windowEvent;
                     }
 
+                    debugger
                     func.apply(context, funcArgs);
                     didError = false;
                 }
@@ -12014,6 +12015,7 @@
      * @returns 
      */
     function scheduleSyncCallback(callback) {
+        debugger
         // Push this callback into an internal queue. We'll flush these either in
         // the next tick, or earlier if something calls `flushSyncCallbackQueue`.
         if (syncQueue === null) {
@@ -12051,6 +12053,7 @@
      * 
      */
     function flushSyncCallbackQueueImpl() {
+        debugger
 
         if (!isFlushingSyncQueue && syncQueue !== null) {
             // Prevent re-entrancy.
@@ -13742,6 +13745,7 @@
     var classComponentUpdater = {
         isMounted: isMounted,
         enqueueSetState: function (inst, payload, callback) {
+            debugger
             var fiber = get(inst);
             var currentTime = requestCurrentTimeForUpdate();
             var suspenseConfig = requestCurrentSuspenseConfig();
@@ -22661,8 +22665,6 @@
      */
     function requestCurrentTimeForUpdate() {
 
-        console.log('.............')
-        // debugger
         if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
             // We're inside React, so it's fine to read the actual time.
             return msToExpirationTime(now());
@@ -22683,9 +22685,11 @@
     }
 
     /**
+     * legecy模式返回的都是Sync，都是按照同步的方式执行
      * @param fiber rootFiber
      */
     function computeExpirationForFiber(currentTime, fiber, suspenseConfig) {
+        debugger
         var mode = fiber.mode;
 
         if ((mode & BlockingMode) === NoMode) {
@@ -22759,6 +22763,7 @@
      * @param fiber rootFiber
      */
     function scheduleUpdateOnFiber(fiber, expirationTime) {
+        debugger
         checkForNestedUpdates();
         warnAboutRenderPhaseUpdatesInDEV(fiber);
         var root = markUpdateTimeFromFiberToRoot(fiber, expirationTime);//fiberRoot
@@ -22951,6 +22956,7 @@
     // the next level that the root has work on. This function is called on every
     // update, and right before exiting a task.
     function ensureRootIsScheduled(root) {
+        debugger
         var lastExpiredTime = root.lastExpiredTime;
 
         if (lastExpiredTime !== NoWork) {
@@ -23002,6 +23008,7 @@
         root.callbackPriority = priorityLevel;
         var callbackNode;
 
+        debugger
         if (expirationTime === Sync) {
             // Sync React callbacks are scheduled on a special internal queue
             callbackNode = scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
