@@ -2148,7 +2148,6 @@
     var getCurrentTime;
     var forceFrameRate;
 
-    debugger
     if ( // If Scheduler runs in a non-DOM environment, it falls back to a naive
         // implementation using setTimeout.
         typeof window === 'undefined' || // Check if MessageChannel is supported, too.
@@ -2244,12 +2243,14 @@
 
         var isMessageLoopRunning = false;
         var scheduledHostCallback = null;
-        var taskTimeoutID = -1; // Scheduler periodically yields in case there is other work on the main
+        var taskTimeoutID = -1;
+
+        // Scheduler periodically yields in case there is other work on the main
         // thread, like user events. By default, it yields multiple times per frame.
         // It does not attempt to align with frame boundaries, since most tasks don't
         // need to be frame aligned; for those that do, use requestAnimationFrame.
 
-        var yieldInterval = 5;
+        var yieldInterval = 5;//每次执行5ms
         var deadline = 0; // TODO: Make this configurable
 
         {
@@ -2257,9 +2258,9 @@
             // there's pending input, always yield at the end of the frame.
             shouldYieldToHost = function () {
                 return getCurrentTime() >= deadline;
-            }; // Since we yield every frame regardless, `requestPaint` has no effect.
+            };
 
-
+            // Since we yield every frame regardless, `requestPaint` has no effect.
             requestPaint = function () {};
         }
 
@@ -2270,7 +2271,7 @@
                 return;
             }
 
-            if (fps > 0) {
+            if (fps > 0) { //帧
                 yieldInterval = Math.floor(1000 / fps);
             } else {
                 // reset the framerate
@@ -2278,9 +2279,14 @@
             }
         };
 
+        /**
+         * 执行 scheduledHostCallback 任务，如果超时没执行完，发送个msg，在下个事件循环继续执行
+         */
         var performWorkUntilDeadline = function () {
             if (scheduledHostCallback !== null) {
-                var currentTime = getCurrentTime(); // Yield after `yieldInterval` ms, regardless of where we are in the vsync
+                var currentTime = getCurrentTime();
+
+                // Yield after `yieldInterval` ms, regardless of where we are in the vsync
                 // cycle. This means there's always time remaining at the beginning of
                 // the message event.
 
@@ -2313,8 +2319,10 @@
         var port = channel.port2;
         channel.port1.onmessage = performWorkUntilDeadline;
 
+        /**
+         * 将 callback 放入全局变量，发送msg，在下个事件循环执行
+         */
         requestHostCallback = function (callback) {
-            debugger
             scheduledHostCallback = callback;
 
             if (!isMessageLoopRunning) {
@@ -2323,15 +2331,19 @@
             }
         };
 
+        /**
+         * callback 延时 xxx ms后执行
+         */
         requestHostTimeout = function (callback, ms) {
-            debugger
             taskTimeoutID = _setTimeout(function () {
                 callback(getCurrentTime());
             }, ms);
         };
 
+        /**
+         * 取消延时任务
+         */
         cancelHostTimeout = function () {
-            debugger
             _clearTimeout(taskTimeoutID);
 
             taskTimeoutID = -1;
@@ -2339,7 +2351,7 @@
     }
 
     /**
-     * 
+     * 添加一个新的节点到堆，并重新排序
      * @param {*} heap 
      * @param {*} node 
      */
@@ -2352,6 +2364,11 @@
         var first = heap[0];
         return first === undefined ? null : first;
     }
+    /**
+     * 取出堆顶元素并重新排序
+     * @param {} heap 
+     * @returns 
+     */
     function pop(heap) {
         var first = heap[0];
 
@@ -2370,7 +2387,7 @@
     }
 
     /**
-     * 
+     * 小顶堆，遍历到堆顶。
      * @param {*} heap 
      * @param {*} node 
      * @param {*} i 
@@ -2380,6 +2397,7 @@
         var index = i;
 
         while (true) {
+            //无符号右移运算符规则。>>>的优先级低，先计算 index - 1
             var parentIndex = index - 1 >>> 1;
             var parent = heap[parentIndex];
 
@@ -2395,6 +2413,13 @@
         }
     }
 
+    /**
+     * 从堆顶开始重新排序
+     * @param {} heap 
+     * @param {*} node 
+     * @param {*} i 
+     * @returns 
+     */
     function siftDown(heap, node, i) {
         var index = i;
         var length = heap.length;
@@ -2438,7 +2463,7 @@
         return diff !== 0 ? diff : a.id - b.id;
     }
 
-    // TODO: Use symbols?
+    // 调度优先级
     {
         var NoPriority = 0;
         var ImmediatePriority = 1;
@@ -2451,7 +2476,6 @@
     var runIdCounter = 0;
     var mainThreadIdCounter = 0;
     var profilingStateSize = 4;
-    debugger
     var sharedProfilingBuffer =  // $FlowFixMe Flow doesn't know about SharedArrayBuffer
         typeof SharedArrayBuffer === 'function' ? new SharedArrayBuffer(profilingStateSize * Int32Array.BYTES_PER_ELEMENT) : // $FlowFixMe Flow doesn't know about ArrayBuffer
             typeof ArrayBuffer === 'function' ? new ArrayBuffer(profilingStateSize * Int32Array.BYTES_PER_ELEMENT) : null // Don't crash the init path on IE9
@@ -2459,7 +2483,6 @@
     /**
      * 
      */
-    debugger
     var profilingState = sharedProfilingBuffer !== null ? new Int32Array(sharedProfilingBuffer) : [];
 
     // We can't read this but it helps save bytes for null checks
@@ -2547,7 +2570,6 @@
      * @param {*} ms 
      */
     function markTaskStart(task, ms) {
-        debugger
         {
             profilingState[QUEUE_SIZE]++;
 
@@ -2567,7 +2589,6 @@
      */
     function markTaskCompleted(task, ms) {
         {
-            debugger
             profilingState[PRIORITY] = NoPriority;
             profilingState[CURRENT_TASK_ID] = 0;
             profilingState[QUEUE_SIZE]--;
@@ -2608,7 +2629,6 @@
      * @param {*} ms 
      */
     function markTaskRun(task, ms) {
-        debugger
         {
             runIdCounter++;
             profilingState[PRIORITY] = task.priorityLevel;
@@ -2626,7 +2646,6 @@
      * @param {*} ms 
      */
     function markTaskYield(task, ms) {
-        debugger
         {
             profilingState[PRIORITY] = NoPriority;
             profilingState[CURRENT_TASK_ID] = 0;
@@ -2642,7 +2661,6 @@
      * @param {*} ms 
      */
     function markSchedulerSuspended(ms) {
-        debugger
         {
             mainThreadIdCounter++;
 
@@ -2656,7 +2674,7 @@
      * @param {*} ms 
      */
     function markSchedulerUnsuspended(ms) {
-        debugger
+
         {
             if (eventLog !== null) {
                 logEvent([SchedulerResumeEvent, ms * 1000, mainThreadIdCounter]);
@@ -2670,15 +2688,18 @@
 
     var maxSigned31BitInt = 1073741823; // Times out immediately
 
-    var IMMEDIATE_PRIORITY_TIMEOUT = -1; // Eventually times out
 
-    var USER_BLOCKING_PRIORITY = 250;
-    var NORMAL_PRIORITY_TIMEOUT = 5000;
-    var LOW_PRIORITY_TIMEOUT = 10000; // Never times out
+    { //各种调度优先级对应的超时时间
+        var IMMEDIATE_PRIORITY_TIMEOUT = -1; // Eventually times out
+
+        var USER_BLOCKING_PRIORITY = 250;
+        var NORMAL_PRIORITY_TIMEOUT = 5000;
+        var LOW_PRIORITY_TIMEOUT = 10000; // Never times out
+    }
 
     var IDLE_PRIORITY = maxSigned31BitInt; // Tasks are stored on a min heap
 
-    var taskQueue = [];
+    var taskQueue = []; //已过期的队列
     var timerQueue = []; // Incrementing id counter. Used to maintain insertion order.
 
     var taskIdCounter = 1; // Pausing the scheduler is useful for debugging.
@@ -2696,7 +2717,6 @@
      * @returns 
      */
     function advanceTimers(currentTime) {
-        debugger
         // Check for tasks that are no longer delayed and add them to the queue.
         var timer = peek(timerQueue);
 
@@ -2748,7 +2768,6 @@
      * @returns 
      */
     function flushWork(hasTimeRemaining, initialTime) {
-        debugger
         {
             markSchedulerUnsuspended(initialTime);
         } // We'll need a host callback the next time work is scheduled.
@@ -2802,7 +2821,6 @@
      * @returns 
      */
     function workLoop(hasTimeRemaining, initialTime) {
-        debugger
         var currentTime = initialTime;
         advanceTimers(currentTime);
         currentTask = peek(taskQueue);
@@ -2931,7 +2949,7 @@
     }
 
     /**
-     * 
+     * 根据调度优先级返回对应的超时时间间隔
      * @param {*} priorityLevel 
      * @returns 
      */
@@ -2963,7 +2981,6 @@
      * @returns 
      */
     function unstable_scheduleCallback(priorityLevel, callback, options) {
-        debugger
         var currentTime = getCurrentTime();
         var startTime;
         var timeout;
@@ -3021,10 +3038,9 @@
             {
                 markTaskStart(newTask, currentTime);
                 newTask.isQueued = true;
-            } // Schedule a host callback, if needed. If we're already performing work,
-            // wait until the next time we yield.
+            }
 
-
+            // Schedule a host callback, if needed. If we're already performing work, wait until the next time we yield.
             if (!isHostCallbackScheduled && !isPerformingWork) {
                 isHostCallbackScheduled = true;
                 requestHostCallback(flushWork);

@@ -201,7 +201,6 @@
                         window.event = windowEvent;
                     }
 
-                    debugger
                     func.apply(context, funcArgs);
                     didError = false;
                 }
@@ -3128,7 +3127,7 @@
         var NoEffect = 0;
         var PerformedWork = 1; // React DevTools reads this flag.
         // You can change the rest (and add more).
-        var Placement = 2;//没有旧的，插入
+        var Placement = 2;//没有旧的，插入。
         var Update = 4;
         var PlacementAndUpdate = 6;
         var Deletion = 8;
@@ -3578,7 +3577,6 @@
      * @param {?object} event Synthetic event to be dispatched.
      * @private
      */
-
     var executeDispatchesAndRelease = function (event) {
         if (event) {
             executeDispatchesInOrder(event);
@@ -3593,6 +3591,11 @@
         return executeDispatchesAndRelease(e);
     };
 
+    /**
+     * 
+     * @param {*} events 
+     * @returns 
+     */
     function runEventsInBatch(events) {
         if (events !== null) {
             eventQueue = accumulateInto(eventQueue, events);
@@ -11905,9 +11908,10 @@
 
     var fakeCallbackNode = {};
 
-    // Except for NoPriority, these correspond to Scheduler priorities. We use
+    // Except for NoPriority, these correspond（一致、符合、相当于） to Scheduler priorities. We use
     // ascending numbers so we can compare them like numbers. They start at 90 to
     // avoid clashing with Scheduler's priorities.
+    //更新优先级
     {
         var ImmediatePriority = 99;
         var UserBlockingPriority$1 = 98;
@@ -12001,6 +12005,12 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} reactPriorityLevel 
+     * @param {*} fn 
+     * @returns 
+     */
     function runWithPriority$1(reactPriorityLevel, fn) {
         var priorityLevel = reactPriorityToSchedulerPriority(reactPriorityLevel);
         return Scheduler_runWithPriority(priorityLevel, fn);
@@ -12015,7 +12025,6 @@
      * @returns 
      */
     function scheduleSyncCallback(callback) {
-        debugger
         // Push this callback into an internal queue. We'll flush these either in
         // the next tick, or earlier if something calls `flushSyncCallbackQueue`.
         if (syncQueue === null) {
@@ -12053,7 +12062,6 @@
      * 
      */
     function flushSyncCallbackQueueImpl() {
-        debugger
 
         if (!isFlushingSyncQueue && syncQueue !== null) {
             // Prevent re-entrancy.
@@ -12560,6 +12568,12 @@
             return family.current;
         }
     }
+    /**
+     * 
+     * @param {*} fiber 
+     * @param {*} element 
+     * @returns 
+     */
     function isCompatibleFamilyForHotReloading(fiber, element) {
         {
             if (resolveFamily === null) {
@@ -12889,6 +12903,12 @@
         return false;
     }
 
+    /**
+     * 
+     * @param {*} Component 
+     * @param {*} baseProps 
+     * @returns 
+     */
     function resolveDefaultProps(Component, baseProps) {
         if (Component && Component.defaultProps) {
             // Resolve default props. Taken from ReactElement
@@ -13251,7 +13271,7 @@
     }
 
     /**
-     * DONE 新建更新
+     * DONE 新建更新，绑定对应的更新优先级
      * @param {*} expirationTime 
      * @param {*} suspenseConfig 
      * @returns 
@@ -13371,7 +13391,7 @@
                     workInProgress.effectTag = workInProgress.effectTag & ~ShouldCapture | DidCapture;
                 }
             // Intentional fallthrough
-
+            //this.setState()中的值在此处合并。
             case UpdateState://将更新对象中的payload对象和prevState合并，返回新的state对象
                 {
                     var _payload = update.payload;
@@ -13745,7 +13765,6 @@
     var classComponentUpdater = {
         isMounted: isMounted,
         enqueueSetState: function (inst, payload, callback) {
-            debugger
             var fiber = get(inst);
             var currentTime = requestCurrentTimeForUpdate();
             var suspenseConfig = requestCurrentSuspenseConfig();
@@ -13805,6 +13824,9 @@
         }
     };
 
+    /**
+     * 
+     */
     function checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext) {
         var instance = workInProgress.stateNode;
 
@@ -14341,9 +14363,9 @@
         instance.state = newState;
         instance.context = nextContext;
         return shouldUpdate;
-    } // Invokes the update life-cycles and returns false if it shouldn't rerender.
+    }
 
-
+    // Invokes the update life-cycles and returns false if it shouldn't rerender.
     function updateClassInstance(current, workInProgress, ctor, newProps, renderExpirationTime) {
         var instance = workInProgress.stateNode;
         cloneUpdateQueue(current, workInProgress);
@@ -14650,6 +14672,7 @@
     // live outside of this function.
     /**
      * @param shouldTrackSideEffects 
+     * 作用是判断是否要增加一些effectTag，主要是用来优化初次渲染的，因为初次渲染没有更新操作
      */
     function ChildReconciler(shouldTrackSideEffects) {
         /**
@@ -14726,6 +14749,12 @@
             return existingChildren;
         }
 
+        /**
+         * 新的改变，两颗fiber树的节点类型相同时，复用之前的fiber
+         * @param {*} fiber 
+         * @param {*} pendingProps 
+         * @returns 
+         */
         function useFiber(fiber, pendingProps) {
             // We currently set sibling to null and index to 0 here because it is easy
             // to forget to do before returning it. E.g. for the single child case.
@@ -14772,7 +14801,8 @@
         }
 
         /**
-         * 
+         * DONE
+         * 给新创建的fiber打上 effectTag=Placement 标志（shouldTrackSideEffects && newFiber.alternate === null），或直接返回
          */
         function placeSingleChild(newFiber) {
             // This is simpler for the single child case. We only need to do a
@@ -14784,6 +14814,14 @@
             return newFiber;
         }
 
+        /**
+         * 
+         * @param {*} returnFiber 
+         * @param {*} current 
+         * @param {*} textContent 
+         * @param {*} expirationTime 
+         * @returns 
+         */
         function updateTextNode(returnFiber, current, textContent, expirationTime) {
             if (current === null || current.tag !== HostText) {
                 // Insert
@@ -14798,6 +14836,14 @@
             }
         }
 
+        /**
+         * 
+         * @param {*} returnFiber 
+         * @param {*} current 
+         * @param {*} element 
+         * @param {*} expirationTime 
+         * @returns 
+         */
         function updateElement(returnFiber, current, element, expirationTime) {
             if (current !== null) {
                 if (current.elementType === element.type || ( // Keep this check inline so it only runs on the false path:
@@ -14904,6 +14950,14 @@
             return null;
         }
 
+        /**
+         * 
+         * @param {*} returnFiber 
+         * @param {*} oldFiber 
+         * @param {*} newChild 
+         * @param {*} expirationTime 
+         * @returns 
+         */
         function updateSlot(returnFiber, oldFiber, newChild, expirationTime) {
             // Update the fiber if the keys match, otherwise return null.
             var key = oldFiber !== null ? oldFiber.key : null;
@@ -15390,6 +15444,7 @@
          * return createFiberFromText(textContent, returnFiber.mode, expirationTime);
          */
         function reconcileSingleTextNode(returnFiber, currentFirstChild, textContent, expirationTime) {
+            debugger
             // There's no need to check for keys on text nodes since we don't have a
             // way to define them.
             if (currentFirstChild !== null && currentFirstChild.tag === HostText) {
@@ -15410,10 +15465,11 @@
         }
 
         /**
-         * 根据 element 创建fiber createFiberFromElement() ; 并设置此fiber.return = returnFiber
+         * 根据 element 创建fiber 。createFiberFromElement() ; 并设置此fiber.return = returnFiber
          * @return newFiber 
          */
         function reconcileSingleElement(returnFiber, currentFirstChild, element, expirationTime) {
+            debugger
             var key = element.key;
             var child = currentFirstChild;
 
@@ -15527,20 +15583,23 @@
          * itself. They will be added to the side-effect list as we pass through the
          * children and the parent.
          * 根据 element 创建fiber createFiberFromElement() ; 并设置此fiber.return = returnFiber
-         * @param {*} returnFiber 
-         * @param {*} currentFirstChild 
-         * @param {*} newChild 
+         * @param {*} returnFiber returnFiber是即将diff的这层的父节点
+         * @param {*} currentFirstChild  currentFirstChild是当前层的第一个Fiber节点
+         * @param {*} newChild newChild是即将更新的vdom节点(可能是TextNode、可能是ReactElement，可能是数组)，不是Fiber节点
          * @param {*} expirationTime 
          * @returns 
          */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
-            // This function is not recursive.
-            // If the top level item is an array, we treat it as a set of children,
-            // not as a fragment. Nested arrays on the other hand will be treated as
-            // fragment nodes. Recursion happens at the normal flow.
-            // Handle top level unkeyed fragments as if they were arrays.
-            // This leads to an ambiguity between <>{[...]}</> and <>...</>.
-            // We treat the ambiguous cases above the same.
+            debugger
+            {
+                // This function is not recursive.
+                // If the top level item is an array, we treat it as a set of children,
+                // not as a fragment. Nested arrays on the other hand will be treated as
+                // fragment nodes. Recursion happens at the normal flow.
+                // Handle top level unkeyed fragments as if they were arrays.
+                // This leads to an ambiguity between <>{[...]}</> and <>...</>.
+                // We treat the ambiguous cases above the same.
+            }
             var isUnkeyedTopLevelFragment = typeof newChild === 'object' && newChild !== null && newChild.type === REACT_FRAGMENT_TYPE && newChild.key === null;
 
             //透过fragment直接拿他的children。
@@ -15626,6 +15685,12 @@
 
     var reconcileChildFibers = ChildReconciler(true);
     var mountChildFibers = ChildReconciler(false);
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @returns 
+     */
     function cloneChildFibers(current, workInProgress) {
         if (!(current === null || workInProgress.child === current.child)) {
             {
@@ -18093,12 +18158,13 @@
     /**
      * workInProgress.child = reconcileChildFibers 或 workInProgress.child = mountChildFibers();
      * current === null 意味着是新组建挂载，他的所有子树不用标记 effectTag，因为当前fiber 的effectTag已更新，所有后代会一起被更新。
-     * current !==null 意味着是更新，每个字节点都需要计算 effectTag。
+     * current !==null 意味着是更新，每个节点都需要计算 effectTag。
      */
     function reconcileChildren(current, workInProgress, nextChildren, renderExpirationTime) {
+        debugger
 
 
-        if (current === null) {
+        if (current === null) {//首次渲染 创建子节点的`Fiber`实例
             // If this is a fresh new component that hasn't been rendered yet, we
             // won't update its child set by applying minimal side-effects. Instead,
             // we will add them all to the child before it gets rendered. That means
@@ -18537,9 +18603,9 @@
 
                 setIsRendering(false);
             }
-        } // React DevTools reads this flag.
+        }
 
-
+        // React DevTools reads this flag.
         workInProgress.effectTag |= PerformedWork;
 
         if (current !== null && didCaptureError) {
@@ -19866,6 +19932,8 @@
      */
     function beginWork(current, workInProgress, renderExpirationTime) {
 
+        debugger
+
         var updateExpirationTime = workInProgress.expirationTime;
 
         {
@@ -19887,7 +19955,8 @@
                 // This may be unset if the props are determined to be equal later (memo).
                 didReceiveUpdate = true;
             } else if (updateExpirationTime < renderExpirationTime) {
-                didReceiveUpdate = false; // This fiber does not have any pending work. Bailout without entering
+                didReceiveUpdate = false;
+                // This fiber does not have any pending work. Bailout without entering
                 // the begin phase. There's still some bookkeeping we that needs to be done
                 // in this optimized path, mostly pushing stuff onto the stack.
 
@@ -20185,6 +20254,10 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} workInProgress 
+     */
     function markUpdate(workInProgress) {
         // Tag the fiber with an update effect. This turns a Placement into
         // a PlacementAndUpdate.
@@ -20239,6 +20312,9 @@
         updateHostContainer = function (workInProgress) {// Noop
         };
 
+        /**
+         * 
+         */
         updateHostComponent$1 = function (current, workInProgress, type, newProps, rootContainerInstance) {
             // If we have an alternate, that means this is an update and we need to
             // schedule a side-effect to do the updates.
@@ -20270,6 +20346,9 @@
             }
         };
 
+        /**
+         * 
+         */
         updateHostText$1 = function (current, workInProgress, oldText, newText) {
             // If the text differs, mark it as an update. All the work in done in commitWork.
             if (oldText !== newText) {
@@ -22689,7 +22768,6 @@
      * @param fiber rootFiber
      */
     function computeExpirationForFiber(currentTime, fiber, suspenseConfig) {
-        debugger
         var mode = fiber.mode;
 
         if ((mode & BlockingMode) === NoMode) {
@@ -22763,7 +22841,6 @@
      * @param fiber rootFiber
      */
     function scheduleUpdateOnFiber(fiber, expirationTime) {
-        debugger
         checkForNestedUpdates();
         warnAboutRenderPhaseUpdatesInDEV(fiber);
         var root = markUpdateTimeFromFiberToRoot(fiber, expirationTime);//fiberRoot
@@ -22834,9 +22911,9 @@
     // on a fiber.
     /**
      * DONE 
-     * rootFiber.expirationTime = expirationTime;
+     * fiber.expirationTime = expirationTime;
      * fiberRoot.firstPendingTime = expirationTime;
-     * @param fiber rootFiber
+     * @param fiber 
      * @return fiberRoot
      */
     function markUpdateTimeFromFiberToRoot(fiber, expirationTime) {
@@ -22849,19 +22926,19 @@
 
         if (alternate !== null && alternate.expirationTime < expirationTime) {
             alternate.expirationTime = expirationTime;
-        } // Walk the parent path to the root and update the child expiration time.
+        }
 
-
+        // Walk the parent path to the root and update the child expiration time.
         var node = fiber.return;
         var root = null;//fiberRoot
 
-        if (node === null && fiber.tag === HostRoot) {
+        if (node === null && fiber.tag === HostRoot) {//是 rootFiber的话
             root = fiber.stateNode;
         } else {
             while (node !== null) {
                 alternate = node.alternate;
 
-                if (node.childExpirationTime < expirationTime) {
+                if (node.childExpirationTime < expirationTime) {// 更新父节点的 childExpirationTime
                     node.childExpirationTime = expirationTime;
 
                     if (alternate !== null && alternate.childExpirationTime < expirationTime) {
@@ -22871,7 +22948,7 @@
                     alternate.childExpirationTime = expirationTime;
                 }
 
-                if (node.return === null && node.tag === HostRoot) {
+                if (node.return === null && node.tag === HostRoot) {// 取到 fiberRoot
                     root = node.stateNode;
                     break;
                 }
@@ -22955,8 +23032,10 @@
     // expiration time of the existing task is the same as the expiration time of
     // the next level that the root has work on. This function is called on every
     // update, and right before exiting a task.
+    /**
+     * root.callbackNode = callbackNode;
+     */
     function ensureRootIsScheduled(root) {
-        debugger
         var lastExpiredTime = root.lastExpiredTime;
 
         if (lastExpiredTime !== NoWork) {
@@ -23008,7 +23087,6 @@
         root.callbackPriority = priorityLevel;
         var callbackNode;
 
-        debugger
         if (expirationTime === Sync) {
             // Sync React callbacks are scheduled on a special internal queue
             callbackNode = scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
@@ -23523,6 +23601,15 @@
             }
         }
     }
+    /**
+     * finally 中执行 flushSyncCallbackQueue（），触发 setState()真正生效。
+     * @param {*} fn 
+     * @param {*} a 
+     * @param {*} b 
+     * @param {*} c 
+     * @param {*} d 
+     * @returns 
+     */
     function discreteUpdates$1(fn, a, b, c, d) {
         var prevExecutionContext = executionContext;
         executionContext |= DiscreteEventContext;
@@ -23813,6 +23900,7 @@
     function workLoopSync() {
         // Already timed out, so perform work without checking if we need to yield.
         while (workInProgress !== null) {
+            debugger
             workInProgress = performUnitOfWork(workInProgress);
         }
     }
@@ -23832,6 +23920,7 @@
      * @returns 
      */
     function performUnitOfWork(unitOfWork) {
+        debugger
 
         // The current, flushed, state of this fiber is the alternate. Ideally
         // nothing should rely on this, but relying on it here means that we don't
@@ -25730,7 +25819,7 @@
     }
 
     /**
-     * 
+     * 根据ReactElement创建fiber的具体实现
      * @param {*} type 
      * @param {*} key 
      * @param {*} pendingProps 
@@ -25742,7 +25831,9 @@
     function createFiberFromTypeAndProps(type, // React$ElementType
         key, pendingProps, owner, mode, expirationTime) {
 
+        debugger
         var fiber;
+        //不确定是类组件还是函数组件
         var fiberTag = IndeterminateComponent; // The resolved type is set if we know what the final type will be. I.e. it's not lazy.
 
         var resolvedType = type;
@@ -25854,7 +25945,8 @@
     }
 
     /**
-     * 
+     * 根据ReactElement创建fiber
+     * createFiberFromTypeAndProps(type, key, pendingProps, owner, mode, expirationTime)
      */
     function createFiberFromElement(element, mode, expirationTime) {
         var owner = null;

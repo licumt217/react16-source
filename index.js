@@ -18,9 +18,22 @@ for (let i = 0; i < 50; i++) {
 class LikeButton extends React.Component {
     constructor (props) {
         super(props);
-        this.state = { liked: false };
+        this.state = { count: 0 };
     }
 
+    handleClick = () => {
+        console.log('------')
+        console.log(this.state.count)
+        this.setState({ count: this.state.count + 1 })
+        this.setState({ count: this.state.count + 2 })
+
+        // setTimeout(() => {
+        //     this.setState({ count: 5 })
+        //     console.log(":" + this.state.count)
+        // })
+
+        console.log(this.state.count)
+    }
     render() {
 
 
@@ -30,12 +43,10 @@ class LikeButton extends React.Component {
 
 
 
-        return e('div', { style: { color: 'red' } }, e(
-            'button',
-            // { onClick: () => alert(1) },
-            { onClick: () => this.setState({ liked: !this.state.liked }), style: { color: 'green' } },
-            'Like'
-        ), this.state.liked ? "like" : "not like")
+        return e('div',
+            { style: { color: 'red' } },
+            e('button', { onClick: this.handleClick, style: { color: 'green' } }, 'Like'), e('span', {}, this.state.count), this.state.count
+        )
     }
 }
 
