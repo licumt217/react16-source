@@ -6335,6 +6335,7 @@
 
     /**
      * 给 dom 元素 （设置内联文本） 、style样式等。如果dom元素的属性中有事件监听，则在此处给顶层元素绑定事件监听。
+     * children是文本和数字的话才设置
      */
     function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
         for (var propKey in nextProps) {
@@ -6359,7 +6360,7 @@
                 if (nextHtml != null) {
                     setInnerHTML(domElement, nextHtml);
                 }
-            } else if (propKey === CHILDREN) { //p 标签 span 标签等设置标签内容
+            } else if (propKey === CHILDREN) { //p 标签 span 标签等设置标签内容(children是文本和数字的话)
                 if (typeof nextProp === 'string') {
                     // Avoid setting initial textContent when the text is empty. In IE11 setting
                     // textContent on a <textarea> will cause the placeholder to not
@@ -6495,7 +6496,7 @@
         return domElement;
     }
     /**
-     * 
+     * 新建文本类型的dom元素并返回
      * @param {*} text 
      * @param {*} rootContainerElement 
      * @returns 
@@ -6504,7 +6505,7 @@
         return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text);
     }
     /**
-     * 
+     * 给instance （domElement）设置属性或style样式等。也包括span p 等的文本内容！！！
      * @param {*} domElement 
      * @param {*} tag 
      * @param {*} rawProps 
@@ -8113,7 +8114,7 @@
         selectionInformation = null;
     }
     /**
-     * 
+     * 根据fiber对象给 HostComponent类型的 创建真实dom实例。
      */
     function createInstance(type, props, rootContainerInstance, hostContext, internalInstanceHandle) {
         var parentNamespace;
@@ -8132,13 +8133,16 @@
             parentNamespace = hostContextDev.namespace;
         }
 
+        //根据type标签创建 dom 元素 【button等】并返回
         var domElement = createElement(type, props, rootContainerInstance, parentNamespace);
+        //将dom元素节点和对应的fiber建立关联。
         precacheFiberNode(internalInstanceHandle, domElement);
+        //将dom节点和对应fiber的 props建立关联(比如onClick=()=>{}等)，用于事件处理。
         updateFiberProps(domElement, props);
         return domElement;
     }
     /**
-     * 
+     * 给给定的dom元素插入子节点
      * @param {*} parentInstance 
      * @param {*} child 
      */
@@ -8146,7 +8150,8 @@
         parentInstance.appendChild(child);
     }
     /**
-     * 
+     * 给instance （domElement）设置属性或style样式等。也包括span p 等的文本内容！！！
+     * @return 返回当前元素是否需要自动获取焦点。
      */
     function finalizeInitialChildren(domElement, type, props, rootContainerInstance, hostContext) {
         setInitialProperties(domElement, type, props, rootContainerInstance);
@@ -8166,9 +8171,9 @@
         return diffProperties(domElement, type, oldProps, newProps, rootContainerInstance);
     }
     /**
-     * 
+     * 根据ReactElement的type和props.children来判断是否是 有直接的文本子节点
      * @param {*} type 
-     * @param {*} props 
+     * @param {*} props props.children 是文本和数字时返回true
      * @returns 
      */
     function shouldSetTextContent(type, props) {
@@ -8196,7 +8201,9 @@
             validateDOMNesting(null, text, hostContextDev.ancestorInfo);
         }
 
+        //新建文本类型的dom元素并返回
         var textNode = createTextNode(text, rootContainerInstance);
+        //将dom元素节点和对应的fiber建立关联。
         precacheFiberNode(internalInstanceHandle, textNode);
         return textNode;
     }
@@ -8650,7 +8657,7 @@
         return node[internalEventHandlersKey] || null;
     }
     /**
-     * 将dom节点和对应fiber的 props建立关联，用于事件处理。
+     * 将dom节点和对应fiber的 props建立关联(比如onClick=()=>{}等)，用于事件处理。
      * @param {*} node 
      * @param {*} props 
      */
@@ -14682,6 +14689,7 @@
          * @returns 
          */
         function deleteChild(returnFiber, childToDelete) {
+            // debugger
             if (!shouldTrackSideEffects) {
                 // Noop.
                 return;
@@ -14712,6 +14720,7 @@
          * @returns 
          */
         function deleteRemainingChildren(returnFiber, currentFirstChild) {
+            // debugger
             if (!shouldTrackSideEffects) {
                 // Noop.
                 return null;
@@ -14730,6 +14739,7 @@
         }
 
         function mapRemainingChildren(returnFiber, currentFirstChild) {
+            // debugger
             // Add the remaining children to a temporary map so that we can find them by
             // keys quickly. Implicit (null) keys get added to this set with their index
             // instead.
@@ -14756,6 +14766,7 @@
          * @returns 
          */
         function useFiber(fiber, pendingProps) {
+            // debugger
             // We currently set sibling to null and index to 0 here because it is easy
             // to forget to do before returning it. E.g. for the single child case.
             var clone = createWorkInProgress(fiber, pendingProps);
@@ -14773,6 +14784,7 @@
          * @returns 
          */
         function placeChild(newFiber, lastPlacedIndex, newIndex) {
+            // debugger
             newFiber.index = newIndex;
 
             if (!shouldTrackSideEffects) {
@@ -14803,8 +14815,10 @@
         /**
          * DONE
          * 给新创建的fiber打上 effectTag=Placement 标志（shouldTrackSideEffects && newFiber.alternate === null），或直接返回
+         * 初始化流程时，第一遍reconcile时，rootFiber的第一个子节点创建fiber后，因为此时 shouldTrackSideEffects =true，故此处给此fiber的effectEffect标记2。
          */
         function placeSingleChild(newFiber) {
+            // debugger
             // This is simpler for the single child case. We only need to do a
             // placement for inserting new children.
             if (shouldTrackSideEffects && newFiber.alternate === null) {
@@ -14823,6 +14837,7 @@
          * @returns 
          */
         function updateTextNode(returnFiber, current, textContent, expirationTime) {
+            // debugger
             if (current === null || current.tag !== HostText) {
                 // Insert
                 var created = createFiberFromText(textContent, returnFiber.mode, expirationTime);
@@ -14845,6 +14860,7 @@
          * @returns 
          */
         function updateElement(returnFiber, current, element, expirationTime) {
+            // debugger
             if (current !== null) {
                 if (current.elementType === element.type || ( // Keep this check inline so it only runs on the false path:
                     isCompatibleFamilyForHotReloading(current, element))) {
@@ -14898,9 +14914,12 @@
         }
 
         /**
-         * 
+         * @param returnFiber 父fiber
+         * @param newChild 要创建的新fiber对应的ReactElement
+         * @return newFiber
          */
         function createChild(returnFiber, newChild, expirationTime) {
+            // debugger
             //return createFiberFromText(): fiber
             if (typeof newChild === 'string' || typeof newChild === 'number') {
                 // Text nodes don't have keys. If the previous node is implicitly keyed
@@ -14959,6 +14978,7 @@
          * @returns 
          */
         function updateSlot(returnFiber, oldFiber, newChild, expirationTime) {
+            // debugger
             // Update the fiber if the keys match, otherwise return null.
             var key = oldFiber !== null ? oldFiber.key : null;
 
@@ -15104,9 +15124,10 @@
         }
 
         /**
-         * 
+         * 初始化流程：依次遍历newChildren中的ReactElement，分别创建fiber，且通过sibing串联，然后返回第一个fiber
          */
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, expirationTime) {
+            // debugger
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
             // with that model. If it ends up not being worth the tradeoffs, we can
@@ -15444,7 +15465,7 @@
          * return createFiberFromText(textContent, returnFiber.mode, expirationTime);
          */
         function reconcileSingleTextNode(returnFiber, currentFirstChild, textContent, expirationTime) {
-            debugger
+            // debugger
             // There's no need to check for keys on text nodes since we don't have a
             // way to define them.
             if (currentFirstChild !== null && currentFirstChild.tag === HostText) {
@@ -15469,7 +15490,7 @@
          * @return newFiber 
          */
         function reconcileSingleElement(returnFiber, currentFirstChild, element, expirationTime) {
-            debugger
+            // debugger
             var key = element.key;
             var child = currentFirstChild;
 
@@ -15590,7 +15611,7 @@
          * @returns 
          */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
-            debugger
+            // debugger
             {
                 // This function is not recursive.
                 // If the top level item is an array, we treat it as a set of children,
@@ -18161,7 +18182,7 @@
      * current !==null 意味着是更新，每个节点都需要计算 effectTag。
      */
     function reconcileChildren(current, workInProgress, nextChildren, renderExpirationTime) {
-        debugger
+        // debugger
 
 
         if (current === null) {//首次渲染 创建子节点的`Fiber`实例
@@ -18481,6 +18502,7 @@
      * @returns 
      */
     function updateClassComponent(current, workInProgress, Component, nextProps, renderExpirationTime) {
+        // debugger
         {
             if (workInProgress.type !== workInProgress.elementType) {
                 // Lazy component props can't be validated in createElement
@@ -18563,6 +18585,7 @@
      * @returns 
      */
     function finishClassComponent(current, workInProgress, Component, shouldUpdate, hasContext, renderExpirationTime) {
+        // debugger
         // Refs should update even if shouldComponentUpdate returns false
         markRef(current, workInProgress);
         var didCaptureError = (workInProgress.effectTag & DidCapture) !== NoEffect;
@@ -18654,6 +18677,7 @@
      * @returns return workInProgress.child;
      */
     function updateHostRoot(current, workInProgress, renderExpirationTime) {
+        // debugger
 
         pushHostRootContext(workInProgress);
         var updateQueue = workInProgress.updateQueue;
@@ -18725,6 +18749,7 @@
      * @returns 
      */
     function updateHostComponent(current, workInProgress, renderExpirationTime) {
+        // debugger
 
         pushHostContext(workInProgress);
 
@@ -18770,6 +18795,7 @@
      * 直接返回null，不做任何处理
      */
     function updateHostText(current, workInProgress) {
+        // debugger
         if (current === null) {
             tryToClaimNextHydratableInstance(workInProgress);
         } // Nothing to do here. This is terminal. We'll do the completion step
@@ -18916,6 +18942,7 @@
      * @returns 
      */
     function mountIndeterminateComponent(_current, workInProgress, Component, renderExpirationTime) {
+        // debugger
         if (_current !== null) {
             // An indeterminate component only mounts if it suspended inside a non-
             // concurrent tree, in an inconsistent state. We want to treat it like
@@ -19932,7 +19959,7 @@
      */
     function beginWork(current, workInProgress, renderExpirationTime) {
 
-        debugger
+        // debugger
 
         var updateExpirationTime = workInProgress.expirationTime;
 
@@ -20117,6 +20144,7 @@
         // move this assignment out of the common path and into each branch.
 
 
+        // debugger
         workInProgress.expirationTime = NoWork;
 
         switch (workInProgress.tag) {
@@ -20255,7 +20283,7 @@
     }
 
     /**
-     * 
+     * 给给定的fiber标记 effectTag | Update(4)
      * @param {*} workInProgress 
      */
     function markUpdate(workInProgress) {
@@ -20275,6 +20303,7 @@
 
     {
         /**
+         * 将HostComponent对应的fiber的实例（具体的dom对象），对应的fiber的所有子fiber（文本节点或HostComponent）对应的dom插入到 父级dom中去。
          * Mutation mode
          */
         appendAllChildren = function (parent, workInProgress, needsVisibilityToggle, isHidden) {
@@ -20284,7 +20313,7 @@
 
             while (node !== null) {
                 if (node.tag === HostComponent || node.tag === HostText) {
-                    //将文本直接插入父元素dom
+                    //将文本直接插入父元素dom；给给定的dom元素插入子节点
                     appendInitialChild(parent, node.stateNode);
                 } else if (node.tag === HostPortal); else if (node.child !== null) {
                     node.child.return = node;
@@ -20435,6 +20464,7 @@
      * 
      */
     function completeWork(current, workInProgress, renderExpirationTime) {
+        debugger
         var newProps = workInProgress.pendingProps;
 
         switch (workInProgress.tag) {
@@ -20466,6 +20496,7 @@
              */
             case HostRoot:
                 {
+                    debugger
                     popHostContainer(workInProgress);
                     popTopLevelContextObject(workInProgress);
                     var fiberRoot = workInProgress.stateNode;
@@ -20496,6 +20527,7 @@
              */
             case HostComponent:
                 {
+                    debugger
                     popHostContext(workInProgress);
                     var rootContainerInstance = getRootHostContainer();
                     var type = workInProgress.type;
@@ -20534,8 +20566,10 @@
                                 markUpdate(workInProgress);
                             }
                         } else {
+                            //根据fiber对象给 HostComponent类型的 创建真实dom实例。
                             var instance = createInstance(type, newProps, rootContainerInstance, currentHostContext, workInProgress);
-                            //将文本子节点直接插入父元素dom中
+                            //将文本子节点直接插入父元素dom中。
+                            //将HostComponent对应的fiber的实例（具体的dom对象），对应的fiber的所有子fiber（文本节点或HostComponent）对应的dom插入到 父级dom中去。
                             appendAllChildren(instance, workInProgress, false, false); // This needs to be set before we mount Flare event listeners
 
                             workInProgress.stateNode = instance;
@@ -20543,6 +20577,7 @@
                             // (eg DOM renderer supports auto-focus for certain elements).
                             // Make sure such renderers get scheduled for later work.
                             //给instance （domElement）设置属性或style样式等。也包括span p 等的文本内容！！！
+                            //返回当前元素是否需要自动获取焦点。
                             if (finalizeInitialChildren(instance, type, newProps, rootContainerInstance)) {
                                 markUpdate(workInProgress);
                             }
@@ -20562,6 +20597,7 @@
              */
             case HostText:
                 {
+                    debugger
                     var newText = newProps;
 
                     if (current && workInProgress.stateNode != null) {
@@ -23900,7 +23936,7 @@
     function workLoopSync() {
         // Already timed out, so perform work without checking if we need to yield.
         while (workInProgress !== null) {
-            debugger
+            // debugger
             workInProgress = performUnitOfWork(workInProgress);
         }
     }
@@ -23920,7 +23956,7 @@
      * @returns 
      */
     function performUnitOfWork(unitOfWork) {
-        debugger
+        // debugger
 
         // The current, flushed, state of this fiber is the alternate. Ideally
         // nothing should rely on this, but relying on it here means that we don't
@@ -25831,7 +25867,7 @@
     function createFiberFromTypeAndProps(type, // React$ElementType
         key, pendingProps, owner, mode, expirationTime) {
 
-        debugger
+        // debugger
         var fiber;
         //不确定是类组件还是函数组件
         var fiberTag = IndeterminateComponent; // The resolved type is set if we know what the final type will be. I.e. it's not lazy.
