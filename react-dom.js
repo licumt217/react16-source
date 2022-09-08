@@ -1388,6 +1388,7 @@
      * @param {*} value
      */
     function setValueForProperty(node, name, value, isCustomComponentTag) {
+        // debugger
         var propertyInfo = getPropertyInfo(name);
 
         if (shouldIgnoreAttribute(name, propertyInfo, isCustomComponentTag)) {
@@ -2071,6 +2072,7 @@
         var usesChecked = props.type === 'checkbox' || props.type === 'radio';
         return usesChecked ? props.checked != null : props.value != null;
     }
+
     /**
      * Implements an <input> host component that allows setting these optional
      * props: `checked`, `value`, `defaultChecked`, and `defaultValue`.
@@ -2087,9 +2089,8 @@
      *
      * See http://www.w3.org/TR/2012/WD-html5-20121025/the-input-element.html
      */
-
-
     function getHostProps(element, props) {
+
         var node = element;
         var checked = props.checked;
 
@@ -6393,8 +6394,15 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} domElement 
+     * @param {*} updatePayload 
+     * @param {*} wasCustomComponentTag 
+     * @param {*} isCustomComponentTag 
+     */
     function updateDOMProperties(domElement, updatePayload, wasCustomComponentTag, isCustomComponentTag) {
-        // TODO: Handle wasCustomComponentTag
+        // debugger
         for (var i = 0; i < updatePayload.length; i += 2) {
             var propKey = updatePayload[i];
             var propValue = updatePayload[i + 1];
@@ -6638,7 +6646,17 @@
         }
     } // Calculate the diff between the two objects.
 
+    /**
+     * 
+     * @param {*} domElement 
+     * @param {*} tag 
+     * @param {*} lastRawProps 
+     * @param {*} nextRawProps 
+     * @param {*} rootContainerElement 
+     * @returns 
+     */
     function diffProperties(domElement, tag, lastRawProps, nextRawProps, rootContainerElement) {
+        debugger
         {
             validatePropertiesInDevelopment(tag, nextRawProps);
         }
@@ -6673,11 +6691,11 @@
                 break;
 
             default:
+                // debugger
                 lastProps = lastRawProps;
                 nextProps = nextRawProps;
 
                 if (typeof lastProps.onClick !== 'function' && typeof nextProps.onClick === 'function') {
-                    // TODO: This cast may not be sound for SVG, MathML or custom elements.
                     trapClickOnNonInteractiveElement(domElement);
                 }
 
@@ -6820,6 +6838,14 @@
         return updatePayload;
     } // Apply the diff.
 
+    /**
+     * 
+     * @param {*} domElement 
+     * @param {*} updatePayload 
+     * @param {*} tag 
+     * @param {*} lastRawProps 
+     * @param {*} nextRawProps 
+     */
     function updateProperties(domElement, updatePayload, tag, lastRawProps, nextRawProps) {
         // Update checked *before* name.
         // In the middle of an update, it is possible to have multiple checked.
@@ -6829,12 +6855,12 @@
         }
 
         var wasCustomComponentTag = isCustomComponent(tag, lastRawProps);
-        var isCustomComponentTag = isCustomComponent(tag, nextRawProps); // Apply the diff.
+        var isCustomComponentTag = isCustomComponent(tag, nextRawProps);
 
+        // Apply the diff.
         updateDOMProperties(domElement, updatePayload, wasCustomComponentTag, isCustomComponentTag);
-        // TODO: Ensure that an update gets scheduled if any of the special props
-        // changed.
 
+        // TODO: Ensure that an update gets scheduled if any of the special props changed.
         switch (tag) {
             case 'input':
                 // Update the wrapper around inputs *after* updating props. This has to
@@ -8160,7 +8186,19 @@
         setInitialProperties(domElement, type, props, rootContainerInstance);
         return shouldAutoFocusHostComponent(type, props);
     }
+
+    /**
+     * 
+     * @param {*} domElement 
+     * @param {*} type 
+     * @param {*} oldProps 
+     * @param {*} newProps 
+     * @param {*} rootContainerInstance 
+     * @param {*} hostContext 
+     * @returns 
+     */
     function prepareUpdate(domElement, type, oldProps, newProps, rootContainerInstance, hostContext) {
+        // debugger
         {
             var hostContextDev = hostContext;
 
@@ -8227,9 +8265,19 @@
             domElement.focus();
         }
     }
+    /**
+     * 
+     * @param {*} domElement 
+     * @param {*} updatePayload 
+     * @param {*} type 
+     * @param {*} oldProps 
+     * @param {*} newProps 
+     * @param {*} internalInstanceHandle 
+     */
     function commitUpdate(domElement, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
         // Update the props handle so that we know which props are the ones with
         // with current event handlers.
+        //将dom节点和对应fiber的 props建立关联(比如onClick=()=>{}等)，用于事件处理。
         updateFiberProps(domElement, newProps); // Apply the diff to the DOM node.
 
         updateProperties(domElement, updatePayload, type, oldProps, newProps);
@@ -8241,6 +8289,12 @@
     function resetTextContent(domElement) {
         setTextContent(domElement, '');
     }
+    /**
+     * 
+     * @param {*} textInstance 
+     * @param {*} oldText 
+     * @param {*} newText 
+     */
     function commitTextUpdate(textInstance, oldText, newText) {
         textInstance.nodeValue = newText;
     }
@@ -14834,7 +14888,7 @@
          * 初始化流程时，第一遍reconcile时，rootFiber的第一个子节点创建fiber后，因为此时 shouldTrackSideEffects =true，故此处给此fiber的effectEffect标记2。
          */
         function placeSingleChild(newFiber) {
-            // debugger
+            debugger
             // This is simpler for the single child case. We only need to do a
             // placement for inserting new children.
             if (shouldTrackSideEffects && newFiber.alternate === null) {
@@ -14853,7 +14907,7 @@
          * @returns 
          */
         function updateTextNode(returnFiber, current, textContent, expirationTime) {
-            // debugger
+            debugger
             if (current === null || current.tag !== HostText) {
                 // Insert
                 var created = createFiberFromText(textContent, returnFiber.mode, expirationTime);
@@ -14876,10 +14930,9 @@
          * @returns 
          */
         function updateElement(returnFiber, current, element, expirationTime) {
-            // debugger
-            if (current !== null) {
-                if (current.elementType === element.type || ( // Keep this check inline so it only runs on the false path:
-                    isCompatibleFamilyForHotReloading(current, element))) {
+            debugger
+            if (current !== null) {//复用之前的fiber
+                if (current.elementType === element.type || (isCompatibleFamilyForHotReloading(current, element))) {
                     // Move based on index
                     var existing = useFiber(current, element.props);
                     existing.ref = coerceRef(returnFiber, current, element);
@@ -14892,9 +14945,9 @@
 
                     return existing;
                 }
-            } // Insert
+            }
 
-
+            // Insert 新建fiber
             var created = createFiberFromElement(element, returnFiber.mode, expirationTime);
             created.ref = coerceRef(returnFiber, current, element);
             created.return = returnFiber;
@@ -14994,7 +15047,7 @@
          * @returns 
          */
         function updateSlot(returnFiber, oldFiber, newChild, expirationTime) {
-            // debugger
+            debugger
             // Update the fiber if the keys match, otherwise return null.
             var key = oldFiber !== null ? oldFiber.key : null;
 
@@ -15143,7 +15196,7 @@
          * 初始化流程：依次遍历newChildren中的ReactElement，分别创建fiber，且通过sibing串联，然后返回第一个fiber
          */
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, expirationTime) {
-            // debugger
+            debugger
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
             // with that model. If it ends up not being worth the tradeoffs, we can
@@ -15627,7 +15680,7 @@
          * @returns 
          */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
-            // debugger
+            debugger
             {
                 // This function is not recursive.
                 // If the top level item is an array, we treat it as a set of children,
@@ -20194,6 +20247,7 @@
              */
             case ClassComponent:
                 {
+                    // debugger
                     var _Component2 = workInProgress.type;
                     var _unresolvedProps = workInProgress.pendingProps;
 
@@ -20306,8 +20360,7 @@
      * @param {*} workInProgress 
      */
     function markUpdate(workInProgress) {
-        // Tag the fiber with an update effect. This turns a Placement into
-        // a PlacementAndUpdate.
+        // Tag the fiber with an update effect. This turns a Placement into a PlacementAndUpdate.
         workInProgress.effectTag |= Update;
     }
 
@@ -20361,33 +20414,27 @@
         };
 
         /**
-         * 
+         * 更新流程中的completeWork阶段进入此。
          */
         updateHostComponent$1 = function (current, workInProgress, type, newProps, rootContainerInstance) {
-            // If we have an alternate, that means this is an update and we need to
-            // schedule a side-effect to do the updates.
+            debugger
+            // If we have an alternate, that means this is an update and we need to schedule a side-effect to do the updates.
             var oldProps = current.memoizedProps;
 
             if (oldProps === newProps) {
-                // In mutation mode, this is sufficient for a bailout because
-                // we won't touch this node even if children changed.
+                // In mutation mode, this is sufficient(足够的，充足的) for a bailout because we won't touch this node even if children changed.
                 return;
-            } // If we get updated because one of our children updated, we don't
-            // have newProps so we'll have to reuse them.
-            // TODO: Split the update API as separate for the props vs. children.
-            // Even better would be if children weren't special cased at all tho.
-
+            }
+            // If we get updated because one of our children updated, we don't have newProps so we'll have to reuse them.
 
             var instance = workInProgress.stateNode;
-            var currentHostContext = getHostContext(); // TODO: Experiencing an error where oldProps is null. Suggests a host
-            // component is hitting the resume path. Figure out why. Possibly
-            // related to `hidden`.
+            var currentHostContext = getHostContext();
 
             var updatePayload = prepareUpdate(instance, type, oldProps, newProps, rootContainerInstance, currentHostContext);
-            // TODO: Type this specific to this type of component.
 
-            workInProgress.updateQueue = updatePayload; // If the update payload indicates that there is a change or if there
-            // is a new ref we mark this as an update. All the work is done in commitWork.
+            workInProgress.updateQueue = updatePayload;
+
+            // If the update payload indicates that there is a change or if there is a new ref we mark this as an update. All the work is done in commitWork.
 
             if (updatePayload) {
                 markUpdate(workInProgress);
@@ -20483,6 +20530,7 @@
      * 
      */
     function completeWork(current, workInProgress, renderExpirationTime) {
+        // debugger
         var newProps = workInProgress.pendingProps;
 
         switch (workInProgress.tag) {
@@ -20545,7 +20593,7 @@
              */
             case HostComponent:
                 {
-                    // debugger
+                    debugger
                     popHostContext(workInProgress);
                     var rootContainerInstance = getRootHostContainer();
                     var type = workInProgress.type;
@@ -22218,8 +22266,15 @@
         detachFiber(current);
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} finishedWork 
+     * @returns 
+     */
     function commitWork(current, finishedWork) {
 
+        debugger
         switch (finishedWork.tag) {
             case FunctionComponent:
             case ForwardRef:
@@ -22243,6 +22298,7 @@
 
             case HostComponent:
                 {
+                    debugger
                     var instance = finishedWork.stateNode;
 
                     if (instance != null) {
@@ -22268,6 +22324,7 @@
 
             case HostText:
                 {
+                    debugger
                     if (!(finishedWork.stateNode !== null)) {
                         {
                             throw Error("This should have a text node initialized. This error is likely caused by a bug in React. Please file an issue.");
@@ -22275,9 +22332,9 @@
                     }
 
                     var textInstance = finishedWork.stateNode;
-                    var newText = finishedWork.memoizedProps; // For hydration we reuse the update path but we treat the oldProps
-                    // as the newProps. The updatePayload will contain the real change in
-                    // this case.
+                    var newText = finishedWork.memoizedProps;
+                    // For hydration we reuse the update path but we treat the oldProps as the newProps. 
+                    // The updatePayload will contain the real change in this case.
 
                     var oldText = current !== null ? current.memoizedProps : newText;
                     commitTextUpdate(textInstance, oldText, newText);
@@ -23483,7 +23540,6 @@
      * @param root -- fiberRoot
      */
     function performSyncWorkOnRoot(root) {
-        // debugger
         // Check if there's expired work on this root. Otherwise, render at Sync.
         var lastExpiredTime = root.lastExpiredTime;
         var expirationTime = lastExpiredTime !== NoWork ? lastExpiredTime : Sync;
@@ -23523,6 +23579,7 @@
                 }
             } while (true);
 
+            debugger
 
             // debugger
 
@@ -23626,7 +23683,7 @@
     }
 
     function batchedUpdates$1(fn, a) {
-        debugger
+        // debugger
         var prevExecutionContext = executionContext;
         executionContext |= BatchedContext;
 
@@ -23712,7 +23769,7 @@
         }
     }
     function flushSync(fn, a) {
-        debugger
+        // debugger
         if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
             {
                 {
@@ -23725,10 +23782,10 @@
         executionContext |= BatchedContext;
 
         try {
-            debugger
+            // debugger
             return runWithPriority$1(ImmediatePriority, fn.bind(null, a));
         } finally {
-            debugger
+            // debugger
             executionContext = prevExecutionContext; // Flush the immediate callbacks that were scheduled during this batch.
             // Note that this will happen even if batchedUpdates is higher up
             // the stack.
@@ -24030,6 +24087,7 @@
         workInProgress = unitOfWork;
 
         do {
+            debugger
             // The current, flushed, state of this fiber is the alternate. Ideally
             // nothing should rely on this, but relying on it here means that we don't
             // need an additional field on the work in progress.
@@ -24252,8 +24310,9 @@
      * 提交阶段
      */
     function commitRootImpl(root, renderPriorityLevel) {
-        // debugger
 
+
+        debugger
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
             // means `flushPassiveEffects` will sometimes result in additional
