@@ -2878,7 +2878,7 @@
     }
 
     /**
-     * 
+     * 将给定优先级设置为currentPriorityLevel，然后执行事件处理器，完毕后还原。
      * @param {*} priorityLevel 
      * @param {*} eventHandler 
      * @returns 
@@ -3076,8 +3076,9 @@
                 markTaskCanceled(task, currentTime);
                 task.isQueued = false;
             }
-        } // Null out the callback to indicate the task has been canceled. (Can't
-        // remove from the queue because you can't remove arbitrary nodes from an
+        }
+        // Null out the callback to indicate the task has been canceled. (Can't
+        // remove from the queue because you can't remove arbitrary(任意的、武断的) nodes from an
         // array based heap, only the first one.)
 
 

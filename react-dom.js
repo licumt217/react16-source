@@ -785,7 +785,7 @@
     };
 
     /**
-     * 
+     * discreteUpdates$1 是当前函数的真正实现
      * @param {*} fn 
      * @param {*} a 
      * @param {*} b 
@@ -872,6 +872,7 @@
      * @returns 
      */
     function discreteUpdates(fn, a, b, c, d) {
+        // debugger
         var prevIsInsideEventHandler = isInsideEventHandler;
         isInsideEventHandler = true;
 
@@ -4627,13 +4628,14 @@
     }
 
     /**
-     * 
+     * 离散事件的事件处理执行函数
      * @param {*} topLevelType 
      * @param {*} eventSystemFlags 
      * @param {*} container 
      * @param {*} nativeEvent 
      */
     function dispatchDiscreteEvent(topLevelType, eventSystemFlags, container, nativeEvent) {
+        // debugger
         flushDiscreteUpdatesIfNeeded(nativeEvent.timeStamp);
         discreteUpdates(dispatchEvent, topLevelType, eventSystemFlags, container, nativeEvent);
     }
@@ -4646,6 +4648,7 @@
      * 
      */
     function dispatchEvent(topLevelType, eventSystemFlags, container, nativeEvent) {
+        // debugger
         if (!_enabled) {
             return;
         }
@@ -12019,6 +12022,7 @@
      * @returns 
      */
     function runWithPriority$1(reactPriorityLevel, fn) {
+        // debugger
         var priorityLevel = reactPriorityToSchedulerPriority(reactPriorityLevel);
         return Scheduler_runWithPriority(priorityLevel, fn);
     }
@@ -12027,21 +12031,18 @@
         return Scheduler_scheduleCallback(priorityLevel, callback, options);
     }
     /**
-     * 
+     * 调度同步回调。
      * @param {*} callback 
      * @returns 
      */
     function scheduleSyncCallback(callback) {
-        // Push this callback into an internal queue. We'll flush these either in
-        // the next tick, or earlier if something calls `flushSyncCallbackQueue`.
+        // Push this callback into an internal queue. We'll flush these either in the next tick, or earlier if something calls `flushSyncCallbackQueue`.
         if (syncQueue === null) {
             syncQueue = [callback];
             // Flush the queue in the next tick, at the earliest.
-
             immediateQueueCallbackNode = Scheduler_scheduleCallback(Scheduler_ImmediatePriority, flushSyncCallbackQueueImpl);
         } else {
-            // Push onto existing queue. Don't need to schedule a callback because
-            // we already scheduled one when we created the queue.
+            // Push onto existing queue. Don't need to schedule a callback because we already scheduled one when we created the queue.
             syncQueue.push(callback);
         }
 
@@ -12056,6 +12057,7 @@
      * 
      */
     function flushSyncCallbackQueue() {
+        // debugger
         if (immediateQueueCallbackNode !== null) {
             var node = immediateQueueCallbackNode;
             immediateQueueCallbackNode = null;
@@ -12069,6 +12071,7 @@
      * 
      */
     function flushSyncCallbackQueueImpl() {
+        // debugger
 
         if (!isFlushingSyncQueue && syncQueue !== null) {
             // Prevent re-entrancy.
@@ -13308,6 +13311,7 @@
      * @returns 
      */
     function enqueueUpdate(fiber, update) {
+        // debugger
         var updateQueue = fiber.updateQueue;
 
         if (updateQueue === null) {
@@ -13787,6 +13791,7 @@
                 update.callback = callback;
             }
 
+            // debugger
             enqueueUpdate(fiber, update);
             scheduleWork(fiber, expirationTime);
         },
@@ -14372,8 +14377,18 @@
         return shouldUpdate;
     }
 
-    // Invokes the update life-cycles and returns false if it shouldn't rerender.
+    /**
+     * Invokes the update life-cycles and returns false if it shouldn't rerender.
+     * 处理更新队列，生成新的state
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} ctor 
+     * @param {*} newProps 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function updateClassInstance(current, workInProgress, ctor, newProps, renderExpirationTime) {
+        // debugger
         var instance = workInProgress.stateNode;
         cloneUpdateQueue(current, workInProgress);
         var oldProps = workInProgress.memoizedProps;
@@ -14406,6 +14421,7 @@
         resetHasForceUpdateBeforeProcessing();
         var oldState = workInProgress.memoizedState;
         var newState = instance.state = oldState;
+        //将更新队列的更新和旧的state合并，生成新的state；
         processUpdateQueue(workInProgress, newProps, instance, renderExpirationTime);
         newState = workInProgress.memoizedState;
 
@@ -15713,6 +15729,7 @@
      * @returns 
      */
     function cloneChildFibers(current, workInProgress) {
+        // debugger
         if (!(current === null || workInProgress.child === current.child)) {
             {
                 throw Error("Resuming work not yet implemented.");
@@ -18552,6 +18569,7 @@
             // In a resume, we'll already have an instance we can reuse.
             shouldUpdate = resumeMountClassInstance(workInProgress, Component, nextProps, renderExpirationTime);
         } else {
+            //处理更新队列，生成新的state
             shouldUpdate = updateClassInstance(current, workInProgress, Component, nextProps, renderExpirationTime);
         }
 
@@ -19859,6 +19877,7 @@
      * @returns 
      */
     function bailoutOnAlreadyFinishedWork(current, workInProgress, renderExpirationTime) {
+        // debugger
         cancelWorkTimer(workInProgress);
 
         if (current !== null) {
@@ -21967,7 +21986,7 @@
      * @param {*} finishedWork 
      */
     function commitPlacement(finishedWork) {
-        debugger
+        // debugger
 
         var parentFiber = getHostParentFiber(finishedWork); // Note: these two variables *must* always be updated together.
 
@@ -22028,7 +22047,7 @@
      * @param {*} parent 
      */
     function insertOrAppendPlacementNodeIntoContainer(node, before, parent) {
-        debugger
+        // debugger
         var tag = node.tag;
         var isHost = tag === HostComponent || tag === HostText;
 
@@ -22879,6 +22898,7 @@
      * @param fiber rootFiber
      */
     function scheduleUpdateOnFiber(fiber, expirationTime) {
+        // debugger
         checkForNestedUpdates();
         warnAboutRenderPhaseUpdatesInDEV(fiber);
         var root = markUpdateTimeFromFiberToRoot(fiber, expirationTime);//fiberRoot
@@ -22909,6 +22929,7 @@
             } else {
                 ensureRootIsScheduled(root);
                 schedulePendingInteractions(root, expirationTime);
+                // debugger
 
                 if (executionContext === NoContext) {
                     // Flush the synchronous work now, unless we're already working or inside
@@ -23030,25 +23051,22 @@
      * 
      */
     function getNextRootExpirationTimeToWorkOn(root) {
-        // Determines the next expiration time that the root should render, taking
-        // into account levels that may be suspended, or levels that may have
-        // received a ping.
+        // Determines the next expiration time that the root should render, taking into account levels that may be suspended, or levels that may have received a ping.
         var lastExpiredTime = root.lastExpiredTime;
 
         if (lastExpiredTime !== NoWork) {
             return lastExpiredTime;
         }
 
-        // "Pending" refers to any update that hasn't committed yet, including if it
-        // suspended. The "suspended" range is therefore a subset.
-
-
+        // "Pending" refers to any update that hasn't committed yet, including if it suspended. The "suspended" range is therefore a subset.
         var firstPendingTime = root.firstPendingTime;
 
         if (!isRootSuspendedAtTime(root, firstPendingTime)) {
             // The highest priority pending time is not suspended. Let's work on that.
             return firstPendingTime;
-        } // If the first pending time is suspended, check if there's a lower priority
+        }
+
+        // If the first pending time is suspended, check if there's a lower priority
         // pending level that we know about. Or check if we received a ping. Work
         // on whichever is higher priority.
 
@@ -23096,14 +23114,12 @@
             }
 
             return;
-        } // TODO: If this is an update, we already read the current time. Pass the
-        // time as an argument.
+        }
 
         var currentTime = requestCurrentTimeForUpdate();
         var priorityLevel = inferPriorityFromExpirationTime(currentTime, expirationTime);
-        // If there's an existing render task, confirm it has the correct priority and
-        // expiration time. Otherwise, we'll cancel it and schedule a new one.
 
+        // If there's an existing render task, confirm it has the correct priority and expiration time. Otherwise, we'll cancel it and schedule a new one.
         if (existingCallbackNode !== null) {
             var existingCallbackPriority = root.callbackPriority;
             var existingCallbackExpirationTime = root.callbackExpirationTime;
@@ -23113,11 +23129,9 @@
                 existingCallbackPriority >= priorityLevel) {
                 // Existing callback is sufficient.
                 return;
-            } // Need to schedule a new task.
-            // TODO: Instead of scheduling a new task, we should be able to change the
-            // priority of the existing one.
+            }
 
-
+            // Need to schedule a new task.
             cancelCallback(existingCallbackNode);
         }
 
@@ -23469,6 +23483,7 @@
      * @param root -- fiberRoot
      */
     function performSyncWorkOnRoot(root) {
+        // debugger
         // Check if there's expired work on this root. Otherwise, render at Sync.
         var lastExpiredTime = root.lastExpiredTime;
         var expirationTime = lastExpiredTime !== NoWork ? lastExpiredTime : Sync;
@@ -23509,6 +23524,7 @@
             } while (true);
 
 
+            // debugger
 
             resetContextDependencies();
             executionContext = prevExecutionContext;
@@ -23610,6 +23626,7 @@
     }
 
     function batchedUpdates$1(fn, a) {
+        debugger
         var prevExecutionContext = executionContext;
         executionContext |= BatchedContext;
 
@@ -23624,6 +23641,12 @@
             }
         }
     }
+    /**
+     * 
+     * @param {*} fn 
+     * @param {*} a 
+     * @returns 
+     */
     function batchedEventUpdates$1(fn, a) {
         var prevExecutionContext = executionContext;
         executionContext |= EventContext;
@@ -23689,6 +23712,7 @@
         }
     }
     function flushSync(fn, a) {
+        debugger
         if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
             {
                 {
@@ -23701,8 +23725,10 @@
         executionContext |= BatchedContext;
 
         try {
+            debugger
             return runWithPriority$1(ImmediatePriority, fn.bind(null, a));
         } finally {
+            debugger
             executionContext = prevExecutionContext; // Flush the immediate callbacks that were scheduled during this batch.
             // Note that this will happen even if batchedUpdates is higher up
             // the stack.
@@ -24226,7 +24252,7 @@
      * 提交阶段
      */
     function commitRootImpl(root, renderPriorityLevel) {
-        debugger
+        // debugger
 
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
@@ -24536,6 +24562,7 @@
             return null;
         } // If layout work was scheduled, flush it now.
 
+        // debugger
 
         flushSyncCallbackQueue();
         return null;
@@ -24579,9 +24606,9 @@
      */
     function commitMutationEffects(root, renderPriorityLevel) {
         // TODO: Should probably move the bulk of this function to commitWork.
-        debugger
+        // debugger
         while (nextEffect !== null) {
-            debugger
+            // debugger
             setCurrentFiber(nextEffect);
             var effectTag = nextEffect.effectTag;
 
@@ -25685,7 +25712,7 @@
     function createWorkInProgress(current, pendingProps) {
         var workInProgress = current.alternate;
 
-        if (workInProgress === null) {
+        if (workInProgress === null) {//current 等于 rootFiber的情况
             // We use a double buffering pooling technique because we know that we'll
             // only ever need at most two versions of a tree. We pool the "other" unused
             // node that we're free to reuse. This is lazily created to avoid allocating
@@ -25710,10 +25737,11 @@
             workInProgress.alternate = current;
             current.alternate = workInProgress;
         } else {
-            workInProgress.pendingProps = pendingProps; // We already have an alternate.
-            // Reset the effect tag.
+            workInProgress.pendingProps = pendingProps;
+            // We already have an alternate. Reset the effect tag.
 
-            workInProgress.effectTag = NoEffect; // The effect list is no longer valid.
+            workInProgress.effectTag = NoEffect;
+            // The effect list is no longer valid.
 
             workInProgress.nextEffect = null;
             workInProgress.firstEffect = null;
