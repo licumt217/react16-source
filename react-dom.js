@@ -8246,7 +8246,7 @@
     }
 
     /**
-     * 
+     * 将对应的dom子节点插入到父节点中去
      */
     function appendChildToContainer(container, child) {
         var parentNode;
@@ -21963,10 +21963,11 @@
     }
 
     /**
-     * 
+     * 插入操作
      * @param {*} finishedWork 
      */
     function commitPlacement(finishedWork) {
+        debugger
 
         var parentFiber = getHostParentFiber(finishedWork); // Note: these two variables *must* always be updated together.
 
@@ -22027,6 +22028,7 @@
      * @param {*} parent 
      */
     function insertOrAppendPlacementNodeIntoContainer(node, before, parent) {
+        debugger
         var tag = node.tag;
         var isHost = tag === HostComponent || tag === HostText;
 
@@ -22036,10 +22038,11 @@
             if (before) {
                 insertInContainerBefore(parent, stateNode, before);
             } else {
+                //将对应的dom子节点插入到父节点中去
                 appendChildToContainer(parent, stateNode);
             }
         } else if (tag === HostPortal); else {
-            //函数组件对应的fiber，将所有的子元素插入dom
+            //函数组件和类组件对应的fiber，将所有的子元素插入dom
             var child = node.child;
 
             if (child !== null) {
@@ -23978,7 +23981,7 @@
         resetCurrentFiber();
         unitOfWork.memoizedProps = unitOfWork.pendingProps;
 
-        debugger
+        // debugger
         if (next === null) {
             // If this doesn't spawn new work, complete the current work.
             next = completeUnitOfWork(unitOfWork);
@@ -23994,7 +23997,7 @@
      * @returns 
      */
     function completeUnitOfWork(unitOfWork) {
-        debugger
+        // debugger
 
         // Attempt to complete the current unit of work, then move to the next
         // sibling. If there are no more siblings, return to the parent fiber.
@@ -24220,9 +24223,11 @@
     }
 
     /**
-     * 
+     * 提交阶段
      */
     function commitRootImpl(root, renderPriorityLevel) {
+        debugger
+
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
             // means `flushPassiveEffects` will sometimes result in additional
@@ -24574,7 +24579,9 @@
      */
     function commitMutationEffects(root, renderPriorityLevel) {
         // TODO: Should probably move the bulk of this function to commitWork.
+        debugger
         while (nextEffect !== null) {
+            debugger
             setCurrentFiber(nextEffect);
             var effectTag = nextEffect.effectTag;
 
@@ -24588,12 +24595,12 @@
                 if (current !== null) {
                     commitDetachRef(current);
                 }
-            } // The following switch statement is only concerned about placement,
+            }
+
+            // The following switch statement is only concerned about placement,
             // updates, and deletions. To avoid needing to add a case for every possible
             // bitmap value, we remove the secondary effects from the effect tag and
             // switch on that value.
-
-
             var primaryEffectTag = effectTag & (Placement | Update | Deletion | Hydrating);
 
             switch (primaryEffectTag) {
