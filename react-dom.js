@@ -20464,7 +20464,6 @@
      * 
      */
     function completeWork(current, workInProgress, renderExpirationTime) {
-        debugger
         var newProps = workInProgress.pendingProps;
 
         switch (workInProgress.tag) {
@@ -20496,7 +20495,7 @@
              */
             case HostRoot:
                 {
-                    debugger
+                    // debugger
                     popHostContainer(workInProgress);
                     popTopLevelContextObject(workInProgress);
                     var fiberRoot = workInProgress.stateNode;
@@ -20527,7 +20526,7 @@
              */
             case HostComponent:
                 {
-                    debugger
+                    // debugger
                     popHostContext(workInProgress);
                     var rootContainerInstance = getRootHostContainer();
                     var type = workInProgress.type;
@@ -20597,7 +20596,7 @@
              */
             case HostText:
                 {
-                    debugger
+                    // debugger
                     var newText = newProps;
 
                     if (current && workInProgress.stateNode != null) {
@@ -23979,6 +23978,7 @@
         resetCurrentFiber();
         unitOfWork.memoizedProps = unitOfWork.pendingProps;
 
+        debugger
         if (next === null) {
             // If this doesn't spawn new work, complete the current work.
             next = completeUnitOfWork(unitOfWork);
@@ -23994,6 +23994,7 @@
      * @returns 
      */
     function completeUnitOfWork(unitOfWork) {
+        debugger
 
         // Attempt to complete the current unit of work, then move to the next
         // sibling. If there are no more siblings, return to the parent fiber.
