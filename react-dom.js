@@ -6656,7 +6656,7 @@
      * @returns 
      */
     function diffProperties(domElement, tag, lastRawProps, nextRawProps, rootContainerElement) {
-        debugger
+
         {
             validatePropertiesInDevelopment(tag, nextRawProps);
         }
@@ -14888,7 +14888,7 @@
          * 初始化流程时，第一遍reconcile时，rootFiber的第一个子节点创建fiber后，因为此时 shouldTrackSideEffects =true，故此处给此fiber的effectEffect标记2。
          */
         function placeSingleChild(newFiber) {
-            debugger
+            // debugger
             // This is simpler for the single child case. We only need to do a
             // placement for inserting new children.
             if (shouldTrackSideEffects && newFiber.alternate === null) {
@@ -14907,7 +14907,7 @@
          * @returns 
          */
         function updateTextNode(returnFiber, current, textContent, expirationTime) {
-            debugger
+            // debugger
             if (current === null || current.tag !== HostText) {
                 // Insert
                 var created = createFiberFromText(textContent, returnFiber.mode, expirationTime);
@@ -14930,7 +14930,7 @@
          * @returns 
          */
         function updateElement(returnFiber, current, element, expirationTime) {
-            debugger
+            // debugger
             if (current !== null) {//复用之前的fiber
                 if (current.elementType === element.type || (isCompatibleFamilyForHotReloading(current, element))) {
                     // Move based on index
@@ -15047,7 +15047,7 @@
          * @returns 
          */
         function updateSlot(returnFiber, oldFiber, newChild, expirationTime) {
-            debugger
+            // debugger
             // Update the fiber if the keys match, otherwise return null.
             var key = oldFiber !== null ? oldFiber.key : null;
 
@@ -15196,7 +15196,7 @@
          * 初始化流程：依次遍历newChildren中的ReactElement，分别创建fiber，且通过sibing串联，然后返回第一个fiber
          */
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, expirationTime) {
-            debugger
+            // debugger
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
             // with that model. If it ends up not being worth the tradeoffs, we can
@@ -15680,7 +15680,7 @@
          * @returns 
          */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
-            debugger
+            // debugger
             {
                 // This function is not recursive.
                 // If the top level item is an array, we treat it as a set of children,
@@ -20417,7 +20417,7 @@
          * 更新流程中的completeWork阶段进入此。
          */
         updateHostComponent$1 = function (current, workInProgress, type, newProps, rootContainerInstance) {
-            debugger
+            // debugger
             // If we have an alternate, that means this is an update and we need to schedule a side-effect to do the updates.
             var oldProps = current.memoizedProps;
 
@@ -20593,7 +20593,7 @@
              */
             case HostComponent:
                 {
-                    debugger
+                    // debugger
                     popHostContext(workInProgress);
                     var rootContainerInstance = getRootHostContainer();
                     var type = workInProgress.type;
@@ -22274,7 +22274,7 @@
      */
     function commitWork(current, finishedWork) {
 
-        debugger
+        // debugger
         switch (finishedWork.tag) {
             case FunctionComponent:
             case ForwardRef:
@@ -22298,7 +22298,7 @@
 
             case HostComponent:
                 {
-                    debugger
+                    // debugger
                     var instance = finishedWork.stateNode;
 
                     if (instance != null) {
@@ -22324,7 +22324,7 @@
 
             case HostText:
                 {
-                    debugger
+                    // debugger
                     if (!(finishedWork.stateNode !== null)) {
                         {
                             throw Error("This should have a text node initialized. This error is likely caused by a bug in React. Please file an issue.");
@@ -23579,7 +23579,6 @@
                 }
             } while (true);
 
-            debugger
 
             // debugger
 
@@ -24087,7 +24086,7 @@
         workInProgress = unitOfWork;
 
         do {
-            debugger
+            // debugger
             // The current, flushed, state of this fiber is the alternate. Ideally
             // nothing should rely on this, but relying on it here means that we don't
             // need an additional field on the work in progress.
@@ -24312,7 +24311,7 @@
     function commitRootImpl(root, renderPriorityLevel) {
 
 
-        debugger
+        // debugger
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
             // means `flushPassiveEffects` will sometimes result in additional
