@@ -6647,7 +6647,7 @@
     } // Calculate the diff between the two objects.
 
     /**
-     * 
+     * hostComponent元素如果属性更新了，在begin阶段没有打标记。在此处和之前属性对比，如果有更新则返回数组；然后在上级函数打标记。
      * @param {*} domElement 
      * @param {*} tag 
      * @param {*} lastRawProps 
@@ -6656,6 +6656,7 @@
      * @returns 
      */
     function diffProperties(domElement, tag, lastRawProps, nextRawProps, rootContainerElement) {
+        debugger
 
         {
             validatePropertiesInDevelopment(tag, nextRawProps);
@@ -6847,6 +6848,7 @@
      * @param {*} nextRawProps 
      */
     function updateProperties(domElement, updatePayload, tag, lastRawProps, nextRawProps) {
+        // debugger
         // Update checked *before* name.
         // In the middle of an update, it is possible to have multiple checked.
         // When a checked radio tries to change name, browser makes another radio's checked false.
@@ -8198,7 +8200,7 @@
      * @returns 
      */
     function prepareUpdate(domElement, type, oldProps, newProps, rootContainerInstance, hostContext) {
-        // debugger
+        debugger
         {
             var hostContextDev = hostContext;
 
@@ -8278,8 +8280,9 @@
         // Update the props handle so that we know which props are the ones with
         // with current event handlers.
         //将dom节点和对应fiber的 props建立关联(比如onClick=()=>{}等)，用于事件处理。
-        updateFiberProps(domElement, newProps); // Apply the diff to the DOM node.
+        updateFiberProps(domElement, newProps);
 
+        // Apply the diff to the DOM node.
         updateProperties(domElement, updatePayload, type, oldProps, newProps);
     }
     /**
@@ -8298,6 +8301,11 @@
     function commitTextUpdate(textInstance, oldText, newText) {
         textInstance.nodeValue = newText;
     }
+    /**
+     * 
+     * @param {*} parentInstance 
+     * @param {*} child 
+     */
     function appendChild(parentInstance, child) {
         parentInstance.appendChild(child);
     }
@@ -8331,6 +8339,12 @@
             trapClickOnNonInteractiveElement(parentNode);
         }
     }
+    /**
+     * 
+     * @param {*} parentInstance 
+     * @param {*} child 
+     * @param {*} beforeChild 
+     */
     function insertBefore(parentInstance, child, beforeChild) {
         parentInstance.insertBefore(child, beforeChild);
     }
@@ -14578,6 +14592,9 @@
         ownerHasKeyUseWarning = {};
         ownerHasFunctionTypeWarning = {};
 
+        /**
+         * 
+         */
         warnForMissingKey = function (child) {
             if (child === null || typeof child !== 'object') {
                 return;
@@ -14752,24 +14769,23 @@
      * 作用是判断是否要增加一些effectTag，主要是用来优化初次渲染的，因为初次渲染没有更新操作
      */
     function ChildReconciler(shouldTrackSideEffects) {
+
         /**
-         * 
+         * DONE;
+         * 将旧fiber树种需要删除的fiber节点标记effectTag=Deletion，且将此要删除的fiber作为副作用挂到父级fiber的副作用链中。
+         * 同一父级节点的多个要删除的子节点通过nextEffect串联起来。
          * @param {*} returnFiber 
          * @param {*} childToDelete 
          * @returns 
          */
         function deleteChild(returnFiber, childToDelete) {
-            // debugger
             if (!shouldTrackSideEffects) {
-                // Noop.
                 return;
-            } // Deletions are added in reversed order so we add it to the front.
-            // At this point, the return fiber's effect list is empty except for
+            }
+
+            // Deletions are added in reversed order so we add it to the front. At this point, the return fiber's effect list is empty except for
             // deletions, so we can just append the deletion to the list. The remaining
-            // effects aren't added until the complete phase. Once we implement
-            // resuming, this may not be true.
-
-
+            // effects aren't added until the complete phase. Once we implement resuming, this may not be true.
             var last = returnFiber.lastEffect;
 
             if (last !== null) {
@@ -14784,19 +14800,16 @@
         }
 
         /**
-         * 
+         * DONE;
+         * 删除父级节点returnFiber 的从 子节点currentFirstChild 开始的所有子节点
          * @param {*} returnFiber 
          * @param {*} currentFirstChild 
          * @returns 
          */
         function deleteRemainingChildren(returnFiber, currentFirstChild) {
-            // debugger
             if (!shouldTrackSideEffects) {
-                // Noop.
                 return null;
-            } // TODO: For the shouldClone case, this could be micro-optimized a bit by
-            // assuming that after the first child we've already added everything.
-
+            }
 
             var childToDelete = currentFirstChild;
 
@@ -14808,11 +14821,16 @@
             return null;
         }
 
+        /**
+         * DONE
+         * 将旧的父级节点的剩余的子节点构建一个map，key是fiber对应的key或index，值是fiber
+         * @param {*} returnFiber 
+         * @param {*} currentFirstChild 
+         * @returns 
+         */
         function mapRemainingChildren(returnFiber, currentFirstChild) {
-            // debugger
             // Add the remaining children to a temporary map so that we can find them by
-            // keys quickly. Implicit (null) keys get added to this set with their index
-            // instead.
+            // keys quickly. Implicit (null) keys get added to this set with their index instead.
             var existingChildren = new Map();
             var existingChild = currentFirstChild;
 
@@ -14830,13 +14848,13 @@
         }
 
         /**
-         * 新的改变，两颗fiber树的节点类型相同时，复用之前的fiber
+         * DONE
+         * 两颗fiber树的节点类型相同时，复用之前的fiber
          * @param {*} fiber 
          * @param {*} pendingProps 
          * @returns 
          */
         function useFiber(fiber, pendingProps) {
-            // debugger
             // We currently set sibling to null and index to 0 here because it is easy
             // to forget to do before returning it. E.g. for the single child case.
             var clone = createWorkInProgress(fiber, pendingProps);
@@ -14846,15 +14864,15 @@
         }
 
         /**
-         * 标记 effectTag 为合适的值
-         * 没有current，就是插入 newFiber.effectTag = Placement;
+         * DONE;
+         * 如果fiber是新建的（alternate===null），则给新fiber标记 Placement Tag。
+         * 如果在旧列表map中匹配到的fiber的 index < lastPlacedIndex 时，说明需要执行插入操作。给新fiber标记 Placement Tag。
          * @param {*} newFiber 
          * @param {*} lastPlacedIndex 
          * @param {*} newIndex 
          * @returns 
          */
         function placeChild(newFiber, lastPlacedIndex, newIndex) {
-            // debugger
             newFiber.index = newIndex;
 
             if (!shouldTrackSideEffects) {
@@ -14864,18 +14882,18 @@
 
             var current = newFiber.alternate;
 
-            if (current !== null) {
+            if (current !== null) {//当前newFiber是复用过来的
                 var oldIndex = current.index;
 
-                if (oldIndex < lastPlacedIndex) {
+                if (oldIndex < lastPlacedIndex) {//插入操作。
                     // This is a move.
                     newFiber.effectTag = Placement;
                     return lastPlacedIndex;
-                } else {
+                } else {//不需要移动
                     // This item can stay in place.
                     return oldIndex;
                 }
-            } else {//没有current，就是插入 newFiber.effectTag = Placement;
+            } else {//当前fiber是新建来的，没有current。设置 effectTag = Placement;直接返回 lastPlacedIndex 。
                 // This is an insertion.
                 newFiber.effectTag = Placement;
                 return lastPlacedIndex;
@@ -14886,11 +14904,10 @@
          * DONE
          * 给新创建的fiber打上 effectTag=Placement 标志（shouldTrackSideEffects && newFiber.alternate === null），或直接返回
          * 初始化流程时，第一遍reconcile时，rootFiber的第一个子节点创建fiber后，因为此时 shouldTrackSideEffects =true，故此处给此fiber的effectEffect标记2。
+         * 新增的fiber节点没有alternate（alternate=null），打上插入标记；复用的话，alternate有值，不打标记；
          */
         function placeSingleChild(newFiber) {
-            // debugger
-            // This is simpler for the single child case. We only need to do a
-            // placement for inserting new children.
+            // newFiber.alternate === null 说明之前旧的fiber树，没有元素，当前fiber打上插入标签。
             if (shouldTrackSideEffects && newFiber.alternate === null) {
                 newFiber.effectTag = Placement;
             }
@@ -14899,7 +14916,8 @@
         }
 
         /**
-         * 
+         * DONE
+         * 如果之前节点为空或不是文本节点的话，直接新建文本fiber并返回；否则复用之前fiber并返回；
          * @param {*} returnFiber 
          * @param {*} current 
          * @param {*} textContent 
@@ -14907,7 +14925,6 @@
          * @returns 
          */
         function updateTextNode(returnFiber, current, textContent, expirationTime) {
-            // debugger
             if (current === null || current.tag !== HostText) {
                 // Insert
                 var created = createFiberFromText(textContent, returnFiber.mode, expirationTime);
@@ -14922,7 +14939,9 @@
         }
 
         /**
-         * 
+         * DONE;
+         * key相同的前提下才会进入此函数。
+         * 新旧元素类型相同时，复用fiber并返回；否则新创建fiber并返回；
          * @param {*} returnFiber 
          * @param {*} current 
          * @param {*} element 
@@ -14930,7 +14949,6 @@
          * @returns 
          */
         function updateElement(returnFiber, current, element, expirationTime) {
-            // debugger
             if (current !== null) {//复用之前的fiber
                 if (current.elementType === element.type || (isCompatibleFamilyForHotReloading(current, element))) {
                     // Move based on index
@@ -15039,7 +15057,10 @@
         }
 
         /**
-         * 
+         * DONE
+         * 1、newChild是对象时，key如果相同：新旧元素类型相同时，复用fiber并返回；否则新创建fiber并返回。key不同时，直接返回null。
+         * 2、newChild是文本或数值时，如果之前节点为空或不是文本节点的话，直接新建文本fiber并返回；否则复用之前fiber并返回；
+         * 3、此方法只是复用或新建，不打相关effectTag标记。
          * @param {*} returnFiber 
          * @param {*} oldFiber 
          * @param {*} newChild 
@@ -15047,30 +15068,28 @@
          * @returns 
          */
         function updateSlot(returnFiber, oldFiber, newChild, expirationTime) {
-            // debugger
             // Update the fiber if the keys match, otherwise return null.
             var key = oldFiber !== null ? oldFiber.key : null;
 
             if (typeof newChild === 'string' || typeof newChild === 'number') {
-                // Text nodes don't have keys. If the previous node is implicitly keyed
-                // we can continue to replace it without aborting even if it is not a text
-                // node.
-                if (key !== null) {
+                // Text nodes don't have keys. If the previous node is implicitly(含蓄的，不明显的) keyed
+                // we can continue to replace it without aborting even if it is not a text node.
+                if (key !== null) {//文本元素不应该有key，万一有的话，直接返回null
                     return null;
                 }
 
                 return updateTextNode(returnFiber, oldFiber, '' + newChild, expirationTime);
             }
 
-            if (typeof newChild === 'object' && newChild !== null) {
+            if (typeof newChild === 'object' && newChild !== null) {//newChild是对象时，key如果相同：新旧元素类型相同时，复用fiber并返回；否则新创建fiber并返回。key不同时，直接返回null。
                 switch (newChild.$$typeof) {
                     case REACT_ELEMENT_TYPE:
                         {
-                            if (newChild.key === key) {
+                            if (newChild.key === key) {//key相同的话直接复用，否则直接返回null
                                 if (newChild.type === REACT_FRAGMENT_TYPE) {
                                     return updateFragment(returnFiber, oldFiber, newChild.props.children, expirationTime, key);
                                 }
-
+                                //新旧元素类型相同时，复用fiber并返回；否则新创建fiber并返回；
                                 return updateElement(returnFiber, oldFiber, newChild, expirationTime);
                             } else {
                                 return null;
@@ -15107,7 +15126,18 @@
             return null;
         }
 
+        /**
+         * DONE
+         * 从旧列表的map中根据新元素的key去匹配，找到的话复用并返回新fiber；否则新建fiber并返回。
+         * @param {*} existingChildren 
+         * @param {*} returnFiber 
+         * @param {*} newIdx 
+         * @param {*} newChild 
+         * @param {*} expirationTime 
+         * @returns 
+         */
         function updateFromMap(existingChildren, returnFiber, newIdx, newChild, expirationTime) {
+            // 新节点是文本节点的话，如果在map中找到了对应的旧节点，则复用，否则新建文本节点并返回。
             if (typeof newChild === 'string' || typeof newChild === 'number') {
                 // Text nodes don't have keys, so we neither have to check the old nor
                 // new node for the key. If both are text nodes, they match.
@@ -15115,10 +15145,12 @@
                 return updateTextNode(returnFiber, matchedFiber, '' + newChild, expirationTime);
             }
 
+            //根据key找到的话，则复用并返回；否则新建fiber并返回。
             if (typeof newChild === 'object' && newChild !== null) {
                 switch (newChild.$$typeof) {
                     case REACT_ELEMENT_TYPE:
                         {
+                            //从旧的列表中找到key相同的元素
                             var _matchedFiber = existingChildren.get(newChild.key === null ? newIdx : newChild.key) || null;
 
                             if (newChild.type === REACT_FRAGMENT_TYPE) {
@@ -15135,7 +15167,7 @@
                             return updatePortal(returnFiber, _matchedFiber2, newChild, expirationTime);
                         }
                 }
-
+                //此逻辑先不看。后期再看。TODO
                 if (isArray$1(newChild) || getIteratorFn(newChild)) {
                     var _matchedFiber3 = existingChildren.get(newIdx) || null;
 
@@ -15183,7 +15215,11 @@
                             break;
                         }
 
-                        error('Encountered two children with the same key, `%s`. ' + 'Keys should be unique so that components maintain their identity ' + 'across updates. Non-unique keys may cause children to be ' + 'duplicated and/or omitted — the behavior is unsupported and ' + 'could change in a future version.', key);
+                        error('Encountered two children with the same key, `%s`. '
+                            + 'Keys should be unique so that components maintain their identity '
+                            + 'across updates. Non-unique keys may cause children to be '
+                            + 'duplicated and/or omitted — the behavior is unsupported and '
+                            + 'could change in a future version.', key);
 
                         break;
                 }
@@ -15193,25 +15229,17 @@
         }
 
         /**
-         * 初始化流程：依次遍历newChildren中的ReactElement，分别创建fiber，且通过sibing串联，然后返回第一个fiber
+         * DONE
+         * 数组diff，通过三次循环操作，给相关的fiber打上插入或移除的标记。更新的标记不在此处打。在complete流程中打。
+         * 依次遍历newChildren中的ReactElement，分别创建fiber，且通过sibing串联，然后返回第一个fiber
          */
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, expirationTime) {
-            // debugger
-            // This algorithm can't optimize by searching from both ends since we
-            // don't have backpointers on fibers. I'm trying to see how far we can get
-            // with that model. If it ends up not being worth the tradeoffs, we can
-            // add it later.
-            // Even with a two ended optimization, we'd want to optimize for the case
-            // where there are few changes and brute force the comparison instead of
-            // going for the Map. It'd like to explore hitting that path first in
-            // forward-only mode and only go for the Map once we notice that we need
-            // lots of look ahead. This doesn't handle reversal as well as two ended
-            // search but that's unusual. Besides, for the two ended optimization to
-            // work on Iterables, we'd need to copy the whole set.
-            // In this first iteration, we'll just live with hitting the bad case
-            // (adding everything to a Map) in for every insert/move.
-            // If you change this code, also update reconcileChildrenIterator() which
-            // uses the same algorithm.
+            {
+                // In this first iteration, we'll just live with hitting the bad case
+                // (adding everything to a Map) in for every insert/move.
+                // If you change this code, also update reconcileChildrenIterator() which
+                // uses the same algorithm.
+            }
             {
                 // First, validate keys.
                 var knownKeys = null;
@@ -15229,6 +15257,11 @@
             var newIdx = 0;
             var nextOldFiber = null;
 
+            // 在第一轮遍历中，会处理4种情况，其中第1，2两种情况会结束第一次循环
+            // 1、key不同，第一次循环结束
+            // 2、newChildren或者oldFiber遍历完，第一次循环结束
+            // 3、key同type不同，标记oldFiber为DELETION
+            // 4、key相同type相同则可以复用
             for (; oldFiber !== null && newIdx < newChildren.length; newIdx++) {
                 if (oldFiber.index > newIdx) {
                     nextOldFiber = oldFiber;
@@ -15237,9 +15270,12 @@
                     nextOldFiber = oldFiber.sibling;
                 }
 
+                // 1、newChild是对象时，key如果相同：新旧元素类型相同时，复用fiber并返回；否则新创建fiber并返回。key不同时，直接返回null。
+                // 2、newChild是文本或数值时，如果之前节点为空或不是文本节点的话，直接新建文本fiber并返回；否则复用之前fiber并返回；
+                // 3、此方法只是复用或新建，不打相关effectTag标记。
                 var newFiber = updateSlot(returnFiber, oldFiber, newChildren[newIdx], expirationTime);
 
-                if (newFiber === null) {
+                if (newFiber === null) {//key不相同时直接退出循环。（从左到右依次对比，碰到key不同返回为null的，直接退出循环）
                     // TODO: This breaks on empty slots like null children. That's
                     // unfortunate because it triggers the slow path all the time. We need
                     // a better way to communicate whether this was a miss or null,
@@ -15251,41 +15287,41 @@
                     break;
                 }
 
-                if (shouldTrackSideEffects) {
+                if (shouldTrackSideEffects) {//新fiber是新建的，标记删除对应的父级的子节点
                     if (oldFiber && newFiber.alternate === null) {
-                        // We matched the slot, but we didn't reuse the existing fiber, so we
-                        // need to delete the existing child.
+                        // We matched the slot, but we didn't reuse the existing fiber, so we need to delete the existing child.
                         deleteChild(returnFiber, oldFiber);
                     }
                 }
 
                 lastPlacedIndex = placeChild(newFiber, lastPlacedIndex, newIdx);
 
-                if (previousNewFiber === null) {
-                    // TODO: Move out of the loop. This only happens for the first run.
-                    resultingFirstChild = newFiber;
-                } else {
-                    // TODO: Defer siblings if we're not at the right index for this slot.
-                    // I.e. if we had null values before, then we want to defer this
-                    // for each null value. However, we also don't want to call updateSlot
-                    // with the previous one.
-                    previousNewFiber.sibling = newFiber;
-                }
+                {//父级子节点依次右移，新节点通过sibing串联起来。
+                    if (previousNewFiber === null) {
+                        // TODO: Move out of the loop. This only happens for the first run.
+                        resultingFirstChild = newFiber;
+                    } else {
+                        // TODO: Defer siblings if we're not at the right index for this slot.
+                        // I.e. if we had null values before, then we want to defer this
+                        // for each null value. However, we also don't want to call updateSlot
+                        // with the previous one.
+                        previousNewFiber.sibling = newFiber;
+                    }
 
-                previousNewFiber = newFiber;
-                oldFiber = nextOldFiber;
+                    previousNewFiber = newFiber;
+                    oldFiber = nextOldFiber;
+                }
             }
 
+            //newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将oldFiber中没遍历完的节点标记为DELETION，即删除的DELETION Tag。然后返回第一个新子节点。结束。
             if (newIdx === newChildren.length) {
                 // We've reached the end of the new children. We can delete the rest.
                 deleteRemainingChildren(returnFiber, oldFiber);
                 return resultingFirstChild;
             }
 
-            //将数组中的所有子元素，依次创建fiber，并通过sibing串联起来，并返回第一个子fiber
-            if (oldFiber === null) {
-                // If we don't have any more existing children we can choose a fast path
-                // since the rest will all be insertions.
+            //oldFiber在第一次循环遍历完了，newChildren没遍历完。将剩下的newChildren的节点标记为Placement，即插入的Tag
+            if (oldFiber === null) {//将数组中的所有子元素，依次创建fiber，并通过sibing串联起来，并返回第一个子fiber
                 for (; newIdx < newChildren.length; newIdx++) {
                     var _newFiber = createChild(returnFiber, newChildren[newIdx], expirationTime);
 
@@ -15295,27 +15331,33 @@
 
                     lastPlacedIndex = placeChild(_newFiber, lastPlacedIndex, newIdx);
 
-                    if (previousNewFiber === null) {
-                        // TODO: Move out of the loop. This only happens for the first run.
-                        resultingFirstChild = _newFiber;
-                    } else {
-                        previousNewFiber.sibling = _newFiber;
+                    {//新节点通过sibing串联起来。
+                        if (previousNewFiber === null) {
+                            // TODO: Move out of the loop. This only happens for the first run.
+                            resultingFirstChild = _newFiber;
+                        } else {
+                            previousNewFiber.sibling = _newFiber;
+                        }
+                        previousNewFiber = _newFiber;
                     }
-
-                    previousNewFiber = _newFiber;
                 }
 
                 return resultingFirstChild;
-            } // Add all children to a key map for quick lookups.
+            }
 
+            //新旧列表都没有遍历结束。
+            //用旧列表剩余的子fiber构建一个临时Map，key是旧fiber的key或index，值是旧fiber；
+            var existingChildren = mapRemainingChildren(returnFiber, oldFiber);
 
-            var existingChildren = mapRemainingChildren(returnFiber, oldFiber); // Keep scanning and use the map to restore deleted items as moves.
+            // Keep scanning and use the map to restore deleted items as moves.
 
+            //遍历剩余的新元素，从map中匹配，匹配到了复用并返回；否则新建并返回fiber；
             for (; newIdx < newChildren.length; newIdx++) {
+                //从map中匹配，匹配到了复用并返回；否则新建并返回fiber；
                 var _newFiber2 = updateFromMap(existingChildren, returnFiber, newIdx, newChildren[newIdx], expirationTime);
 
                 if (_newFiber2 !== null) {
-                    if (shouldTrackSideEffects) {
+                    if (shouldTrackSideEffects) {//从map中删除旧列表中已经匹配过的元素
                         if (_newFiber2.alternate !== null) {
                             // The new fiber is a work in progress, but if there exists a
                             // current, that means that we reused the fiber. We need to delete
@@ -15327,17 +15369,19 @@
 
                     lastPlacedIndex = placeChild(_newFiber2, lastPlacedIndex, newIdx);
 
-                    if (previousNewFiber === null) {
-                        resultingFirstChild = _newFiber2;
-                    } else {
-                        previousNewFiber.sibling = _newFiber2;
-                    }
+                    {
+                        if (previousNewFiber === null) {
+                            resultingFirstChild = _newFiber2;
+                        } else {
+                            previousNewFiber.sibling = _newFiber2;
+                        }
 
-                    previousNewFiber = _newFiber2;
+                        previousNewFiber = _newFiber2;
+                    }
                 }
             }
 
-            if (shouldTrackSideEffects) {
+            if (shouldTrackSideEffects) {//给旧列表中剩余的元素标记删除标记。
                 // Any existing children that weren't consumed above were deleted. We need
                 // to add them to the deletion list.
                 existingChildren.forEach(function (child) {
@@ -15531,10 +15575,10 @@
         }
 
         /**
-         * return createFiberFromText(textContent, returnFiber.mode, expirationTime);
+         * DONE;
+         * 之前是文本节点的话，复用并返回；否则新建文本节点并返回。
          */
         function reconcileSingleTextNode(returnFiber, currentFirstChild, textContent, expirationTime) {
-            // debugger
             // There's no need to check for keys on text nodes since we don't have a
             // way to define them.
             if (currentFirstChild !== null && currentFirstChild.tag === HostText) {
@@ -15555,20 +15599,20 @@
         }
 
         /**
-         * 根据 element 创建fiber 。createFiberFromElement() ; 并设置此fiber.return = returnFiber
+         * DONE;
+         * 新节点是单个元素的协调函数；
+         * 1、能在父级节点的子节点中找到能复用的fiber则复用并返回；同时父级的其它子节点标记删除。
+         * 2、如果找不到可复用的，则给父级的所有子节点标记删除；然后生成一个新的fiber并返回。
          * @return newFiber 
          */
         function reconcileSingleElement(returnFiber, currentFirstChild, element, expirationTime) {
-            // debugger
             var key = element.key;
             var child = currentFirstChild;
 
             while (child !== null) {
-                // TODO: If key === null and child.key === null, then this only applies to
-                // the first item in the list.
-                if (child.key === key) {
+                if (child.key === key) {//key 相同 【不设置key，默认为null，也是相同的】
                     switch (child.tag) {
-                        case Fragment:
+                        case Fragment://父级子节点和当前元素都是带有 相同key的 Fragment，其它子节点标记删除，复用此子节点，并返回；否则，跳出case循环；此种情况很少见！
                             {
                                 if (element.type === REACT_FRAGMENT_TYPE) {
                                     deleteRemainingChildren(returnFiber, child.sibling);
@@ -15588,13 +15632,11 @@
 
                         case Block:
 
-                        // We intentionally fallthrough here if enableBlocksAPI is not on.
-                        // eslint-disable-next-lined no-fallthrough
-
-                        default:
+                        default://元素类型相同时，复用父级节点的当前子节点；父级的剩余子节点标记删除；并返回复用的fiber；类型不同时，退出 case 循环；
                             {
-                                if (child.elementType === element.type || ( // Keep this check inline so it only runs on the false path:
-                                    isCompatibleFamilyForHotReloading(child, element))) {
+                                //元素类型相同 或 类型兼容
+                                if (child.elementType === element.type || (isCompatibleFamilyForHotReloading(child, element))) {
+                                    //旧fiber树的其它剩余子节点标记删除
                                     deleteRemainingChildren(returnFiber, child.sibling);
 
                                     var _existing3 = useFiber(child, element.props);
@@ -15613,17 +15655,17 @@
                                 break;
                             }
                     } // Didn't match.
-
-
+                    //走到此，说明 key 相同，但是元素类型不同，无法复用，直接退出总循环；
                     deleteRemainingChildren(returnFiber, child);
                     break;
-                } else {
+                } else {//如果父级节点的旧的子节点的 key 和 新子节点（ReactElement）的key不同，则将此旧的子节点标记删除。
                     deleteChild(returnFiber, child);
                 }
-
+                //取下个兄弟节点继续循环。
                 child = child.sibling;
             }
 
+            //走到此，说明当前元素无法和旧的子节点的fiber复用，只能创建新的fiber并返回
             if (element.type === REACT_FRAGMENT_TYPE) {
                 var created = createFiberFromFragment(element.props.children, returnFiber.mode, expirationTime, element.key);
                 created.return = returnFiber;
@@ -15680,6 +15722,7 @@
          * @returns 
          */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
+            //入口
             // debugger
             {
                 // This function is not recursive.
@@ -15700,7 +15743,8 @@
 
             var isObject = typeof newChild === 'object' && newChild !== null;
 
-            if (isObject) { // ReactElement对象
+            //对象节点（ReactElement）
+            if (isObject) { // ReactElement对象；新的ReactElement是单节点的话，能复用旧的父级的子节点的话，复用fiber；否则新建fiber（新建需要标记插入标记）；
                 switch (newChild.$$typeof) {
                     case REACT_ELEMENT_TYPE:
                         //根据 element 创建fiber createFiberFromElement() ; 并设置此fiber.return = returnFiber
@@ -15711,11 +15755,13 @@
                 }
             }
 
+            //文本节点
             if (typeof newChild === 'string' || typeof newChild === 'number') {
                 return placeSingleChild(reconcileSingleTextNode(returnFiber, currentFirstChild, '' + newChild, expirationTime));
             }
 
-            if (isArray$1(newChild)) {
+            //数组节点
+            if (isArray$1(newChild)) {//新的子元素是数组；
                 return reconcileChildrenArray(returnFiber, currentFirstChild, newChild, expirationTime);
             }
 
@@ -18572,7 +18618,6 @@
      * @returns 
      */
     function updateClassComponent(current, workInProgress, Component, nextProps, renderExpirationTime) {
-        // debugger
         {
             if (workInProgress.type !== workInProgress.elementType) {
                 // Lazy component props can't be validated in createElement
@@ -20414,7 +20459,8 @@
         };
 
         /**
-         * 更新流程中的completeWork阶段进入此。
+         * 更新流程，如果hostComponent的属性更新了，在begin阶段没有打标记。在此处打上更新标记（4）
+         * 更新流程中的completeWork阶段进入此，给对应fiber打上相关effectTag
          */
         updateHostComponent$1 = function (current, workInProgress, type, newProps, rootContainerInstance) {
             // debugger
@@ -21982,6 +22028,7 @@
      * @returns 
      */
     function getHostSibling(fiber) {
+        // debugger
         // We're going to search forward into the tree until we find a sibling host
         // node. Unfortunately, if multiple insertions are done in a row we have to
         // search past them. This leads to exponential search for the next sibling.
@@ -22019,9 +22066,9 @@
                     node.child.return = node;
                     node = node.child;
                 }
-            } // Check if this host node is stable or about to be placed.
+            }
 
-
+            // Check if this host node is stable or about to be placed.
             if (!(node.effectTag & Placement)) {
                 // Found it!
                 return node.stateNode;
@@ -22034,7 +22081,6 @@
      * @param {*} finishedWork 
      */
     function commitPlacement(finishedWork) {
-        // debugger
 
         var parentFiber = getHostParentFiber(finishedWork); // Note: these two variables *must* always be updated together.
 
@@ -22124,7 +22170,14 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} node 
+     * @param {*} before 
+     * @param {*} parent 
+     */
     function insertOrAppendPlacementNode(node, before, parent) {
+        // debugger
         var tag = node.tag;
         var isHost = tag === HostComponent || tag === HostText;
 
@@ -22984,6 +23037,7 @@
 
                 performSyncWorkOnRoot(root);
             } else {
+                // debugger
                 ensureRootIsScheduled(root);
                 schedulePendingInteractions(root, expirationTime);
                 // debugger
@@ -24060,6 +24114,7 @@
             next = beginWork$1(current, unitOfWork, renderExpirationTime$1);
         }
 
+
         resetCurrentFiber();
         unitOfWork.memoizedProps = unitOfWork.pendingProps;
 
@@ -24115,6 +24170,7 @@
                     return next;
                 }
 
+                // debugger
                 if (returnFiber !== null && // Do not append effects to parents if a sibling failed to complete
                     (returnFiber.effectTag & Incomplete) === NoEffect) {
                     // Append all the effects of the subtree and this fiber onto the effect
@@ -25768,9 +25824,10 @@
      * @returns 
      */
     function createWorkInProgress(current, pendingProps) {
+
         var workInProgress = current.alternate;
 
-        if (workInProgress === null) {//current 等于 rootFiber的情况
+        if (workInProgress === null) {
             // We use a double buffering pooling technique because we know that we'll
             // only ever need at most two versions of a tree. We pool the "other" unused
             // node that we're free to reuse. This is lazily created to avoid allocating
@@ -25796,11 +25853,11 @@
             current.alternate = workInProgress;
         } else {
             workInProgress.pendingProps = pendingProps;
+
             // We already have an alternate. Reset the effect tag.
-
             workInProgress.effectTag = NoEffect;
-            // The effect list is no longer valid.
 
+            // The effect list is no longer valid.
             workInProgress.nextEffect = null;
             workInProgress.firstEffect = null;
             workInProgress.lastEffect = null;
