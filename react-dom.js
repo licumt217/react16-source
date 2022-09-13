@@ -6656,7 +6656,7 @@
      * @returns 
      */
     function diffProperties(domElement, tag, lastRawProps, nextRawProps, rootContainerElement) {
-        debugger
+        // debugger
 
         {
             validatePropertiesInDevelopment(tag, nextRawProps);
@@ -8200,7 +8200,7 @@
      * @returns 
      */
     function prepareUpdate(domElement, type, oldProps, newProps, rootContainerInstance, hostContext) {
-        debugger
+        // debugger
         {
             var hostContextDev = hostContext;
 
@@ -11717,7 +11717,9 @@
 
             if (!contextTypes) {
                 return emptyContextObject;
-            } // Avoid recreating masked context unless unmasked context has changed.
+            }
+
+            // Avoid recreating masked context unless unmasked context has changed.
             // Failing to do this will result in unnecessary calls to componentWillReceiveProps.
             // This may trigger infinite loops if componentWillReceiveProps calls setState.
 
@@ -13051,6 +13053,11 @@
             isDisallowedContextReadInDEV = false;
         }
     }
+    /**
+     * 
+     * @param {*} providerFiber 
+     * @param {*} nextValue 
+     */
     function pushProvider(providerFiber, nextValue) {
         var context = providerFiber.type._context;
 
@@ -13237,6 +13244,9 @@
             }
         }
     }
+    /**
+     * 
+     */
     function readContext(context, observedBits) {
         {
             // This warning would fire if you read context inside a Hook like useMemo.
@@ -13777,6 +13787,9 @@
             }
         };
 
+        /**
+         * 
+         */
         warnOnUndefinedDerivedState = function (type, partialState) {
             if (partialState === undefined) {
                 var componentName = getComponentName(type) || 'Component';
@@ -13810,6 +13823,13 @@
         Object.freeze(fakeInternalInstance);
     }
 
+    /**
+     * DONE 执行 getDerivedStateFromProps 生命周期方法，合并后生成新的state
+     * @param {*} workInProgress 
+     * @param {*} ctor 
+     * @param {*} getDerivedStateFromProps 
+     * @param {*} nextProps 
+     */
     function applyDerivedStateFromProps(workInProgress, ctor, getDerivedStateFromProps, nextProps) {
         var prevState = workInProgress.memoizedState;
 
@@ -13839,6 +13859,7 @@
     }
 
     /**
+     * DONE;
      * 需要挂载到类实例的updater属性上
      */
     var classComponentUpdater = {
@@ -13940,7 +13961,7 @@
     }
 
     /**
-     * 
+     * DONE ; 类静态方法和类实例方法的相关校验
      * @param {*} workInProgress 
      * @param {*} ctor 
      * @param {*} newProps 
@@ -14100,12 +14121,13 @@
      * @returns instance
      */
     function constructClassInstance(workInProgress, ctor, props) {
+        debugger
         var isLegacyContextConsumer = false;
         var unmaskedContext = emptyContextObject;
         var context = emptyContextObject;
         var contextType = ctor.contextType;
 
-        {
+        {//contextType 相关的校验信息 
             if ('contextType' in ctor) {
                 var isValid = // Allow null for conditional declaration
                     contextType === null || contextType !== undefined && contextType.$$typeof === REACT_CONTEXT_TYPE && contextType._context === undefined;
@@ -14144,21 +14166,23 @@
             var contextTypes = ctor.contextTypes;
             isLegacyContextConsumer = contextTypes !== null && contextTypes !== undefined;
             context = isLegacyContextConsumer ? getMaskedContext(workInProgress, unmaskedContext) : emptyContextObject;
-        } // Instantiate twice to help detect side-effects.
+        }
 
 
-        {
+        {// Instantiate twice to help detect side-effects.（严格模式）
             if (workInProgress.mode & StrictMode) {
                 new ctor(props, context); // eslint-disable-line no-new
             }
         }
 
+        //实例化类实例，执行构造函数生命周期方法。
         var instance = new ctor(props, context);
         var state = workInProgress.memoizedState = instance.state !== null && instance.state !== undefined ? instance.state : null;
         //将类实例instance 设置为类组件fiber的stateNode属性；给实例的updater 属性赋值 classComponentUpdater
         adoptClassInstance(workInProgress, instance);
 
         {
+            //使用类的静态方法 getDerivedStateFromProps 时，state必须不能为null，否则警告。
             if (typeof ctor.getDerivedStateFromProps === 'function' && state === null) {
                 var componentName = getComponentName(ctor) || 'Component';
 
@@ -14171,11 +14195,11 @@
                         + 'This ensures that `getDerivedStateFromProps` arguments have a consistent shape.',
                         componentName, instance.state === null ? 'null' : 'undefined', componentName);
                 }
-            } // If new component APIs are defined, "unsafe" lifecycles won't be called.
-            // Warn about these lifecycles if they are present.
+            }
+
+            // If new component APIs are defined, "unsafe" lifecycles won't be called. Warn about these lifecycles if they are present.
             // Don't warn about react-lifecycles-compat polyfilled methods though.
-
-
+            //使用了getDerivedStateFromProps 或 getSnapshotBeforeUpdate生命周期方法后，如何同时使用了即将废弃的willMount / willReceiveProps/ willUpdate生命周期时，警告！
             if (typeof ctor.getDerivedStateFromProps === 'function' || typeof instance.getSnapshotBeforeUpdate === 'function') {
                 var foundWillMountName = null;
                 var foundWillReceivePropsName = null;
@@ -14216,9 +14240,10 @@
                     }
                 }
             }
-        } // Cache unmasked context so we can avoid recreating masked context unless necessary.
-        // ReactFiberContext usually updates this cache but can't for newly-created instances.
+        }
 
+        // Cache unmasked context so we can avoid recreating masked context unless necessary.
+        // ReactFiberContext usually updates this cache but can't for newly-created instances.
 
         if (isLegacyContextConsumer) {
             cacheContext(workInProgress, unmaskedContext, context);
@@ -14284,6 +14309,9 @@
     }
 
     /**
+     * DONE 。挂载类实例。
+     * 1、执行 getDerivedStateFromProps 生命周期方法，合并后生成新的state
+     * 2、有 componentDidMount 的话，标记更新。
      * Invokes the mount life-cycles on a previously never rendered instance.
      */
     function mountClassInstance(workInProgress, ctor, newProps, renderExpirationTime) {
@@ -14295,6 +14323,7 @@
         instance.props = newProps;
         instance.state = workInProgress.memoizedState;
         instance.refs = emptyRefsObject;
+        //给fiber初始化更新队列。fiber.updateQueue = queue;
         initializeUpdateQueue(workInProgress);
         var contextType = ctor.contextType;
 
@@ -14306,7 +14335,7 @@
         }
 
         {
-            if (instance.state === newProps) {
+            if (instance.state === newProps) {//将props直接赋值给state的话，警告。
                 var componentName = getComponentName(ctor) || 'Component';
 
                 if (!didWarnAboutDirectlyAssigningPropsToState.has(componentName)) {
@@ -14331,17 +14360,17 @@
         instance.state = workInProgress.memoizedState;
         var getDerivedStateFromProps = ctor.getDerivedStateFromProps;
 
-        if (typeof getDerivedStateFromProps === 'function') {
+        if (typeof getDerivedStateFromProps === 'function') {//执行 getDerivedStateFromProps 生命周期方法，合并后生成新的state
             applyDerivedStateFromProps(workInProgress, ctor, getDerivedStateFromProps, newProps);
             instance.state = workInProgress.memoizedState;
-        } // In order to support react-lifecycles-compat polyfilled components,
+        }
+
+        // In order to support react-lifecycles-compat polyfilled components,
         // Unsafe lifecycles should not be invoked for components using the new APIs.
-
-
         if (typeof ctor.getDerivedStateFromProps !== 'function' && typeof instance.getSnapshotBeforeUpdate !== 'function'
             && (typeof instance.UNSAFE_componentWillMount === 'function' || typeof instance.componentWillMount === 'function')) {
-            callComponentWillMount(workInProgress, instance); // If we had additional state updates during this life-cycle, let's
-            // process them now.
+            callComponentWillMount(workInProgress, instance);
+            // If we had additional state updates during this life-cycle, let's process them now.
 
             processUpdateQueue(workInProgress, newProps, instance, renderExpirationTime);
             instance.state = workInProgress.memoizedState;
@@ -14456,7 +14485,7 @@
      * @returns 
      */
     function updateClassInstance(current, workInProgress, ctor, newProps, renderExpirationTime) {
-        // debugger
+        debugger
         var instance = workInProgress.stateNode;
         cloneUpdateQueue(current, workInProgress);
         var oldProps = workInProgress.memoizedProps;
@@ -14972,8 +15001,17 @@
             return created;
         }
 
+        /**
+         * 
+         * @param {*} returnFiber 
+         * @param {*} current 
+         * @param {*} portal 
+         * @param {*} expirationTime 
+         * @returns 
+         */
         function updatePortal(returnFiber, current, portal, expirationTime) {
-            if (current === null || current.tag !== HostPortal || current.stateNode.containerInfo !== portal.containerInfo || current.stateNode.implementation !== portal.implementation) {
+            if (current === null || current.tag !== HostPortal || current.stateNode.containerInfo !== portal.containerInfo
+                || current.stateNode.implementation !== portal.implementation) {
                 // Insert
                 var created = createFiberFromPortal(portal, returnFiber.mode, expirationTime);
                 created.return = returnFiber;
@@ -15723,7 +15761,6 @@
          */
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, expirationTime) {
             //入口
-            // debugger
             {
                 // This function is not recursive.
                 // If the top level item is an array, we treat it as a set of children,
@@ -16264,7 +16301,8 @@
     }
 
     /**
-     * 函数组件的话在此调用函数
+     * begin 
+     * 函数组件的话在此调用函数，执行函数，返回对应的ReactElement。
      */
     function renderWithHooks(current, workInProgress, Component, props, secondArg, nextRenderExpirationTime) {
         renderExpirationTime = nextRenderExpirationTime;
@@ -18335,6 +18373,15 @@
         workInProgress.child = reconcileChildFibers(workInProgress, null, nextChildren, renderExpirationTime);
     }
 
+    /**
+     * begin
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} Component 
+     * @param {*} nextProps 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function updateForwardRef(current, workInProgress, Component, nextProps, renderExpirationTime) {
         // TODO: current can be non-null here even if the component
         // hasn't yet mounted. This happens after the first render suspends.
@@ -18521,6 +18568,13 @@
         return updateFunctionComponent(current, workInProgress, Component, nextProps, renderExpirationTime);
     }
 
+    /**
+     * begin 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function updateFragment(current, workInProgress, renderExpirationTime) {
         var nextChildren = workInProgress.pendingProps;
         reconcileChildren(current, workInProgress, nextChildren, renderExpirationTime);
@@ -18550,6 +18604,7 @@
      * @param {*} workInProgress 
      */
     function markRef(current, workInProgress) {
+        debugger
         var ref = workInProgress.ref;
 
         if (current === null && ref !== null || current !== null && current.ref !== ref) {
@@ -18558,7 +18613,17 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} Component 
+     * @param {*} nextProps 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function updateFunctionComponent(current, workInProgress, Component, nextProps, renderExpirationTime) {
+        debugger
         {
             if (workInProgress.type !== workInProgress.elementType) {
                 // Lazy component props can't be validated in createElement
@@ -18618,6 +18683,7 @@
      * @returns 
      */
     function updateClassComponent(current, workInProgress, Component, nextProps, renderExpirationTime) {
+        debugger
         {
             if (workInProgress.type !== workInProgress.elementType) {
                 // Lazy component props can't be validated in createElement
@@ -18647,7 +18713,7 @@
         var instance = workInProgress.stateNode;
         var shouldUpdate;
 
-        if (instance === null) {
+        if (instance === null) {//初始化
             if (current !== null) {
                 // A class component without an instance only mounts if it suspended
                 // inside a non-concurrent tree, in an inconsistent state. We want to
@@ -18666,7 +18732,7 @@
         } else if (current === null) {
             // In a resume, we'll already have an instance we can reuse.
             shouldUpdate = resumeMountClassInstance(workInProgress, Component, nextProps, renderExpirationTime);
-        } else {
+        } else {//更新
             //处理更新队列，生成新的state
             shouldUpdate = updateClassInstance(current, workInProgress, Component, nextProps, renderExpirationTime);
         }
@@ -18691,6 +18757,7 @@
     }
 
     /**
+     * begin流程
      * 执行类组件的render方法，并执行reconcileChildren（），返回workInProgress.child.
      * @param {*} current 
      * @param {*} workInProgress 
@@ -18701,7 +18768,7 @@
      * @returns 
      */
     function finishClassComponent(current, workInProgress, Component, shouldUpdate, hasContext, renderExpirationTime) {
-        // debugger
+        debugger
         // Refs should update even if shouldComponentUpdate returns false
         markRef(current, workInProgress);
         var didCaptureError = (workInProgress.effectTag & DidCapture) !== NoEffect;
@@ -18793,7 +18860,7 @@
      * @returns return workInProgress.child;
      */
     function updateHostRoot(current, workInProgress, renderExpirationTime) {
-        // debugger
+        debugger
 
         pushHostRootContext(workInProgress);
         var updateQueue = workInProgress.updateQueue;
@@ -18865,7 +18932,7 @@
      * @returns 
      */
     function updateHostComponent(current, workInProgress, renderExpirationTime) {
-        // debugger
+        debugger
 
         pushHostContext(workInProgress);
 
@@ -19058,7 +19125,7 @@
      * @returns 
      */
     function mountIndeterminateComponent(_current, workInProgress, Component, renderExpirationTime) {
-        // debugger
+        debugger
         if (_current !== null) {
             // An indeterminate component only mounts if it suspended inside a non-
             // concurrent tree, in an inconsistent state. We want to treat it like
@@ -19849,6 +19916,13 @@
         return workInProgress.child;
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function updatePortalComponent(current, workInProgress, renderExpirationTime) {
         pushHostContainer(workInProgress, workInProgress.stateNode.containerInfo);
         var nextChildren = workInProgress.pendingProps;
@@ -19867,6 +19941,13 @@
         return workInProgress.child;
     }
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function updateContextProvider(current, workInProgress, renderExpirationTime) {
         var providerType = workInProgress.type;
         var context = providerType._context;
@@ -19907,7 +19988,15 @@
 
     var hasWarnedAboutUsingContextAsConsumer = false;
 
+    /**
+     * 
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} renderExpirationTime 
+     * @returns 
+     */
     function updateContextConsumer(current, workInProgress, renderExpirationTime) {
+        debugger
         var context = workInProgress.type; // The logic below for Context differs depending on PROD or DEV mode. In
         // DEV mode, we create a separate object for Context.Consumer that acts
         // like a proxy to Context. This proxy object adds unnecessary code in PROD
@@ -19975,7 +20064,6 @@
      * @returns 
      */
     function bailoutOnAlreadyFinishedWork(current, workInProgress, renderExpirationTime) {
-        // debugger
         cancelWorkTimer(workInProgress);
 
         if (current !== null) {
@@ -20076,7 +20164,7 @@
      */
     function beginWork(current, workInProgress, renderExpirationTime) {
 
-        // debugger
+        debugger
 
         var updateExpirationTime = workInProgress.expirationTime;
 
@@ -20279,6 +20367,9 @@
                     return mountLazyComponent(current, workInProgress, elementType, updateExpirationTime, renderExpirationTime);
                 }
 
+            /**
+             * 
+             */
             case FunctionComponent:
                 {
                     var _Component = workInProgress.type;
@@ -20325,8 +20416,12 @@
             case HostPortal:
                 return updatePortalComponent(current, workInProgress, renderExpirationTime);
 
+            /**
+             * 
+             */
             case ForwardRef:
                 {
+                    debugger
                     var type = workInProgress.type;
                     var _unresolvedProps2 = workInProgress.pendingProps;
 
@@ -20344,6 +20439,9 @@
             case Profiler:
                 return updateProfiler(current, workInProgress, renderExpirationTime);
 
+            /**
+             * 
+             */
             case ContextProvider:
                 return updateContextProvider(current, workInProgress, renderExpirationTime);
 
@@ -21526,6 +21624,7 @@
      * 
      */
     function commitLifeCycles(finishedRoot, current, finishedWork, committedExpirationTime) {
+        // debugger
         switch (finishedWork.tag) {
             case FunctionComponent:
             case ForwardRef:
@@ -21543,6 +21642,7 @@
 
             case ClassComponent:
                 {
+                    // debugger
                     var instance = finishedWork.stateNode;
 
                     if (finishedWork.effectTag & Update) {
@@ -21775,6 +21875,10 @@
         }
     }
 
+    /**
+     * 在commit的第三个阶段，将ref和对应的dom元素绑定上 ref.current=instanceToUse
+     * @param {*} finishedWork 
+     */
     function commitAttachRef(finishedWork) {
         var ref = finishedWork.ref;
 
@@ -24367,7 +24471,7 @@
     function commitRootImpl(root, renderPriorityLevel) {
 
 
-        // debugger
+        debugger
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
             // means `flushPassiveEffects` will sometimes result in additional
@@ -26218,6 +26322,13 @@
         fiber.type = 'DELETED';
         return fiber;
     }
+    /**
+     * 
+     * @param {*} portal 
+     * @param {*} mode 
+     * @param {*} expirationTime 
+     * @returns 
+     */
     function createFiberFromPortal(portal, mode, expirationTime) {
         var pendingProps = portal.children !== null ? portal.children : [];
         var fiber = createFiber(HostPortal, pendingProps, portal.key, mode);
@@ -27229,6 +27340,13 @@
         }
     }
 
+    /**
+     * 
+     * @param {*} children 
+     * @param {*} containerInfo 
+     * @param {*} implementation 
+     * @returns 
+     */
     function createPortal(children, containerInfo, // TODO: figure out the API for cross-renderer implementation.
         implementation) {
         var key = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
@@ -27260,6 +27378,12 @@
     setRestoreImplementation(restoreControlledState$3);
     setBatchingImplementation(batchedUpdates$1, discreteUpdates$1, flushDiscreteUpdates, batchedEventUpdates$1);
 
+    /**
+     * 
+     * @param {*} children 
+     * @param {*} container 
+     * @returns 
+     */
     function createPortal$1(children, container) {
         var key = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
@@ -27328,11 +27452,11 @@
     }
 
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = Internals;
-    exports.createPortal = createPortal$1;
+    exports.createPortal = createPortal$1;//--
     exports.findDOMNode = findDOMNode;
     exports.flushSync = flushSync;
     exports.hydrate = hydrate;
-    exports.render = render;
+    exports.render = render;//-
     exports.unmountComponentAtNode = unmountComponentAtNode;
     exports.unstable_batchedUpdates = batchedUpdates$1;
     exports.unstable_createPortal = unstable_createPortal;

@@ -660,7 +660,11 @@
 
     pureComponentPrototype.isPureReactComponent = true;
 
-    // an immutable object with a single mutable value
+    /**
+     * React.createRef
+     * an immutable object with a single mutable value
+     * @returns 
+     */
     function createRef() {
         var refObject = {
             current: null
@@ -1172,7 +1176,9 @@
                     // Warn about using Maps as children
                     if (iteratorFn === children.entries) {
                         if (!didWarnAboutMaps) {
-                            warn('Using Maps as children is deprecated and will be removed in ' + 'a future major release. Consider converting children to ' + 'an array of keyed ReactElements instead.');
+                            warn('Using Maps as children is deprecated and will be removed in '
+                                + 'a future major release. Consider converting children to '
+                                + 'an array of keyed ReactElements instead.');
                         }
 
                         didWarnAboutMaps = true;
@@ -1199,7 +1205,8 @@
 
                 {
                     {
-                        throw Error("Objects are not valid as a React child (found: " + (childrenString === '[object Object]' ? 'object with keys {' + Object.keys(children).join(', ') + '}' : childrenString) + ")." + addendum);
+                        throw Error("Objects are not valid as a React child (found: "
+                            + (childrenString === '[object Object]' ? 'object with keys {' + Object.keys(children).join(', ') + '}' : childrenString) + ")." + addendum);
                     }
                 }
             }
@@ -1396,6 +1403,12 @@
         return children;
     }
 
+    /**
+     * 
+     * @param {*} defaultValue 
+     * @param {*} calculateChangedBits 
+     * @returns 
+     */
     function createContext(defaultValue, calculateChangedBits) {
         if (calculateChangedBits === undefined) {
             calculateChangedBits = null;
@@ -1554,6 +1567,11 @@
         return lazyType;
     }
 
+    /**
+     * React.forwardRef
+     * @param {*} render 
+     * @returns 
+     */
     function forwardRef(render) {
         {
             if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
@@ -1562,7 +1580,8 @@
                 error('forwardRef requires a render function but was given %s.', render === null ? 'null' : typeof render);
             } else {
                 if (render.length !== 0 && render.length !== 2) {
-                    error('forwardRef render functions accept exactly two parameters: props and ref. %s', render.length === 1 ? 'Did you forget to use the ref parameter?' : 'Any additional parameter will be undefined.');
+                    error('forwardRef render functions accept exactly two parameters: props and ref. %s',
+                        render.length === 1 ? 'Did you forget to use the ref parameter?' : 'Any additional parameter will be undefined.');
                 }
             }
 
@@ -3525,19 +3544,19 @@
     };
 
     exports.Children = Children;
-    exports.Component = Component;
-    exports.Fragment = REACT_FRAGMENT_TYPE;
+    exports.Component = Component;//--
+    exports.Fragment = REACT_FRAGMENT_TYPE;//--
     exports.Profiler = REACT_PROFILER_TYPE;
     exports.PureComponent = PureComponent;
     exports.StrictMode = REACT_STRICT_MODE_TYPE;
     exports.Suspense = REACT_SUSPENSE_TYPE;
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals$1;
     exports.cloneElement = cloneElement$1;
-    exports.createContext = createContext;
-    exports.createElement = createElement$1;
+    exports.createContext = createContext;//--
+    exports.createElement = createElement$1;//--
     exports.createFactory = createFactory;
     exports.createRef = createRef;
-    exports.forwardRef = forwardRef;
+    exports.forwardRef = forwardRef;//--
     exports.isValidElement = isValidElement;
     exports.lazy = lazy;
     exports.memo = memo;

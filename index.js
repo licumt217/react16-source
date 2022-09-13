@@ -4,51 +4,70 @@ const e = React.createElement;
 
 const Fragment = React.Fragment;
 
+const root = ReactDOM.createRoot(document.getElementById("app"))
+const arr = []
+const arr2 = []
 
-let child = function () {
-    return "child :" + Math.random() + e('span', {}, 'xxxx');
-}
-
-let arr = [];
-for (let i = 0; i < 50; i++) {
-    arr.push(e(child))
-}
-
-let parkList = [
-    {
-        id: "1001",
-        name: '车场1',
-        color: '1'
-    },
-    {
-        id: "1002",
-        name: '车场2',
-        color: '1'
-    },
-    {
-        id: "1003",
-        name: '车场3',
-        color: '1'
-    },
-    {
-        id: "1004",
-        name: '车场4',
-        color: '1'
-    },
-    {
-        id: "1005",
-        name: '车场5',
-        color: '1'
-    },
-]
 
 class LikeButton extends React.Component {
     constructor (props) {
         super(props);
-        this.state = { parkList: parkList, count: 1 };
+        this.state = {
+            parkList: [
+                {
+                    id: "1001",
+                    name: '车场1',
+                    color: '1'
+                },
+                {
+                    id: "1003",
+                    name: '车场3',
+                    color: '1'
+                },
+                {
+                    id: "1002",
+                    name: '车场2',
+                    color: '1'
+                },
+
+                {
+                    id: "1004",
+                    name: '车场4',
+                    color: 'xxxxx'
+                },
+
+            ], count: 1, date: new Date()
+        };
+    }
+
+
+    shouldComponentUpdate() {
+        return false;
+    }
+    static getDerivedStateFromProps() {
+        return {
+            count: 5
+        }
     }
 
     componentDidMount() {
+        // this.timer = setInterval(() => {
+        //     this.tick();
+        // }, 1000)
+    }
+    componentDidUpdate() {
+        // console.log('update')
+    }
+    componentWillUnmount() {
+        clearInterval(this.timer)
+    }
+    tick = () => {
+        this.setState({
+            date: new Date()
+        })
+    }
+    aaa() {
+
     }
 
     handleClick = () => {
@@ -82,86 +101,57 @@ class LikeButton extends React.Component {
             ]
         })
 
-        // setTimeout(() => {
-        //     this.setState({ count: 5 })
-        //     console.log(":" + this.state.count)
-        // })
 
-        console.log(this.state.count)
     }
     render() {
 
 
-        // if (this.state.liked) {
-        //     return 'You liked this.';
-        // }
-
-
-
-        // return e('div', { onClick: this.handleClick }, e('span', {}, 1), this.state.count);
-        // return this.state.count
 
         return e('div', { onClick: this.handleClick }, this.state.parkList.map((item, index) => {
-            return e("span", { key: item.id, color: item.color }, item.name);
+            return e("span", { key: item.id, color: item.color }, this.state.date.toLocaleTimeString(), this.state.count);
         }));
     }
 }
-
-function DisplayInfoVertical({ label, value, noValueSymbol = "-" }) {
-
-
-
-    const divProps = {
-        style: {
-            display: 'inline-block',
-            width: '300px'
-        }
-    };
-
-    const pProps = {
-        style: {
-            marginBottom: '0.1em',
-            color: 'gray'
-        }
-    };
-
-    let child1 = e("p", pProps, label);
-
-    let child2 = e("p", null, value || noValueSymbol);
-
-    return e("div", divProps, child1, child2);
+class DD extends React.Component {
+    render() {
+        return e('span', null, 'span111,,,')
+    }
 }
+for (let i = 0; i < 30000; i++) {
+    arr.push(e(LikeButton))
+}
+for (let i = 0; i < 40000; i++) {
+    arr2.push(e(DD))
+}
+class ABC extends React.Component {
+    constructor (props) {
+        super(props)
+        this.state = {
+            todos: arr
+        }
+    }
 
-const child1 = e(DisplayInfoVertical, {
-    label: "姓名",
-    value: "liqiang"
-});
+    handleC = () => {
+        this.setState({
+            todos: arr2
+        })
+    }
 
 
-const child2 = e(DisplayInfoVertical, {
-    label: "年龄",
-    value: 18
-});
-
-const child3 = e(DisplayInfoVertical, {
-    label: "籍贯"
-});
-const myTest = e(Fragment, null, child1, child2, child3);
-
-
-
-
-
-const domContainer = document.querySelector('#app');
-const ele = e('span', { onClick: () => { alert(1) } }, "点击我！！！");
-// const ele = e(hone)
-// const ele = e(hone)
-
-function callbackOfReactDomRender() {
-    console.log('done')
+    render() {
+        return e('div', { onClick: this.handleC }, ...this.state.todos)
+    }
 }
 
 
 
-// ReactDOM.render(ele, domContainer, callbackOfReactDomRender);
-ReactDOM.render(e(LikeButton), domContainer);
+// ReactDOM.render(e(ABC), document.getElementById("app"));
+root.render(e(ABC));
+
+
+
+
+
+
+
+
