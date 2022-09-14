@@ -1,7 +1,8 @@
 'use strict';
 
 const e = React.createElement;
-
+const useState = React.useState;
+const useTransition = React.useTransition;
 const Fragment = React.Fragment;
 
 const root = ReactDOM.createRoot(document.getElementById("app"))
@@ -46,7 +47,7 @@ class LikeButton extends React.Component {
     }
     static getDerivedStateFromProps() {
         return {
-            count: 5
+            count: 5555
         }
     }
 
@@ -107,9 +108,7 @@ class LikeButton extends React.Component {
 
 
 
-        return e('div', { onClick: this.handleClick }, this.state.parkList.map((item, index) => {
-            return e("span", { key: item.id, color: item.color }, this.state.date.toLocaleTimeString(), this.state.count);
-        }));
+        return e('div', { onClick: this.handleClick }, this.state.count);
     }
 }
 class DD extends React.Component {
@@ -117,30 +116,54 @@ class DD extends React.Component {
         return e('span', null, 'span111,,,')
     }
 }
-for (let i = 0; i < 30000; i++) {
+for (let i = 0; i < 3; i++) {
     arr.push(e(LikeButton))
 }
-for (let i = 0; i < 40000; i++) {
+for (let i = 0; i < 4; i++) {
     arr2.push(e(DD))
 }
-class ABC extends React.Component {
-    constructor (props) {
-        super(props)
-        this.state = {
-            todos: arr
-        }
-    }
 
-    handleC = () => {
-        this.setState({
-            todos: arr2
+const list = [];
+for (let i = 0; i < 18500; i++) {
+    list.push(e('div', {}, e('p', {}, e('span', { style: { color: 'red', border: '2px solid green', height: '20px' } }, Math.random()))))
+}
+
+const list2 = [];
+for (let i = 0; i < 18500; i++) {
+    list2.push(e('div', {}, e('p', {}, e('span', { style: { color: 'red', border: '2px solid green', height: '20px' } }, Math.random()))))
+}
+
+function ABC() {
+
+    const [age, setAge] = useState(18);
+    const [name, setName] = useState("liqiang");
+    const [showList, setShowList] = useState(["list1", "list2", "list3"]);
+    // const [isPending, startTransition] = useTransition()
+
+
+    const handleClick = () => {
+        setAge(22)
+    }
+    const changeInput = (event) => {
+        const value = event.target.value;
+        setValue(value)
+
+        // let ar = [];
+        // for (let i = 0; i < list.length; i++) {
+        //     if (String(list[i]).includes(value)) {
+        //         ar.push(e('p', { style: { color: 'red', border: '2px solid green', height: '20px' } }, list[i]))
+        //     }
+        // }
+        startTransition(() => {
+            setShowList(list === showList ? list2 : list)
         })
+
+
     }
 
 
-    render() {
-        return e('div', { onClick: this.handleC }, ...this.state.todos)
-    }
+
+    return e('div', { onClick: handleClick }, ...showList, e('p', {}, age), e('p', {}, name))
 }
 
 

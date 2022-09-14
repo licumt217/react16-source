@@ -1575,17 +1575,24 @@
         return elementType;
     }
 
+    /**
+     * 
+     * @returns 
+     */
     function resolveDispatcher() {
         var dispatcher = ReactCurrentDispatcher.current;
 
         {
             if (dispatcher === null) {
-                error('Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for' + ' one of the following reasons:\n' + '1. You might have mismatching versions of React and the renderer (such as React DOM)\n' + '2. You might be breaking the Rules of Hooks\n' + '3. You might have more than one copy of React in the same app\n' + 'See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.');
+                error('Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for'
+                    + ' one of the following reasons:\n' + '1. You might have mismatching versions of React and the renderer (such as React DOM)\n'
+                    + '2. You might be breaking the Rules of Hooks\n' + '3. You might have more than one copy of React in the same app\n'
+                    + 'See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.');
             }
-        } // Will result in a null access error if accessed outside render phase. We
+        }
+        // Will result in a null access error if accessed outside render phase. We
         // intentionally don't throw our own error because this is in a hot path.
         // Also helps ensure this is inlined.
-
 
         return dispatcher;
     }
@@ -1608,6 +1615,11 @@
 
         return dispatcher.useContext(Context);
     }
+    /**
+     * 
+     * @param {*} initialState 
+     * @returns 
+     */
     function useState(initialState) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useState(initialState);
@@ -1650,6 +1662,10 @@
             return dispatcher.useDebugValue(value, formatterFn);
         }
     }
+    /**
+     * 
+     * @returns 
+     */
     function useTransition() {
         var dispatcher = resolveDispatcher();
         return dispatcher.useTransition();
@@ -2678,6 +2694,7 @@
                 //是否已超时
                 var didUserCallbackTimeout = currentTask.expirationTime <= currentTime;
 
+                // debugger
                 var continuationCallback = callback(didUserCallbackTimeout);
                 currentTime = getCurrentTime();
 
@@ -2966,7 +2983,7 @@
             } finally {
                 if (hasMoreWork) {
                     // If there's more work, schedule the next message event at the end of the preceding one.
-                    //还有未执行完的任务，继续调度。。
+                    //还有未执行完的任务，在下个宏任务中继续执行
                     schedulePerformWorkUntilDeadline();
                 } else {
                     isMessageLoopRunning = false;
@@ -3358,7 +3375,7 @@
     };
 
     exports.Children = Children;
-    exports.Component = Component;
+    exports.Component = Component;//-
     exports.Fragment = REACT_FRAGMENT_TYPE;
     exports.Profiler = REACT_PROFILER_TYPE;
     exports.PureComponent = PureComponent;
@@ -3367,17 +3384,17 @@
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals$1;
     exports.cloneElement = cloneElement$1;
     exports.createContext = createContext;
-    exports.createElement = createElement$1;
+    exports.createElement = createElement$1;//-
     exports.createFactory = createFactory;
-    exports.createRef = createRef;
-    exports.forwardRef = forwardRef;
+    exports.createRef = createRef;//-
+    exports.forwardRef = forwardRef;//-
     exports.isValidElement = isValidElement;
     exports.lazy = lazy;
     exports.memo = memo;
     exports.startTransition = startTransition;
     exports.unstable_act = act;
     exports.useCallback = useCallback;
-    exports.useContext = useContext;
+    exports.useContext = useContext;//-
     exports.useDebugValue = useDebugValue;
     exports.useDeferredValue = useDeferredValue;
     exports.useEffect = useEffect;
@@ -3388,9 +3405,9 @@
     exports.useMemo = useMemo;
     exports.useReducer = useReducer;
     exports.useRef = useRef;
-    exports.useState = useState;
+    exports.useState = useState;//-
     exports.useSyncExternalStore = useSyncExternalStore;
-    exports.useTransition = useTransition;
+    exports.useTransition = useTransition;//-
     exports.version = ReactVersion;
 
 })));
