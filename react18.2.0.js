@@ -691,12 +691,13 @@
             }
         }
     }
+
     /**
+     * DONE
      * Factory method to create a new React element. This no longer adheres to
      * the class pattern, so do not use new to call it. Also, instanceof check
      * will not work. Instead test $$typeof field against Symbol.for('react.element') to check
      * if something is a React Element.
-     *
      * @param {*} type
      * @param {*} props
      * @param {*} key
@@ -711,8 +712,6 @@
      * indicating filename, line number, and/or other information.
      * @internal
      */
-
-
     var ReactElement = function (type, key, ref, self, source, owner, props) {
         var element = {
             // This tag allows us to uniquely identify this as a React Element
@@ -766,11 +765,12 @@
 
         return element;
     };
+
     /**
+     * DONE
      * Create and return a new ReactElement of the given type.
      * See https://reactjs.org/docs/react-api.html#createelement
      */
-
     function createElement(type, config, children) {
         var propName; // Reserved names are extracted
 
@@ -805,9 +805,9 @@
                     props[propName] = config[propName];
                 }
             }
-        } // Children can be more than one argument, and those are transferred onto
+        }
+        // Children can be more than one argument, and those are transferred onto
         // the newly allocated props object.
-
 
         var childrenLength = arguments.length - 2;
 
@@ -828,7 +828,6 @@
 
             props.children = childArray;
         } // Resolve default props
-
 
         if (type && type.defaultProps) {
             var defaultProps = type.defaultProps;
@@ -1512,18 +1511,27 @@
         REACT_MODULE_REFERENCE = Symbol.for('react.module.reference');
     }
 
+    /**
+     * DONE
+     * @param {*} type 
+     * @returns 
+     */
     function isValidElementType(type) {
         if (typeof type === 'string' || typeof type === 'function') {
             return true;
         } // Note: typeof might be other than 'symbol' or 'number' (e.g. if it's a polyfill).
 
 
-        if (type === REACT_FRAGMENT_TYPE || type === REACT_PROFILER_TYPE || enableDebugTracing || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || enableLegacyHidden || type === REACT_OFFSCREEN_TYPE || enableScopeAPI || enableCacheElement || enableTransitionTracing) {
+        if (type === REACT_FRAGMENT_TYPE || type === REACT_PROFILER_TYPE || enableDebugTracing ||
+            type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE ||
+            enableLegacyHidden || type === REACT_OFFSCREEN_TYPE || enableScopeAPI || enableCacheElement || enableTransitionTracing) {
             return true;
         }
 
         if (typeof type === 'object' && type !== null) {
-            if (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || // This needs to include all possible module reference object
+            if (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE
+                || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE ||
+                // This needs to include all possible module reference object
                 // types supported by any Flight configuration anywhere since
                 // we don't know which Flight build this will end up being used
                 // with.
@@ -2201,16 +2209,14 @@
         }
     }
     /**
+     * DONE
      * Ensure that every element either is passed in a static location, in an
      * array with an explicit keys property defined, or in an object literal
      * with valid key property.
-     *
      * @internal
      * @param {ReactNode} node Statically passed child of any type.
      * @param {*} parentType node's parent's type.
      */
-
-
     function validateChildKeys(node, parentType) {
         if (typeof node !== 'object') {
             return;
@@ -2248,14 +2254,13 @@
             }
         }
     }
+
     /**
      * Given an element, validate that its props follow the propTypes definition,
      * provided by the type.
      *
      * @param {ReactElement} element
      */
-
-
     function validatePropTypes(element) {
         {
             var type = element.type;
@@ -2325,8 +2330,17 @@
             }
         }
     }
+
+    /**
+     * DONE
+     * @param {*} type 
+     * @param {*} props 
+     * @param {*} children 
+     * @returns 
+     */
     function createElementWithValidation(type, props, children) {
-        var validType = isValidElementType(type); // We warn in this case but don't throw. We expect the element creation to
+        var validType = isValidElementType(type);
+        // We warn in this case but don't throw. We expect the element creation to
         // succeed and there will likely be errors in render.
 
         if (!validType) {
@@ -2362,7 +2376,8 @@
             }
         }
 
-        var element = createElement.apply(this, arguments); // The result can be nullish if a mock or a custom function is used.
+        var element = createElement.apply(this, arguments);
+        // The result can be nullish if a mock or a custom function is used.
         // TODO: Drop this when these are no longer allowed as the type argument.
 
         if (element == null) {
