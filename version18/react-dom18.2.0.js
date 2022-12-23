@@ -21,6 +21,10 @@
     //addendum	n.补遗; (尤指书籍的)补篇;
 
 
+    // arbitrary adj.任意的; 武断的; 随心所欲的; 专横的; 专制的;
+
+
+
 
 
 
@@ -161,8 +165,6 @@
     /**
      * Mapping from registration name to event name
      */
-
-
     var registrationNameDependencies = {};
     /**
      * Mapping from lowercase registration names to the properly cased version,
@@ -170,13 +172,18 @@
      * only in true.
      * @type {Object}
      */
-
     var possibleRegistrationNames = {}; // Trust the developer to only use possibleRegistrationNames in true
 
+    /**
+     * DONE
+     * @Param registrationName react事件名称，比如onClick
+     * @Param dependencies原生事件名称数组，比如['click']
+     */
     function registerTwoPhaseEvent(registrationName, dependencies) {
         registerDirectEvent(registrationName, dependencies);
         registerDirectEvent(registrationName + 'Capture', dependencies);
     }
+    //DONE
     function registerDirectEvent(registrationName, dependencies) {
         {
             if (registrationNameDependencies[registrationName]) {
@@ -4083,7 +4090,7 @@
 
     var passiveBrowserEventsSupported = false; // Check if browser support events with passive listeners
     // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#Safely_detecting_option_support
-
+    //DONE 提升滚动性能的passive属性
     if (canUseDOM) {
         try {
             var options = {}; // $FlowFixMe: Ignore Flow complaining about needing a value
@@ -4890,6 +4897,8 @@
             return false;
         }
     }
+
+    //DONE
     function onScheduleRoot(root, children) {
         {
             if (injectedHook && typeof injectedHook.onScheduleFiberRoot === 'function') {
@@ -5205,6 +5214,7 @@
             }
         }
     }
+    //DONE
     function markRenderScheduled(lane) {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markRenderScheduled === 'function') {
@@ -5790,9 +5800,11 @@
         // expire after a render has already started.
         return (lanes & root.expiredLanes) !== NoLanes;
     }
+    //DONE
     function isTransitionLane(lane) {
         return (lane & TransitionLanes) !== NoLanes;
     }
+    //DONE
     function claimNextTransitionLane() {
         // Cycle through the lanes, assigning each new transition to the next lane.
         // In most cases, this means every transition gets its own lane, until we
@@ -5830,6 +5842,12 @@
     function getHighestPriorityLane(lanes) {
         return lanes & -lanes;
     }
+
+    /**
+     * DONE
+     * @param {*} lanes 
+     * @returns 
+     */
     function pickArbitraryLane(lanes) {
         // This wrapper function gets inlined. Only exists so to communicate that it
         // doesn't matter which bit is selected; you can pick any bit without
@@ -5858,7 +5876,7 @@
         return (set & subset) === subset;
     }
     /**
-     * 
+     * DONE
      * @param {*} a 
      * @param {*} b 
      * @returns 
@@ -5871,9 +5889,8 @@
     }
     function intersectLanes(a, b) {
         return a & b;
-    } // Seems redundant, but it changes the type from a single lane (used for
-    // updates) to a group of lanes (used for flushing work).
-
+    }
+    // Seems redundant, but it changes the type from a single lane (used for updates) to a group of lanes (used for flushing work).
     function laneToLanes(lane) {
         return lane;
     }
@@ -6115,9 +6132,11 @@
         var IdleEventPriority = IdleLane;
     }
     var currentUpdatePriority = NoLane;
+    //DONE
     function getCurrentUpdatePriority() {
         return currentUpdatePriority;
     }
+    //DONE
     function setCurrentUpdatePriority(newPriority) {
         currentUpdatePriority = newPriority;
     }
@@ -7565,12 +7584,15 @@
     var SPACEBAR_CODE = 32;
     var SPACEBAR_CHAR = String.fromCharCode(SPACEBAR_CODE);
 
+    //DONE
     function registerEvents() {
         registerTwoPhaseEvent('onBeforeInput', ['compositionend', 'keypress', 'textInput', 'paste']);
         registerTwoPhaseEvent('onCompositionEnd', ['compositionend', 'focusout', 'keydown', 'keypress', 'keyup', 'mousedown']);
         registerTwoPhaseEvent('onCompositionStart', ['compositionstart', 'focusout', 'keydown', 'keypress', 'keyup', 'mousedown']);
         registerTwoPhaseEvent('onCompositionUpdate', ['compositionupdate', 'focusout', 'keydown', 'keypress', 'keyup', 'mousedown']);
-    } // Track whether we've ever handled a keypress on the space key.
+    }
+
+    // Track whether we've ever handled a keypress on the space key.
 
 
     var hasSpaceKeypress = false;
@@ -7967,6 +7989,7 @@
         return isSupported;
     }
 
+    //DONE
     function registerEvents$1() {
         registerTwoPhaseEvent('onChange', ['change', 'click', 'focusin', 'focusout', 'input', 'keydown', 'keyup', 'selectionchange']);
     }
@@ -8213,6 +8236,7 @@
         }
     }
 
+    //DONE
     function registerEvents$2() {
         registerDirectEvent('onMouseEnter', ['mouseout', 'mouseover']);
         registerDirectEvent('onMouseLeave', ['mouseout', 'mouseover']);
@@ -8787,6 +8811,7 @@
 
     var skipSelectionChangeEvent = canUseDOM && 'documentMode' in document && document.documentMode <= 11;
 
+    //DONE
     function registerEvents$3() {
         registerTwoPhaseEvent('onSelect', ['focusout', 'contextmenu', 'dragend', 'focusin', 'keydown', 'keyup', 'mousedown', 'mouseup', 'selectionchange']);
     }
@@ -9019,7 +9044,9 @@
     var ANIMATION_START = getVendorPrefixedEventName('animationstart');
     var TRANSITION_END = getVendorPrefixedEventName('transitionend');
 
-    var topLevelEventsToReactNames = new Map(); // NOTE: Capitalization is important in this list!
+    var topLevelEventsToReactNames = new Map();
+
+    // NOTE: Capitalization is important in this list!
     //
     // E.g. it needs "pointerDown", not "pointerdown".
     // This is because we derive both React name ("onPointerDown")
@@ -9028,23 +9055,31 @@
     // Exceptions that don't match this convention are listed separately.
     //
     // prettier-ignore
+    //DONE
+    var simpleEventPluginEvents = ['abort', 'auxClick', 'cancel', 'canPlay', 'canPlayThrough', 'click', 'close', 'contextMenu', 'copy', 'cut',
+        'drag', 'dragEnd', 'dragEnter', 'dragExit', 'dragLeave', 'dragOver', 'dragStart', 'drop', 'durationChange', 'emptied', 'encrypted',
+        'ended', 'error', 'gotPointerCapture', 'input', 'invalid', 'keyDown', 'keyPress', 'keyUp', 'load', 'loadedData', 'loadedMetadata',
+        'loadStart', 'lostPointerCapture', 'mouseDown', 'mouseMove', 'mouseOut', 'mouseOver', 'mouseUp', 'paste', 'pause', 'play', 'playing',
+        'pointerCancel', 'pointerDown', 'pointerMove', 'pointerOut', 'pointerOver', 'pointerUp', 'progress', 'rateChange', 'reset', 'resize',
+        'seeked', 'seeking', 'stalled', 'submit', 'suspend', 'timeUpdate', 'touchCancel', 'touchEnd', 'touchStart', 'volumeChange', 'scroll',
+        'toggle', 'touchMove', 'waiting', 'wheel'];
 
-    var simpleEventPluginEvents = ['abort', 'auxClick', 'cancel', 'canPlay', 'canPlayThrough', 'click', 'close', 'contextMenu', 'copy', 'cut', 'drag', 'dragEnd', 'dragEnter', 'dragExit', 'dragLeave', 'dragOver', 'dragStart', 'drop', 'durationChange', 'emptied', 'encrypted', 'ended', 'error', 'gotPointerCapture', 'input', 'invalid', 'keyDown', 'keyPress', 'keyUp', 'load', 'loadedData', 'loadedMetadata', 'loadStart', 'lostPointerCapture', 'mouseDown', 'mouseMove', 'mouseOut', 'mouseOver', 'mouseUp', 'paste', 'pause', 'play', 'playing', 'pointerCancel', 'pointerDown', 'pointerMove', 'pointerOut', 'pointerOver', 'pointerUp', 'progress', 'rateChange', 'reset', 'resize', 'seeked', 'seeking', 'stalled', 'submit', 'suspend', 'timeUpdate', 'touchCancel', 'touchEnd', 'touchStart', 'volumeChange', 'scroll', 'toggle', 'touchMove', 'waiting', 'wheel'];
-
+    //DONE
     function registerSimpleEvent(domEventName, reactName) {
         topLevelEventsToReactNames.set(domEventName, reactName);
         registerTwoPhaseEvent(reactName, [domEventName]);
     }
 
+    //DONE
     function registerSimpleEvents() {
         for (var i = 0; i < simpleEventPluginEvents.length; i++) {
             var eventName = simpleEventPluginEvents[i];
             var domEventName = eventName.toLowerCase();
             var capitalizedEvent = eventName[0].toUpperCase() + eventName.slice(1);
             registerSimpleEvent(domEventName, 'on' + capitalizedEvent);
-        } // Special cases where event names don't match.
+        }
 
-
+        // Special cases where event names don't match.
         registerSimpleEvent(ANIMATION_END, 'onAnimationEnd');
         registerSimpleEvent(ANIMATION_ITERATION, 'onAnimationIteration');
         registerSimpleEvent(ANIMATION_START, 'onAnimationStart');
@@ -9210,15 +9245,14 @@
         }
     }
 
-    // TODO: remove top-level side effect.
-    registerSimpleEvents();
-    registerEvents$2();
-    registerEvents$1();
-    registerEvents$3();
-    registerEvents();
+    registerSimpleEvents();//DONE。两阶段；topLevelEventsToReactNames（顶层的从dom事件名称到react事件名称的映射）
+    registerEvents$2();//onMouse onPointer
+    registerEvents$1();//两阶段  (onChange)
+    registerEvents$3();//两阶段 （onSelect）
+    registerEvents();//两阶段 （onCompositionEnd。。。）
 
     /**
-     * 
+     * DONE
      */
     function extractEvents$5(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags, targetContainer) {
         // TODO: we should remove the concept of a "SimpleEventPlugin".
@@ -9255,15 +9289,14 @@
         }
     }
 
-    // List of events that need to be individually attached to media elements.
-
+    // List of events that need to be individually（单独的） attached to media elements.
     var mediaEventTypes = ['abort', 'canplay', 'canplaythrough', 'durationchange', 'emptied', 'encrypted', 'ended', 'error', 'loadeddata',
         'loadedmetadata', 'loadstart', 'pause', 'play', 'playing', 'progress', 'ratechange', 'resize', 'seeked', 'seeking', 'stalled',
         'suspend', 'timeupdate', 'volumechange', 'waiting'];
+
     // We should not delegate these events to the container, but rather
     // set them on the actual target element itself. This is primarily
-    // because these events do not consistently bubble in the DOM.
-
+    // because these events do not consistently（一贯的、始终如一的） bubble in the DOM.
     var nonDelegatedEvents = new Set(['cancel', 'close', 'invalid', 'load', 'scroll', 'toggle'].concat(mediaEventTypes));
 
     //DONE
@@ -9318,9 +9351,8 @@
                 event = _dispatchQueue$i.event,
                 listeners = _dispatchQueue$i.listeners;
             processDispatchQueueItemsInOrder(event, listeners, inCapturePhase); //  event system doesn't use pooling.
-        } // This would be a good time to rethrow if any of the event handlers threw.
-
-
+        }
+        // This would be a good time to rethrow if any of the event handlers threw.
         rethrowCaughtError();
     }
 
@@ -9354,13 +9386,14 @@
     /**
      * DONE
      * @param {*} domEventName 
-     * @param {*} isCapturePhaseListener 
+     * @param {*} isCapturePhaseListener 是否捕获阶段监听器
      * @param {*} target 
      */
     function listenToNativeEvent(domEventName, isCapturePhaseListener, target) {
         {
             if (nonDelegatedEvents.has(domEventName) && !isCapturePhaseListener) {
-                error('Did not expect a listenToNativeEvent() call for "%s" in the bubble phase. ' + 'This is a bug in React. Please file an issue.', domEventName);
+                error('Did not expect a listenToNativeEvent() call for "%s" in the bubble phase. '
+                    + 'This is a bug in React. Please file an issue.', domEventName);
             }
         }
 
@@ -9376,7 +9409,7 @@
     // This is only used by createEventHandle when the
     var listeningMarker = '_reactListening' + Math.random().toString(36).slice(2);
     /**
-     * 
+     * DONE
      * @param {*} rootContainerElement 
      */
     function listenToAllSupportedEvents(rootContainerElement) {
@@ -9395,7 +9428,7 @@
             var ownerDocument = rootContainerElement.nodeType === DOCUMENT_NODE ? rootContainerElement : rootContainerElement.ownerDocument;
 
             if (ownerDocument !== null) {
-                // The selectionchange event also needs deduplication
+                // The selectionchange event also needs deduplication（去重）
                 // but it is attached to the document.
                 if (!ownerDocument[listeningMarker]) {
                     ownerDocument[listeningMarker] = true;
@@ -9407,9 +9440,10 @@
 
     /**
      * DONE
+     * trapped(受限制的、受困的)
      */
     function addTrappedEventListener(targetContainer, domEventName, eventSystemFlags, isCapturePhaseListener, isDeferredListenerForLegacyFBSupport) {
-        var listener = createEventListenerWrapperWithPriority(targetContainer, domEventName, eventSystemFlags);
+        var listener = createEventListenerWrapperWithPriority(targetContainer, domEventName, eventSystemFlags);//dispatchDiscreteEvent 等
         // If passive option is not supported, then the event will be active and not passive.
 
         var isPassiveListener = undefined;
@@ -9430,8 +9464,8 @@
         var unsubscribeListener; // When legacyFBSupport is enabled, it's for when we
 
 
-        if (isCapturePhaseListener) {
-            if (isPassiveListener !== undefined) {
+        if (isCapturePhaseListener) {//捕获
+            if (isPassiveListener !== undefined) {//passive event
                 unsubscribeListener = addEventCaptureListenerWithPassiveFlag(targetContainer, domEventName, listener, isPassiveListener);
             } else {
                 unsubscribeListener = addEventCaptureListener(targetContainer, domEventName, listener);
@@ -11293,7 +11327,7 @@
         return textNode;
     }
     /**
-     * 
+     * DONE
      */
     function getCurrentEventPriority() {
         var currentEvent = window.event;
@@ -13058,6 +13092,7 @@
 
     var ReactCurrentBatchConfig$1 = ReactSharedInternals.ReactCurrentBatchConfig;
     var NoTransition = null;
+    //DONE
     function requestCurrentTransition() {
         return ReactCurrentBatchConfig$1.transition;
     }
@@ -13610,7 +13645,7 @@
 
     var concurrentQueues = null;
     /**
-     * 
+     * DONE
      */
     function pushConcurrentUpdateQueue(queue) {
         if (concurrentQueues === null) {
@@ -13696,7 +13731,7 @@
         queue.interleaved = update;
     }
     /**
-     * 
+     * DONE
      * @param {*} fiber 
      * @param {*} queue 
      * @param {*} update 
@@ -13708,8 +13743,8 @@
 
         if (interleaved === null) {
             // This is the first update. Create a circular list.
-            update.next = update; // At the end of the current render, this queue's interleaved updates will
-            // be transferred to the pending queue.
+            update.next = update;
+            // At the end of the current render, this queue's interleaved updates will be transferred to the pending queue.
 
             pushConcurrentUpdateQueue(queue);
         } else {
@@ -13728,7 +13763,7 @@
     var unsafe_markUpdateLaneFromFiberToRoot = markUpdateLaneFromFiberToRoot;
 
     /**
-     * 
+     * DONE
      * @param {*} sourceFiber 
      * @param {*} lane 
      * @returns 
@@ -13778,10 +13813,14 @@
         }
     }
 
-    var UpdateState = 0;
-    var ReplaceState = 1;
-    var ForceUpdate = 2;
-    var CaptureUpdate = 3; // Global state that is reset at the beginning of calling `processUpdateQueue`.
+    {
+        var UpdateState = 0;
+        var ReplaceState = 1;
+        var ForceUpdate = 2;
+        var CaptureUpdate = 3;
+    }
+
+    // Global state that is reset at the beginning of calling `processUpdateQueue`.
     // It should only be read right after calling `processUpdateQueue`, via
     // `checkHasForceUpdateAfterProcessing`.
 
@@ -13827,6 +13866,12 @@
             workInProgress.updateQueue = clone;
         }
     }
+    /**
+     * DONE
+     * @param {*} eventTime 
+     * @param {*} lane 
+     * @returns 
+     */
     function createUpdate(eventTime, lane) {
         var update = {
             eventTime: eventTime,
@@ -13839,7 +13884,7 @@
         return update;
     }
     /**
-     * 
+     * DONE
      */
     function enqueueUpdate(fiber, update, lane) {
         var updateQueue = fiber.updateQueue;
@@ -13853,12 +13898,16 @@
 
         {
             if (currentlyProcessingQueue === sharedQueue && !didWarnUpdateInsideUpdate) {
-                error('An update (setState, replaceState, or forceUpdate) was scheduled ' + 'from inside an update function. Update functions should be pure, ' + 'with zero side-effects. Consider using componentDidUpdate or a ' + 'callback.');
+                error('An update (setState, replaceState, or forceUpdate) was scheduled '
+                    + 'from inside an update function. Update functions should be pure, '
+                    + 'with zero side-effects. Consider using componentDidUpdate or a '
+                    + 'callback.');
 
                 didWarnUpdateInsideUpdate = true;
             }
         }
 
+        //已在渲染阶段了
         if (isUnsafeClassRenderPhaseUpdate()) {
             // This is an unsafe render phase update. Add directly to the update
             // queue so we can process it immediately during the current render.
@@ -13882,6 +13931,13 @@
             return enqueueConcurrentClassUpdate(fiber, sharedQueue, update, lane);
         }
     }
+    /**
+     * DONE
+     * @param {*} root 
+     * @param {*} fiber 
+     * @param {*} lane 
+     * @returns 
+     */
     function entangleTransitions(root, fiber, lane) {
         var updateQueue = fiber.updateQueue;
 
@@ -25877,7 +25933,10 @@
     function getWorkInProgressRoot() {
         return workInProgressRoot;
     }
+
+    //DONE
     function requestEventTime() {
+
         if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
             // We're inside React, so it's fine to read the actual time.
             return now();
@@ -25887,20 +25946,21 @@
         if (currentEventTime !== NoTimestamp) {
             // Use the same start time for all updates until we enter React again.
             return currentEventTime;
-        } // This is the first update since React yielded. Compute a new start time.
+        }
 
-
+        // This is the first update since React yielded. Compute a new start time.
         currentEventTime = now();
         return currentEventTime;
     }
     /**
-     * 
+     * DONE
      * @param {*} fiber 
      * @returns 
      */
     function requestUpdateLane(fiber) {
         // Special cases
         var mode = fiber.mode;
+
 
         if ((mode & ConcurrentMode) === NoMode) {
             return SyncLane;
@@ -25945,23 +26005,16 @@
             return currentEventTransitionLane;
         }
 
-        // Updates originating(起源、发端) inside certain React methods, like flushSync, have
-        // their priority set by tracking it with a context variable.
-        //
-        // The opaque（不透明、不清楚） type returned by the host config is internally（内在的、内部的） a lane, so we can
-        // use that directly.
+        // Updates originating(起源、发端) inside certain React methods, like flushSync, have their priority set by tracking it with a context variable.
+        // The opaque（不透明、不清楚） type returned by the host config is internally（内在的、内部的） a lane, so we can use that directly.
 
         var updateLane = getCurrentUpdatePriority();
 
         if (updateLane !== NoLane) {
             return updateLane;
-        } // This update originated outside React. Ask the host environment for an
-        // appropriate priority, based on the type of event.
-        //
-        // The opaque type returned by the host config is internally a lane, so we can
-        // use that directly.
-        // TODO: Move this type conversion to the event priority module.
-
+        }
+        // This update originated outside React. Ask the host environment for an appropriate priority, based on the type of event.
+        // The opaque type returned by the host config is internally a lane, so we can use that directly.
 
         var eventLane = getCurrentEventPriority();
         return eventLane;
@@ -25982,15 +26035,16 @@
     }
 
     /**
-     * 
+     * DONE
      * @param {*} root 
      * @param {*} fiber 
      * @param {*} lane 
      * @param {*} eventTime 
      */
     function scheduleUpdateOnFiber(root, fiber, lane, eventTime) {
+        //入口
 
-
+        debugger
         checkForNestedUpdates();
 
         {
@@ -26075,6 +26129,9 @@
         markRootUpdated(root, lane, eventTime);
         ensureRootIsScheduled(root, eventTime);
     }
+    /**
+     * DONE
+     */
     function isUnsafeClassRenderPhaseUpdate(fiber) {
         // Check if this is a render phase update. Only called by class components,
         // which special (deprecated) behavior for UNSAFE_componentWillReceive props.
@@ -27846,11 +27903,15 @@
         return timeElapsed < 120 ? 120 : timeElapsed < 480 ? 480 : timeElapsed < 1080 ? 1080 : timeElapsed < 1920 ? 1920 : timeElapsed < 3000 ? 3000 : timeElapsed < 4320 ? 4320 : ceil(timeElapsed / 1960) * 1960;
     }
 
+    //DONE
     function checkForNestedUpdates() {
         if (nestedUpdateCount > NESTED_UPDATE_LIMIT) {
             nestedUpdateCount = 0;
             rootWithNestedUpdates = null;
-            throw new Error('Maximum update depth exceeded. This can happen when a component ' + 'repeatedly calls setState inside componentWillUpdate or ' + 'componentDidUpdate. React limits the number of nested updates to ' + 'prevent infinite loops.');
+            throw new Error('Maximum update depth exceeded. This can happen when a component '
+                + 'repeatedly calls setState inside componentWillUpdate or '
+                + 'componentDidUpdate. React limits the number of nested updates to '
+                + 'prevent infinite loops.');
         }
 
         {
@@ -27858,7 +27919,10 @@
                 nestedPassiveUpdateCount = 0;
                 rootWithPassiveNestedUpdates = null;
 
-                error('Maximum update depth exceeded. This can happen when a component ' + "calls setState inside useEffect, but useEffect either doesn't " + 'have a dependency array, or one of the dependencies changes on ' + 'every render.');
+                error('Maximum update depth exceeded. This can happen when a component '
+                    + "calls setState inside useEffect, but useEffect either doesn't "
+                    + 'have a dependency array, or one of the dependencies changes on '
+                    + 'every render.');
             }
         }
     }
@@ -29310,6 +29374,11 @@
         didWarnAboutFindNodeInStrictMode = {};
     }
 
+    /**
+     * DONE
+     * @param {*} parentComponent 
+     * @returns 
+     */
     function getContextForSubtree(parentComponent) {
         if (!parentComponent) {
             return emptyContextObject;
@@ -29389,7 +29458,7 @@
      * @param {*} identifierPrefix 
      * @param {*} onRecoverableError 
      * @param {*} transitionCallbacks 
-     * @returns 
+     * @returns fiberRoot
      */
     function createContainer(containerInfo, tag, hydrationCallbacks, isStrictMode, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError, transitionCallbacks) {
         var hydrate = false;
@@ -29457,7 +29526,6 @@
         }
 
         var update = createUpdate(eventTime, lane);
-        // Caution: React DevTools currently depends on this property being called "element".
         update.payload = {
             element: element
         };
@@ -29482,6 +29550,8 @@
 
         return lane;
     }
+
+
     function getPublicRootInstance(container) {
         var containerFiber = container.current;
 
@@ -29945,6 +30015,7 @@
             }
         }
 
+        debugger
         updateContainer(children, root, null, null);
     };
 
@@ -29975,13 +30046,12 @@
     };
 
     /**
-     * 
+     * DONE
      * @param {*} container 
      * @param {*} options 
      * @returns 
      */
     function createRoot(container, options) {
-        //入口
         if (!isValidContainer(container)) {
             throw new Error('createRoot(...): Target container is not a DOM element.');
         }
@@ -29999,7 +30069,11 @@
                     warn('hydrate through createRoot is deprecated. Use ReactDOMClient.hydrateRoot(container, <App />) instead.');
                 } else {
                     if (typeof options === 'object' && options !== null && options.$$typeof === REACT_ELEMENT_TYPE) {
-                        error('You passed a JSX element to createRoot. You probably meant to ' + 'call root.render instead. ' + 'Example usage:\n\n' + '  let root = createRoot(domContainer);\n' + '  root.render(<App />);');
+                        error('You passed a JSX element to createRoot. You probably meant to '
+                            + 'call root.render instead. '
+                            + 'Example usage:\n\n'
+                            + '  let root = createRoot(domContainer);\n'
+                            + '  root.render(<App />);');
                     }
                 }
             }
@@ -30440,7 +30514,7 @@
     };
 
     /**
-     * 
+     * DONE
      * @param {*} container 
      * @param {*} options 
      * @returns 
@@ -30448,7 +30522,8 @@
     function createRoot$1(container, options) {
         {
             if (!Internals.usingClientEntryPoint && !true) {
-                error('You are importing createRoot from "react-dom" which is not supported. ' + 'You should instead import it from "react-dom/client".');
+                error('You are importing createRoot from "react-dom" which is not supported. '
+                    + 'You should instead import it from "react-dom/client".');
             }
         }
 

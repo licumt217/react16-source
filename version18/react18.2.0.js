@@ -798,7 +798,8 @@
             }
 
             self = config.__self === undefined ? null : config.__self;
-            source = config.__source === undefined ? null : config.__source; // Remaining properties are added to a new props object
+            source = config.__source === undefined ? null : config.__source;
+            // Remaining properties are added to a new props object
 
             for (propName in config) {
                 if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
@@ -2347,7 +2348,8 @@
             var info = '';
 
             if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
-                info += ' You likely forgot to export your component from the file ' + "it's defined in, or you might have mixed up default and named imports.";
+                info += ' You likely forgot to export your component from the file '
+                    + "it's defined in, or you might have mixed up default and named imports.";
             }
 
             var sourceInfo = getSourceInfoErrorAddendumForProps(props);
@@ -2372,7 +2374,9 @@
             }
 
             {
-                error('React.createElement: type is invalid -- expected a string (for ' + 'built-in components) or a class/function (for composite ' + 'components) but got: %s.%s', typeString, info);
+                error('React.createElement: type is invalid -- expected a string (for '
+                    + 'built-in components) or a class/function (for composite '
+                    + 'components) but got: %s.%s', typeString, info);
             }
         }
 
@@ -2541,6 +2545,7 @@
     var getCurrentTime;
     var hasPerformanceNow = typeof performance === 'object' && typeof performance.now === 'function';
 
+    //DONE now()
     if (hasPerformanceNow) {
         var localPerformance = performance;
 
