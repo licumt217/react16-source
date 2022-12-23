@@ -923,6 +923,7 @@
     function disabledLog() {}
 
     disabledLog.__reactDisabledLog = true;
+    //DONE
     function disableLogs() {
         {
             if (disabledDepth === 0) {
@@ -957,6 +958,7 @@
             disabledDepth++;
         }
     }
+    //DONE
     function reenableLogs() {
         {
             disabledDepth--;
@@ -1003,6 +1005,7 @@
 
     var ReactCurrentDispatcher = ReactSharedInternals.ReactCurrentDispatcher;
     var prefix;
+    //DONE
     function describeBuiltInComponentFrame(name, source, ownerFn) {
         {
             if (prefix === undefined) {
@@ -1027,6 +1030,7 @@
         componentFrameCache = new PossiblyWeakMap();
     }
 
+    //DONE
     function describeNativeComponentFrame(fn, construct) {
         // If something asked for a stack inside a fake render, it should get ignored.
         if (!fn || reentry) {
@@ -1187,11 +1191,13 @@
         return syntheticFrame;
     }
 
+    //DONE
     function describeClassComponentFrame(ctor, source, ownerFn) {
         {
             return describeNativeComponentFrame(ctor, true);
         }
     }
+    //DONE
     function describeFunctionComponentFrame(fn, source, ownerFn) {
         {
             return describeNativeComponentFrame(fn, false);
@@ -1253,6 +1259,7 @@
         return '';
     }
 
+    //DONE
     function describeFiber(fiber) {
         var owner = fiber._debugOwner ? fiber._debugOwner.type : null;
         var source = fiber._debugSource;
@@ -1286,6 +1293,7 @@
         }
     }
 
+    //DONE
     function getStackByFiberInDevAndProd(workInProgress) {
         try {
             var info = '';
@@ -1302,6 +1310,7 @@
         }
     }
 
+    //DONE
     function getWrappedName(outerType, innerType, wrapperName) {
         var displayName = outerType.displayName;
 
@@ -1314,11 +1323,13 @@
     } // Keep in sync with react-reconciler/getComponentNameFromFiber
 
 
+    //DONE
     function getContextName(type) {
         return type.displayName || 'Context';
     } // Note that the reconciler package should generally prefer to use getComponentNameFromFiber() instead.
 
 
+    //DONE
     function getComponentNameFromType(type) {
         if (type == null) {
             // Host root, text node or just invalid type.
@@ -1402,16 +1413,19 @@
         return null;
     }
 
+    //DONE
     function getWrappedName$1(outerType, innerType, wrapperName) {
         var functionName = innerType.displayName || innerType.name || '';
         return outerType.displayName || (functionName !== '' ? wrapperName + "(" + functionName + ")" : wrapperName);
     } // Keep in sync with shared/getComponentNameFromType
 
 
+    //DONE
     function getContextName$1(type) {
         return type.displayName || 'Context';
     }
 
+    //DONE
     function getComponentNameFromFiber(fiber) {
         var tag = fiber.tag,
             type = fiber.type;
@@ -1533,6 +1547,7 @@
         }
     }
 
+    //DONE
     function resetCurrentFiber() {
         {
             ReactDebugCurrentFrame.getCurrentStack = null;
@@ -1540,6 +1555,7 @@
             isRendering = false;
         }
     }
+    //DONE
     function setCurrentFiber(fiber) {
         {
             ReactDebugCurrentFrame.getCurrentStack = fiber === null ? null : getCurrentFiberStackInDev;
@@ -4964,6 +4980,7 @@
             }
         }
     }
+    //DONE
     function onPostCommitRoot(root) {
         if (injectedHook && typeof injectedHook.onPostCommitFiberRoot === 'function') {
             try {
@@ -5071,6 +5088,7 @@
             }
         }
     }
+    //DONE
     function markComponentRenderStopped() {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentRenderStopped === 'function') {
@@ -5078,6 +5096,7 @@
             }
         }
     }
+    //DONE
     function markComponentPassiveEffectMountStarted(fiber) {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentPassiveEffectMountStarted === 'function') {
@@ -5085,6 +5104,7 @@
             }
         }
     }
+    //DONE
     function markComponentPassiveEffectMountStopped() {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentPassiveEffectMountStopped === 'function') {
@@ -5092,6 +5112,7 @@
             }
         }
     }
+    //DONE
     function markComponentPassiveEffectUnmountStarted(fiber) {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentPassiveEffectUnmountStarted === 'function') {
@@ -5099,6 +5120,7 @@
             }
         }
     }
+    //DONE
     function markComponentPassiveEffectUnmountStopped() {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentPassiveEffectUnmountStopped === 'function') {
@@ -5106,6 +5128,7 @@
             }
         }
     }
+    //DONE
     function markComponentLayoutEffectMountStarted(fiber) {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentLayoutEffectMountStarted === 'function') {
@@ -5113,6 +5136,7 @@
             }
         }
     }
+    //DONE
     function markComponentLayoutEffectMountStopped() {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentLayoutEffectMountStopped === 'function') {
@@ -5120,6 +5144,7 @@
             }
         }
     }
+    //DONE
     function markComponentLayoutEffectUnmountStarted(fiber) {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentLayoutEffectUnmountStarted === 'function') {
@@ -5127,6 +5152,7 @@
             }
         }
     }
+    //DONE
     function markComponentLayoutEffectUnmountStopped() {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentLayoutEffectUnmountStopped === 'function') {
@@ -5134,6 +5160,7 @@
             }
         }
     }
+    //DONE
     function markComponentErrored(fiber, thrownValue, lanes) {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentErrored === 'function') {
@@ -5141,6 +5168,7 @@
             }
         }
     }
+    //DONE
     function markComponentSuspended(fiber, wakeable, lanes) {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markComponentSuspended === 'function') {
@@ -5169,6 +5197,7 @@
             }
         }
     }
+    //DONE
     function markPassiveEffectsStarted(lanes) {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markPassiveEffectsStarted === 'function') {
@@ -5176,6 +5205,7 @@
             }
         }
     }
+    //DONE
     function markPassiveEffectsStopped() {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markPassiveEffectsStopped === 'function') {
@@ -5184,7 +5214,7 @@
         }
     }
     /**
-     * 
+     * DONE
      * @param {*} lanes 
      */
     function markRenderStarted(lanes) {
@@ -5195,6 +5225,7 @@
         }
     }
     /**
+     * DONE
      * 交出控制权
      */
     function markRenderYielded() {
@@ -5205,7 +5236,7 @@
         }
     }
     /**
-     * 
+     * DONE
      */
     function markRenderStopped() {
         {
@@ -5438,6 +5469,7 @@
     var nextRetryLane = RetryLane1;
 
     /**
+     * DONE
      * 从lanes中获取最高优先级的lanes
      * @param {*} lanes 
      * @returns 
@@ -5510,6 +5542,7 @@
     }
 
     /**
+     * DONE
      * 从 root.pendingLanes; 中取出优先级最高的下一个要处理的lanes
      */
     function getNextLanes(root, wipLanes) {
@@ -5623,6 +5656,7 @@
 
         return nextLanes;
     }
+    //DONE
     function getMostRecentEventTime(root, lanes) {
         var eventTimes = root.eventTimes;
         var mostRecentEventTime = NoTimestamp;
@@ -5753,6 +5787,7 @@
     function getHighestPriorityPendingLanes(root) {
         return getHighestPriorityLanes(root.pendingLanes);
     }
+    //DONE
     function getLanesToRetrySynchronouslyOnError(root) {
         var everythingButOffscreen = root.pendingLanes & ~OffscreenLane;
 
@@ -5766,12 +5801,15 @@
 
         return NoLanes;
     }
+    //DONE
     function includesSyncLane(lanes) {
         return (lanes & SyncLane) !== NoLanes;
     }
+    //DONE
     function includesNonIdleWork(lanes) {
         return (lanes & NonIdleLanes) !== NoLanes;
     }
+    //DONE
     function includesOnlyRetries(lanes) {
         return (lanes & RetryLanes) === lanes;
     }
@@ -5779,10 +5817,12 @@
         var UrgentLanes = SyncLane | InputContinuousLane | DefaultLane;
         return (lanes & UrgentLanes) === NoLanes;
     }
+    //DONE
     function includesOnlyTransitions(lanes) {
         return (lanes & TransitionLanes) === lanes;
     }
     /**
+     * DONE
      * 是否包含阻塞lane
      * @param {*} root 
      * @param {*} lanes 
@@ -5793,6 +5833,7 @@
         return (lanes & SyncDefaultLanes) !== NoLanes;
     }
     /**
+     * DONE
      * 给定lanes中是否包含过期的lane
      */
     function includesExpiredLane(root, lanes) {
@@ -5857,6 +5898,7 @@
     }
 
     /**
+     * DONE
      * 获取lanes索引
      * @param {} lanes 
      * @returns 
@@ -5865,6 +5907,7 @@
         return 31 - clz32(lanes);
     }
 
+    //DONE
     function laneToIndex(lane) {
         return pickArbitraryLaneIndex(lane);
     }
@@ -5872,6 +5915,7 @@
     function includesSomeLane(a, b) {
         return (a & b) !== NoLanes;
     }
+    //DONE
     function isSubsetOfLanes(set, subset) {
         return (set & subset) === subset;
     }
@@ -5884,6 +5928,7 @@
     function mergeLanes(a, b) {
         return a | b;
     }
+    //DONE
     function removeLanes(set, subset) {
         return set & ~subset;
     }
@@ -5911,6 +5956,7 @@
         return laneMap;
     }
     /**
+     * DONE
      * 给fiberRoot的eventTimes在对应跑道上设置eventTime
      * @param {*} root 
      * @param {*} updateLane 
@@ -5943,6 +5989,7 @@
         // We can always overwrite an existing timestamp because we prefer the most recent event, and we assume time is monotonically increasing.
         eventTimes[index] = eventTime;
     }
+    //DONE
     function markRootSuspended(root, suspendedLanes) {
         root.suspendedLanes |= suspendedLanes;
         root.pingedLanes &= ~suspendedLanes; // The suspended lanes are no longer CPU-bound. Clear their expiration times.
@@ -5957,6 +6004,7 @@
             lanes &= ~lane;
         }
     }
+    //DONE
     function markRootPinged(root, pingedLanes, eventTime) {
         root.pingedLanes |= root.suspendedLanes & pingedLanes;
     }
@@ -6075,6 +6123,7 @@
 
         return lane;
     }
+    //DONE
     function addFiberToLanesMap(root, fiber, lanes) {
 
         if (!isDevToolsPresent) {
@@ -6091,6 +6140,7 @@
             lanes &= ~lane;
         }
     }
+    //DONE
     function movePendingFibersToMemoized(root, lanes) {
 
         if (!isDevToolsPresent) {
@@ -6119,6 +6169,7 @@
             lanes &= ~lane;
         }
     }
+    //DONE
     function getTransitionsForLanes(root, lanes) {
         {
             return null;
@@ -6153,10 +6204,12 @@
     function higherEventPriority(a, b) {
         return a !== 0 && a < b ? a : b;
     }
+    //DONE
     function lowerEventPriority(a, b) {
         return a === 0 || a > b ? a : b;
     }
     /**
+     * DONE
      * a 的优先级是否高于 b
      * 越少，优先级越高
      */
@@ -6164,7 +6217,7 @@
         return a !== 0 && a < b;
     }
     /**
-     * 
+     * DONE
      */
     function lanesToEventPriority(lanes) {
         var lane = getHighestPriorityLane(lanes);
@@ -11808,6 +11861,7 @@
             }
         }
     }
+    //DONE
     function errorHydratingContainer(parentContainer) {
         {
             // TODO: This gets logged by onRecoverableError, too, so we should be
@@ -11826,6 +11880,7 @@
     var internalEventHandlersKey = '__reactEvents$' + randomKey;
     var internalEventHandlerListenersKey = '__reactListeners$' + randomKey;
     var internalEventHandlesSetKey = '__reactHandles$' + randomKey;
+    //DONE
     function detachDeletedInstance(node) {
         // TODO: This function is only called on host components. I don't think all of
         // these fields are relevant.
@@ -12369,7 +12424,7 @@
         }
     }
     /**
-     * 
+     * DONE
      * @returns 
      */
     function flushSyncCallbacks() {
@@ -12612,6 +12667,7 @@
         }
     }
 
+    //DONE
     function markDidThrowWhileHydratingDEV() {
         {
             didSuspendOrErrorDEV = true;
@@ -13078,10 +13134,12 @@
         }
     }
 
+    //DONE
     function getIsHydrating() {
         return isHydrating;
     }
 
+    //DONE
     function queueHydrationError(error) {
         if (hydrationErrors === null) {
             hydrationErrors = [error];
@@ -13367,7 +13425,7 @@
     var lastFullyObservedContext = null;
     var isDisallowedContextReadInDEV = false;
     /**
-     * 
+     * DONE
      */
     function resetContextDependencies() {
         // This is called right before React yields execution, to ensure `readContext`
@@ -13965,6 +14023,7 @@
             markRootEntangled(root, newQueueLanes);
         }
     }
+    //DONE
     function enqueueCapturedUpdate(workInProgress, capturedUpdate) {
         // Captured updates are updates that are thrown by a child during the render
         // phase. They should be discarded if the render is aborted. Therefore,
@@ -16404,6 +16463,7 @@
         pop(suspenseStackCursor, fiber);
     }
 
+    //DONE
     function shouldCaptureSuspense(workInProgress, hasInvisibleParent) {
         // If it was the primary children that just suspended, capture and render the
         // fallback. Otherwise, don't capture and bubble to the next boundary.
@@ -16835,6 +16895,7 @@
 
         current.lanes = removeLanes(current.lanes, lanes);
     }
+    //DONE
     function resetHooksAfterThrow() {
         // We can assume the previous dispatcher is always this one, since we set it
         // at the beginning of the render phase and there's no re-entrance.
@@ -18944,6 +19005,7 @@
     var currentUpdateIsNested = false;
     var nestedUpdateScheduled = false;
 
+    //DONE
     function isCurrentUpdateNested() {
         return currentUpdateIsNested;
     }
@@ -18954,6 +19016,7 @@
         }
     }
 
+    //DONE
     function resetNestedUpdateFlag() {
         {
             currentUpdateIsNested = false;
@@ -18968,6 +19031,7 @@
         }
     }
 
+    //DONE
     function getCommitTime() {
         return commitTime;
     }
@@ -18994,6 +19058,7 @@
         profilerStartTime = -1;
     }
 
+    //DONE
     function stopProfilerTimerIfRunningAndRecordDelta(fiber, overrideBaseTime) {
 
         if (profilerStartTime >= 0) {
@@ -19078,6 +19143,7 @@
         layoutEffectStartTime = now$1();
     }
 
+    //DONE
     function startPassiveEffectTimer() {
 
         passiveEffectStartTime = now$1();
@@ -19095,6 +19161,7 @@
         }
     }
 
+    //DONE
     function createCapturedValueAtFiber(value, source) {
         // If the value is an error, call this function immediately after it is thrown
         // so the stack is accurate.
@@ -19121,6 +19188,7 @@
         return true;
     }
 
+    //DONE
     function logCapturedError(boundary, errorInfo) {
         try {
             var logError = showErrorDialog(boundary, errorInfo); // Allow injected showErrorDialog() to prevent default console.error logging.
@@ -19157,17 +19225,23 @@
                 }
 
                 var componentName = source ? getComponentNameFromFiber(source) : null;
-                var componentNameMessage = componentName ? "The above error occurred in the <" + componentName + "> component:" : 'The above error occurred in one of your React components:';
+                var componentNameMessage = componentName ? "The above error occurred in the <"
+                    + componentName
+                    + "> component:" : 'The above error occurred in one of your React components:';
                 var errorBoundaryMessage;
 
                 if (boundary.tag === HostRoot) {
-                    errorBoundaryMessage = 'Consider adding an error boundary to your tree to customize error handling behavior.\n' + 'Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.';
+                    errorBoundaryMessage = 'Consider adding an error boundary to your tree to customize error handling behavior.\n'
+                        + 'Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.';
                 } else {
                     var errorBoundaryName = getComponentNameFromFiber(boundary) || 'Anonymous';
-                    errorBoundaryMessage = "React will try to recreate this component tree from scratch " + ("using the error boundary you provided, " + errorBoundaryName + ".");
+                    errorBoundaryMessage = "React will try to recreate this component tree from scratch "
+                        + ("using the error boundary you provided, "
+                            + errorBoundaryName + ".");
                 }
 
-                var combinedMessage = componentNameMessage + "\n" + componentStack + "\n\n" + ("" + errorBoundaryMessage); // In development, we provide our own message with just the component stack.
+                var combinedMessage = componentNameMessage + "\n" + componentStack + "\n\n" + ("" + errorBoundaryMessage);
+                // In development, we provide our own message with just the component stack.
                 // We don't include the original error message and JS stack because the browser
                 // has already printed it. Even if the application swallows the error, it is still
                 // displayed by the browser thanks to the DEV-only fake event trick in ReactErrorUtils.
@@ -19192,6 +19266,7 @@
 
     var PossiblyWeakMap$1 = typeof WeakMap === 'function' ? WeakMap : Map;
 
+    //DONE
     function createRootErrorUpdate(fiber, errorInfo, lane) {
         var update = createUpdate(NoTimestamp, lane); // Unmount the root by rendering null.
 
@@ -19211,6 +19286,7 @@
         return update;
     }
 
+    //DONE
     function createClassErrorUpdate(fiber, errorInfo, lane) {
         var update = createUpdate(NoTimestamp, lane);
         update.tag = CaptureUpdate;
@@ -19263,7 +19339,8 @@
                         // then it needs to call setState to recover from errors.
                         // If no state update is scheduled then the boundary will swallow the error.
                         if (!includesSomeLane(fiber.lanes, SyncLane)) {
-                            error('%s: Error boundaries should implement getDerivedStateFromError(). ' + 'In that method, return a state update to display an error message or fallback UI.', getComponentNameFromFiber(fiber) || 'Unknown');
+                            error('%s: Error boundaries should implement getDerivedStateFromError(). '
+                                + 'In that method, return a state update to display an error message or fallback UI.', getComponentNameFromFiber(fiber) || 'Unknown');
                         }
                     }
                 }
@@ -19273,6 +19350,7 @@
         return update;
     }
 
+    //DONE
     function attachPingListener(root, wakeable, lanes) {
         // Attach a ping listener
         //
@@ -19318,6 +19396,7 @@
         }
     }
 
+    //DONE
     function attachRetryListener(suspenseBoundary, root, wakeable, lanes) {
         // Retry listener
         //
@@ -19341,9 +19420,9 @@
         }
     }
 
+    //DONE
     function resetSuspendedComponent(sourceFiber, rootRenderLanes) {
         // A legacy mode Suspense quirk, only relevant to hook components.
-
 
         var tag = sourceFiber.tag;
 
@@ -19361,6 +19440,7 @@
         }
     }
 
+    //DONE
     function getNearestSuspenseBoundaryToCapture(returnFiber) {
         var node = returnFiber;
 
@@ -19377,6 +19457,7 @@
         return null;
     }
 
+    //DONE
     function markSuspenseBoundaryShouldCapture(suspenseBoundary, returnFiber, sourceFiber, root, rootRenderLanes) {
         // This marks a Suspense boundary so that when we're unwinding the stack,
         // it captures the suspended "exception" and does a second (fallback) pass.
@@ -19485,6 +19566,7 @@
         return suspenseBoundary;
     }
 
+    //DONE
     function throwException(root, returnFiber, sourceFiber, value, rootRenderLanes) {
         // The source fiber did not complete.
         sourceFiber.flags |= Incomplete;
@@ -19512,7 +19594,8 @@
 
             if (suspenseBoundary !== null) {
                 suspenseBoundary.flags &= ~ForceClientRender;
-                markSuspenseBoundaryShouldCapture(suspenseBoundary, returnFiber, sourceFiber, root, rootRenderLanes); // We only attach ping listeners in concurrent mode. Legacy Suspense always
+                markSuspenseBoundaryShouldCapture(suspenseBoundary, returnFiber, sourceFiber, root, rootRenderLanes);
+                // We only attach ping listeners in concurrent mode. Legacy Suspense always
                 // commits fallbacks synchronously, so there are no pings.
 
                 if (suspenseBoundary.mode & ConcurrentMode) {
@@ -19540,7 +19623,11 @@
                 // synchronously to maintain consistency with external state.
 
 
-                var uncaughtSuspenseError = new Error('A component suspended while responding to synchronous input. This ' + 'will cause the UI to be replaced with a loading indicator. To ' + 'fix, updates that suspend should be wrapped ' + 'with startTransition.'); // If we're outside a transition, fall through to the regular error path.
+                var uncaughtSuspenseError = new Error('A component suspended while responding to synchronous input. This '
+                    + 'will cause the UI to be replaced with a loading indicator. To '
+                    + 'fix, updates that suspend should be wrapped '
+                    + 'with startTransition.');
+                // If we're outside a transition, fall through to the regular error path.
                 // The error will be caught by the nearest suspense boundary.
 
                 value = uncaughtSuspenseError;
@@ -19550,7 +19637,8 @@
             if (getIsHydrating() && sourceFiber.mode & ConcurrentMode) {
                 markDidThrowWhileHydratingDEV();
 
-                var _suspenseBoundary = getNearestSuspenseBoundaryToCapture(returnFiber); // If the error was thrown during hydration, we may be able to recover by
+                var _suspenseBoundary = getNearestSuspenseBoundaryToCapture(returnFiber);
+                // If the error was thrown during hydration, we may be able to recover by
                 // discarding the dehydrated content and switching to a client render.
                 // Instead of surfacing the error, find the nearest Suspense boundary
                 // and render it again without hydration.
@@ -19563,7 +19651,8 @@
                         _suspenseBoundary.flags |= ForceClientRender;
                     }
 
-                    markSuspenseBoundaryShouldCapture(_suspenseBoundary, returnFiber, sourceFiber, root, rootRenderLanes); // Even though the user may not be affected by this error, we should
+                    markSuspenseBoundaryShouldCapture(_suspenseBoundary, returnFiber, sourceFiber, root, rootRenderLanes);
+                    // Even though the user may not be affected by this error, we should
                     // still log it so it can be fixed.
 
                     queueHydrationError(createCapturedValueAtFiber(value, sourceFiber));
@@ -23316,6 +23405,7 @@
 
     var inProgressLanes = null;
     var inProgressRoot = null;
+    //DONE
     function reportUncaughtErrorInDEV(error) {
         // Wrapping each small part of the commit phase into a guarded
         // callback is a bit too slow (https://github.com/facebook/react/pull/21666).
@@ -23415,6 +23505,7 @@
         }
     }
 
+    //DONE
     function safelyCallDestroy(current, nearestMountedAncestor, destroy) {
         try {
             destroy();
@@ -23571,6 +23662,7 @@
         }
     }
 
+    //DONE
     function commitHookEffectListUnmount(flags, finishedWork, nearestMountedAncestor) {
         var updateQueue = finishedWork.updateQueue;
         var lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
@@ -23623,6 +23715,7 @@
         }
     }
 
+    //DONE
     function commitHookEffectListMount(flags, finishedWork) {
         var updateQueue = finishedWork.updateQueue;
         var lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
@@ -23685,7 +23778,21 @@
                             if (destroy === null) {
                                 addendum = ' You returned null. If your effect does not require clean ' + 'up, return undefined (or nothing).';
                             } else if (typeof destroy.then === 'function') {
-                                addendum = '\n\nIt looks like you wrote ' + hookName + '(async () => ...) or returned a Promise. ' + 'Instead, write the async function inside your effect ' + 'and call it immediately:\n\n' + hookName + '(() => {\n' + '  async function fetchData() {\n' + '    // You can await here\n' + '    const response = await MyAPI.getData(someId);\n' + '    // ...\n' + '  }\n' + '  fetchData();\n' + "}, [someId]); // Or [] if effect doesn't need props or state\n\n" + 'Learn more about data fetching with Hooks: https://reactjs.org/link/hooks-data-fetching';
+                                addendum = '\n\nIt looks like you wrote '
+                                    + hookName
+                                    + '(async () => ...) or returned a Promise. '
+                                    + 'Instead, write the async function inside your effect '
+                                    + 'and call it immediately:\n\n'
+                                    + hookName
+                                    + '(() => {\n'
+                                    + '  async function fetchData() {\n'
+                                    + '    // You can await here\n'
+                                    + '    const response = await MyAPI.getData(someId);\n'
+                                    + '    // ...\n'
+                                    + '  }\n'
+                                    + '  fetchData();\n'
+                                    + "}, [someId]); // Or [] if effect doesn't need props or state\n\n"
+                                    + 'Learn more about data fetching with Hooks: https://reactjs.org/link/hooks-data-fetching';
                             } else {
                                 addendum = ' You returned: ' + destroy;
                             }
@@ -23700,6 +23807,7 @@
         }
     }
 
+    //DONE
     function commitPassiveEffectDurations(finishedRoot, finishedWork) {
         {
             // Only Profilers with work in their subtree will have an Update effect scheduled.
@@ -24203,6 +24311,7 @@
         fiber.return = null;
     }
 
+    //DONE
     function detachFiberAfterEffects(fiber) {
         var alternate = fiber.alternate;
 
@@ -25424,11 +25533,13 @@
         }
     }
 
+    //DONE
     function commitPassiveMountEffects(root, finishedWork, committedLanes, committedTransitions) {
         nextEffect = finishedWork;
         commitPassiveMountEffects_begin(finishedWork, root, committedLanes, committedTransitions);
     }
 
+    //DONE
     function commitPassiveMountEffects_begin(subtreeRoot, root, committedLanes, committedTransitions) {
         while (nextEffect !== null) {
             var fiber = nextEffect;
@@ -25499,6 +25610,7 @@
         }
     }
 
+    //DONE
     function commitPassiveUnmountEffects(firstChild) {
         nextEffect = firstChild;
         commitPassiveUnmountEffects_begin();
@@ -25602,6 +25714,7 @@
         }
     }
 
+    //DONE
     function commitPassiveUnmountEffectsInsideOfDeletedTree_begin(deletedSubtreeRoot, nearestMountedAncestor) {
         while (nextEffect !== null) {
             var fiber = nextEffect; // Deletion effects fire in parent -> child order
@@ -25622,6 +25735,7 @@
         }
     }
 
+    //DONE
     function commitPassiveUnmountEffectsInsideOfDeletedTree_complete(deletedSubtreeRoot) {
         while (nextEffect !== null) {
             var fiber = nextEffect;
@@ -25650,6 +25764,7 @@
         }
     }
 
+    //DONE
     function commitPassiveUnmountInsideDeletedTreeOnFiber(current, nearestMountedAncestor) {
         switch (current.tag) {
             case FunctionComponent:
@@ -25900,6 +26015,7 @@
     var RENDER_TIMEOUT_MS = 500;
     var workInProgressTransitions = null;
 
+    //DONE
     function resetRenderTimer() {
         workInProgressRootRenderTargetTime = now() + RENDER_TIMEOUT_MS;
     }
@@ -26044,7 +26160,6 @@
     function scheduleUpdateOnFiber(root, fiber, lane, eventTime) {
         //入口
 
-        debugger
         checkForNestedUpdates();
 
         {
@@ -26141,13 +26256,14 @@
         );
     }
 
+    //DONE
     // Use this function to schedule a task for a root. There's only one task per
     // root; if a task was already scheduled, we'll check to make sure the priority
     // of the existing task is the same as the priority of the next level that the
     // root has work on. This function is called on every update, and right before
     // exiting a task.
-
     function ensureRootIsScheduled(root, currentTime) {
+        debugger
         var existingCallbackNode = root.callbackNode;
 
         // Check if any lanes are being starved by other work. If so, mark them as expired so we know to work on those next.
@@ -26265,7 +26381,7 @@
 
 
     /**
-     * 
+     * DONE
      * @param {*} root 
      * @param {*} didTimeout 
      * @returns 
@@ -26400,6 +26516,7 @@
         return null;
     }
 
+    //DONE
     function recoverFromConcurrentError(root, errorRetryLanes) {
         // If an error occurred during hydration, discard server response and fall
         // back to client side render.
@@ -26445,6 +26562,7 @@
         return exitStatus;
     }
 
+    //DONE
     function queueRecoverableErrors(errors) {
         if (workInProgressRootRecoverableErrors === null) {
             workInProgressRootRecoverableErrors = errors;
@@ -26454,7 +26572,7 @@
     }
 
     /**
-     * 
+     * DONE
      * @param {*} root 
      * @param {*} exitStatus 
      * @param {*} lanes 
@@ -26574,6 +26692,7 @@
         }
     }
 
+    //DONE
     function isRenderConsistentWithExternalStores(finishedWork) {
         // Search the rendered tree for external store reads, and check whether the
         // stores were mutated in a concurrent event. Intentionally using an iterative
@@ -26637,6 +26756,7 @@
         return true;
     }
 
+    //DONE
     function markRootSuspended$1(root, suspendedLanes) {
         // When suspending, we should always exclude lanes that were pinged or (more
         // rarely, since we try to avoid it) updated during the render phase.
@@ -26803,6 +26923,7 @@
     }
 
     /**
+     * DONE
      * 新建rootFiber对应的workInProgress并返回
      * @param {*} root 
      * @param {*} lanes 
@@ -26851,6 +26972,7 @@
         return rootWorkInProgress;
     }
 
+    //DONE
     function handleError(root, thrownValue) {
         do {
             var erroredWork = workInProgress;
@@ -26922,6 +27044,7 @@
         } while (true);
     }
 
+    //DONE
     function pushDispatcher() {
         var prevDispatcher = ReactCurrentDispatcher$2.current;
         ReactCurrentDispatcher$2.current = ContextOnlyDispatcher;
@@ -26936,6 +27059,7 @@
         }
     }
 
+    //DONE
     function popDispatcher(prevDispatcher) {
         ReactCurrentDispatcher$2.current = prevDispatcher;
     }
@@ -26951,6 +27075,7 @@
             workInProgressRootExitStatus = RootSuspended;
         }
     }
+    //DONE
     function renderDidSuspendDelayIfPossible() {
         if (workInProgressRootExitStatus === RootInProgress || workInProgressRootExitStatus === RootSuspended || workInProgressRootExitStatus === RootErrored) {
             workInProgressRootExitStatus = RootSuspendedWithDelay;
@@ -26969,6 +27094,7 @@
             markRootSuspended$1(workInProgressRoot, workInProgressRootRenderLanes);
         }
     }
+    //DONE
     function renderDidError(error) {
         if (workInProgressRootExitStatus !== RootSuspendedWithDelay) {
             workInProgressRootExitStatus = RootErrored;
@@ -26989,7 +27115,7 @@
     }
 
     /**
-     * 
+     * DONE
      * @param {*} root 
      * @param {*} lanes 
      * @returns 
@@ -27064,7 +27190,7 @@
     }
 
     /**
-     * 
+     * DONE
      */
     function renderRootConcurrent(root, lanes) {
         var prevExecutionContext = executionContext;
@@ -27581,7 +27707,7 @@
     }
 
     /**
-     * 
+     * DONE
      */
     function flushPassiveEffects() {
         // Returns whether passive effects were flushed.
@@ -27622,6 +27748,7 @@
         }
     }
 
+    //DONE
     function flushPassiveEffectsImpl() {
         if (rootWithPendingPassiveEffects === null) {
             return false;
@@ -27710,6 +27837,7 @@
     function isAlreadyFailedLegacyErrorBoundary(instance) {
         return legacyErrorBoundariesThatAlreadyFailed !== null && legacyErrorBoundariesThatAlreadyFailed.has(instance);
     }
+    //DONE
     function markLegacyErrorBoundaryAsFailed(instance) {
         if (legacyErrorBoundariesThatAlreadyFailed === null) {
             legacyErrorBoundariesThatAlreadyFailed = new Set([instance]);
@@ -27727,6 +27855,7 @@
 
     var onUncaughtError = prepareToThrowUncaughtError;
 
+    //DONE
     function captureCommitPhaseErrorOnRoot(rootFiber, sourceFiber, error) {
         var errorInfo = createCapturedValueAtFiber(error, sourceFiber);
         var update = createRootErrorUpdate(rootFiber, errorInfo, SyncLane);
@@ -27739,6 +27868,7 @@
         }
     }
 
+    //DONE
     function captureCommitPhaseError(sourceFiber, nearestMountedAncestor, error$1) {
         {
             reportUncaughtErrorInDEV(error$1);
@@ -27790,7 +27920,11 @@
             // trees. What it should instead do is propagate the error to the parent of
             // the deleted tree. In the meantime, do not add this warning to the
             // allowlist; this is only for our internal use.
-            error('Internal React error: Attempted to capture a commit phase error ' + 'inside a detached tree. This indicates a bug in React. Likely ' + 'causes include deleting the same fiber more than once, committing an ' + 'already-finished tree, or an inconsistent return pointer.\n\n' + 'Error message:\n\n%s', error$1);
+            error('Internal React error: Attempted to capture a commit phase error '
+                + 'inside a detached tree. This indicates a bug in React. Likely '
+                + 'causes include deleting the same fiber more than once, committing an '
+                + 'already-finished tree, or an inconsistent return pointer.\n\n'
+                + 'Error message:\n\n%s', error$1);
         }
     }
     function pingSuspendedRoot(root, wakeable, pingedLanes) {
@@ -27937,6 +28071,7 @@
         }
     }
 
+    //DONE
     function commitDoubleInvokeEffectsInDEV(fiber, hasPassiveEffects) {
         {
             // TODO (StrictEffects) Should we set a marker on the root if it contains strict effects
@@ -27959,6 +28094,7 @@
         }
     }
 
+    //DONE
     function invokeEffectsInDev(firstChild, fiberFlags, invokeEffectFn) {
         {
             // We don't need to re-check StrictEffectsMode here.
@@ -28135,6 +28271,7 @@
         }
     }
 
+    //DONE
     function restorePendingUpdaters(root, lanes) {
         {
             if (isDevToolsPresent) {
@@ -28150,7 +28287,7 @@
     var fakeActCallbackNode = {};
 
     /**
-     * 
+     * DONE
      * @param {*} priorityLevel 
      * @param {*} callback 
      * @returns 
@@ -28178,6 +28315,7 @@
         return cancelCallback(callbackNode);
     }
 
+    //DONE
     function shouldForceFlushFallbacksInDEV() {
         // Never force flush in production. This function should get stripped out.
         return ReactCurrentActQueue$1.current !== null;
@@ -28236,6 +28374,7 @@
         }
     }
 
+    //DONE
     function setIsRunningInsertionEffect(isRunning) {
         {
             isRunningInsertionEffect = isRunning;
@@ -28394,6 +28533,7 @@
             return false;
         }
     }
+    //DONE
     function markFailedErrorBoundaryForHotReloading(fiber) {
         {
             if (resolveFamily === null) {
@@ -30015,7 +30155,6 @@
             }
         }
 
-        debugger
         updateContainer(children, root, null, null);
     };
 
