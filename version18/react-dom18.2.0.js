@@ -2403,6 +2403,7 @@
     var MATH_NAMESPACE = 'http://www.w3.org/1998/Math/MathML';
     var SVG_NAMESPACE = 'http://www.w3.org/2000/svg'; // Assumes there is no parent namespace.
 
+    //DONE
     function getIntrinsicNamespace(type) {
         switch (type) {
             case 'svg':
@@ -2415,6 +2416,7 @@
                 return HTML_NAMESPACE;
         }
     }
+    //DONE
     function getChildNamespace(parentNamespace, type) {
         if (parentNamespace == null || parentNamespace === HTML_NAMESPACE) {
             // No (or default) parent namespace: potential entry point.
@@ -4513,10 +4515,11 @@
     var MutationMask = Placement | Update | ChildDeletion | ContentReset | Ref | Hydrating | Visibility;
     var LayoutMask = Update | Callback | Ref | Visibility; // TODO: Split into PassiveMountMask and PassiveUnmountMask
 
-    var PassiveMask = Passive | ChildDeletion; // Union of tags that don't get reset on clones.
+    var PassiveMask = Passive | ChildDeletion;
+
+    // Union of tags that don't get reset on clones.
     // This allows certain concepts to persist without recalculating them,
     // e.g. whether a subtree contains passive effects or portals.
-
     var StaticMask = LayoutStatic | PassiveStatic | RefStatic;
 
     var ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner;
@@ -5292,11 +5295,10 @@
             16;
     }
 
-    // TODO: This is pretty well supported by browsers. Maybe we can drop it.
-
-    var clz32 = Math.clz32 ? Math.clz32 : clz32Fallback; // Count leading zeros.
-    // Based on:
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/clz32
+    //Math.clz32()方法的作用就是计算一个32位无符号整数的二进制表示中有多少个前导0，
+    // clz其实就是词组"count leading zero"的首字母缩写，
+    // 因此方法名clz32代表的含义就是“计算32位无符号整数的前导0的个数”。
+    var clz32 = Math.clz32 ? Math.clz32 : clz32Fallback;
 
     var log = Math.log;
     var LN2 = Math.LN2;
@@ -5677,7 +5679,8 @@
     }
 
     /**
-     * 
+     * DONE
+     * 根据不同的lane和currentTime计算过期时间
      */
     function computeExpirationTime(lane, currentTime) {
         switch (lane) {
@@ -5745,7 +5748,8 @@
     }
 
     /**
-     * 
+     * DONE
+     * 将对应的过期lane附加到root.expiredLanes上
      */
     function markStarvedLanesAsExpired(root, currentTime) {
         // TODO: This gets called every time we yield. We can optimize by storing
@@ -5756,34 +5760,35 @@
         var pingedLanes = root.pingedLanes;
         var expirationTimes = root.expirationTimes;
         // Iterate through the pending lanes and check if we've reached their
-        // expiration time. If so, we'll assume the update is being starved and mark
+        // expiration time. If so, we'll assume(假定、假设) the update is being starved and mark
         // it as expired to force it to finish.
 
         var lanes = pendingLanes;
 
+        //遍历，将lanes中的每个lane按照优先级从高到低，设置对应的过期时间到root.expirationTimes
         while (lanes > 0) {
             var index = pickArbitraryLaneIndex(lanes);
             var lane = 1 << index;
             var expirationTime = expirationTimes[index];
 
+            //如果root上的expirationTimes对应的lane赛道的过期时间未设置，则计算对应的过期时间
             if (expirationTime === NoTimestamp) {
                 // Found a pending lane with no expiration time. If it's not suspended, or
-                // if it's pinged, assume it's CPU-bound. Compute a new expiration time
-                // using the current time.
+                // if it's pinged, assume it's CPU-bound. Compute a new expiration time using the current time.
                 if ((lane & suspendedLanes) === NoLanes || (lane & pingedLanes) !== NoLanes) {
                     // Assumes（假设） timestamps are monotonically(单调的，无变化的) increasing.
                     expirationTimes[index] = computeExpirationTime(lane, currentTime);
                 }
-            } else if (expirationTime <= currentTime) {
+            } else if (expirationTime <= currentTime) {//已过期，将对应的lane附加到root.expiredLanes上
                 // This lane expired
                 root.expiredLanes |= lane;
             }
 
             lanes &= ~lane;
         }
-    } // This returns the highest priority pending lanes regardless of whether they
-    // are suspended.
+    }
 
+    // This returns the highest priority pending lanes regardless of whether they are suspended.
     function getHighestPriorityPendingLanes(root) {
         return getHighestPriorityLanes(root.pendingLanes);
     }
@@ -5899,7 +5904,8 @@
 
     /**
      * DONE
-     * 获取lanes索引
+     * 获取lanes索引（最高优先级的索引）
+     * return 31 - clz32(lanes);
      * @param {} lanes 
      * @returns 
      */
@@ -5907,7 +5913,12 @@
         return 31 - clz32(lanes);
     }
 
-    //DONE
+    /**
+     * DONE
+     * Arbitrary(任意的)
+     * @param {*} lane 
+     * @returns 
+     */
     function laneToIndex(lane) {
         return pickArbitraryLaneIndex(lane);
     }
@@ -6218,23 +6229,24 @@
     }
     /**
      * DONE
+     * 将lanes转为事件优先级
      */
     function lanesToEventPriority(lanes) {
         var lane = getHighestPriorityLane(lanes);
 
         if (!isHigherEventPriority(DiscreteEventPriority, lane)) {
-            return DiscreteEventPriority;
+            return DiscreteEventPriority;//1
         }
 
         if (!isHigherEventPriority(ContinuousEventPriority, lane)) {
-            return ContinuousEventPriority;
+            return ContinuousEventPriority;//4
         }
 
         if (includesNonIdleWork(lane)) {
-            return DefaultEventPriority;
+            return DefaultEventPriority;//16
         }
 
-        return IdleEventPriority;
+        return IdleEventPriority;//536870912
     }
 
     //DONE
@@ -11240,6 +11252,12 @@
     var STYLE$1 = 'style';
     var eventsEnabled = null;
     var selectionInformation = null;
+
+    /**
+     * DONE
+     * @param {*} rootContainerInstance 
+     * @returns 
+     */
     function getRootHostContext(rootContainerInstance) {
         var type;
         var namespace;
@@ -12121,6 +12139,7 @@
         };
     }
 
+    //DONE
     function pop(cursor, fiber) {
         if (index < 0) {
             {
@@ -12146,6 +12165,9 @@
         index--;
     }
 
+    /**
+     * DONE
+     */
     function push(cursor, value, fiber) {
         index++;
         valueStack[index] = cursor.current;
@@ -12266,6 +12288,12 @@
         }
     }
 
+    /**
+     * DONE
+     * @param {*} fiber 
+     * @param {*} context 
+     * @param {*} didChange 
+     */
     function pushTopLevelContextObject(fiber, context, didChange) {
         {
             if (contextStackCursor.current !== emptyContextObject) {
@@ -13116,6 +13144,7 @@
         }
     }
 
+    //DONE
     function resetHydrationState() {
 
         hydrationParentFiber = null;
@@ -13713,7 +13742,8 @@
         }
     }
     /**
-     * setState的新值在此处放入 queue.pending  中，函数再次渲染时能到读到最新的。
+     * DONE
+     * setState的新值在此处放入 queue.pending中，函数再次渲染时能到读到最新的。
      */
     function finishQueueingConcurrentUpdates() {
 
@@ -13790,11 +13820,12 @@
     }
     /**
      * DONE
+     * queue.interleaved = update;
      * @param {*} fiber 
-     * @param {*} queue 
+     * @param {*} queue -- sharedQueue
      * @param {*} update 
      * @param {*} lane 
-     * @returns 
+     * @returns fiberRoot
      */
     function enqueueConcurrentClassUpdate(fiber, queue, update, lane) {
         var interleaved = queue.interleaved;
@@ -13802,7 +13833,7 @@
         if (interleaved === null) {
             // This is the first update. Create a circular list.
             update.next = update;
-            // At the end of the current render, this queue's interleaved updates will be transferred to the pending queue.
+            // At the end of the current render, this queue's interleaved(插入的) updates will be transferred to the pending queue.
 
             pushConcurrentUpdateQueue(queue);
         } else {
@@ -13813,6 +13844,7 @@
         queue.interleaved = update;
         return markUpdateLaneFromFiberToRoot(fiber, lane);
     }
+
     function enqueueConcurrentRenderForLane(fiber, lane) {
         return markUpdateLaneFromFiberToRoot(fiber, lane);
     } // Calling this function outside this module should only be done for backwards
@@ -13908,6 +13940,7 @@
         };
         fiber.updateQueue = queue;
     }
+    //DONE
     function cloneUpdateQueue(current, workInProgress) {
         // Clone the update queue from current. Unless it's already a clone.
         var queue = workInProgress.updateQueue;
@@ -13926,6 +13959,7 @@
     }
     /**
      * DONE
+     * 创建更新对象并返回
      * @param {*} eventTime 
      * @param {*} lane 
      * @returns 
@@ -14197,6 +14231,7 @@
         return prevState;
     }
 
+    //DONE
     function processUpdateQueue(workInProgress, props, instance, renderLanes) {
         // This is always non-null on a ClassComponent or HostRoot
         var queue = workInProgress.updateQueue;
@@ -14207,12 +14242,14 @@
         }
 
         var firstBaseUpdate = queue.firstBaseUpdate;
-        var lastBaseUpdate = queue.lastBaseUpdate; // Check if there are pending updates. If so, transfer them to the base queue.
+        var lastBaseUpdate = queue.lastBaseUpdate;
+        // Check if there are pending updates. If so, transfer them to the base queue.
 
         var pendingQueue = queue.shared.pending;
 
         if (pendingQueue !== null) {
-            queue.shared.pending = null; // The pending queue is circular. Disconnect the pointer between first
+            queue.shared.pending = null;
+            // The pending queue is circular. Disconnect the pointer between first
             // and last so that it's non-circular.
 
             var lastPendingUpdate = pendingQueue;
@@ -15377,12 +15414,13 @@
         var payload = lazyType._payload;
         var init = lazyType._init;
         return init(payload);
-    } // This wrapper function exists because I expect to clone the code in each path
+    }
+
+    //DONE
+    // This wrapper function exists because I expect to clone the code in each path
     // to be able to optimize each path individually by branching early. This needs
     // a compiler or we can do it manually. Helpers that don't need this branching
     // live outside of this function.
-
-
     function ChildReconciler(shouldTrackSideEffects) {
         function deleteChild(returnFiber, childToDelete) {
             if (!shouldTrackSideEffects) {
@@ -16369,6 +16407,7 @@
         return rootInstance;
     }
 
+    //DONE
     function pushHostContainer(fiber, nextRootInstance) {
         // Push current root instance onto the stack;
         // This allows us to reset root when portals are popped.
@@ -16382,7 +16421,8 @@
         // So we push an empty value first. This lets us safely unwind on errors.
 
         push(contextStackCursor$1, NO_CONTEXT, fiber);
-        var nextRootContext = getRootHostContext(nextRootInstance); // Now that we know this function doesn't throw, replace it.
+        var nextRootContext = getRootHostContext(nextRootInstance);
+        // Now that we know this function doesn't throw, replace it.
 
         pop(contextStackCursor$1, fiber);
         push(contextStackCursor$1, nextRootContext, fiber);
@@ -18122,6 +18162,7 @@
         }
     }
 
+    //DONE
     var ContextOnlyDispatcher = {
         readContext: readContext,
         useCallback: throwInvalidHookError,
@@ -19735,6 +19776,7 @@
         didWarnAboutTailOptions = {};
     }
 
+    //DONE
     function reconcileChildren(current, workInProgress, nextChildren, renderLanes) {
         if (current === null) {
             // If this is a fresh new component that hasn't been rendered yet, we
@@ -20370,6 +20412,7 @@
         return workInProgress.child;
     }
 
+    //DONE
     function pushHostRootContext(workInProgress) {
         var root = workInProgress.stateNode;
 
@@ -20383,6 +20426,10 @@
         pushHostContainer(workInProgress, root.containerInfo);
     }
 
+    /**
+     * DONE
+     * beginWork -- HostRoot
+     */
     function updateHostRoot(current, workInProgress, renderLanes) {
         pushHostRootContext(workInProgress);
 
@@ -20414,7 +20461,8 @@
                 pendingSuspenseBoundaries: nextState.pendingSuspenseBoundaries,
                 transitions: nextState.transitions
             };
-            var updateQueue = workInProgress.updateQueue; // `baseState` can always be the last state because the root doesn't
+            var updateQueue = workInProgress.updateQueue;
+            // `baseState` can always be the last state because the root doesn't
             // have reducer functions so it doesn't need rebasing.
 
             updateQueue.baseState = overrideState;
@@ -21900,15 +21948,15 @@
         }
     }
 
+    //DONE
     function checkScheduledUpdateOrContext(current, renderLanes) {
-        // Before performing an early bailout, we must check if there are pending
-        // updates or context.
+        // Before performing an early bailout, we must check if there are pending updates or context.
         var updateLanes = current.lanes;
 
         if (includesSomeLane(updateLanes, renderLanes)) {
             return true;
-        } // No pending update, but because context is propagated lazily, we need
-
+        }
+        // No pending update, but because context is propagated lazily, we need
         return false;
     }
 
@@ -22090,7 +22138,9 @@
         return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
     }
 
+    //DONE
     function beginWork(current, workInProgress, renderLanes) {
+        debugger
         {
             if (workInProgress._debugNeedsRemount && current !== null) {
                 // This will restart the begin phase with a new fiber.
@@ -22108,8 +22158,7 @@
                 // This may be unset if the props are determined to be equal later (memo).
                 didReceiveUpdate = true;
             } else {
-                // Neither props nor legacy context changes. Check if there's a pending
-                // update or context change.
+                // Neither props nor legacy context changes. Check if there's a pending update or context change.
                 var hasScheduledUpdateOrContext = checkScheduledUpdateOrContext(current, renderLanes);
 
                 if (!hasScheduledUpdateOrContext && // If this is the second pass of an error or suspense boundary, there
@@ -22149,7 +22198,8 @@
                 var numberOfForks = getForksAtLevel();
                 pushTreeId(workInProgress, numberOfForks, slotIndex);
             }
-        } // Before entering the begin phase, clear pending update priority.
+        }
+        // Before entering the begin phase, clear pending update priority.
         // TODO: This assumes that we're about to evaluate the component and process
         // the update queue. However, there's an exception: SimpleMemoComponent
         // sometimes bails out later in the begin phase. This indicates that we should
@@ -22188,7 +22238,7 @@
                     return updateClassComponent(current, workInProgress, _Component, _resolvedProps, renderLanes);
                 }
 
-            case HostRoot:
+            case HostRoot://DONE
                 return updateHostRoot(current, workInProgress, renderLanes);
 
             case HostComponent:
@@ -22282,7 +22332,10 @@
                 }
         }
 
-        throw new Error("Unknown unit of work tag (" + workInProgress.tag + "). This error is likely caused by a bug in " + 'React. Please file an issue.');
+        throw new Error("Unknown unit of work tag ("
+            + workInProgress.tag
+            + "). This error is likely caused by a bug in "
+            + 'React. Please file an issue.');
     }
 
     function markUpdate(workInProgress) {
@@ -25928,6 +25981,7 @@
             return jestIsDefined && isReactActEnvironmentGlobal !== false;
         }
     }
+    //DONE
     function isConcurrentActEnvironment() {
         {
             var isReactActEnvironmentGlobal = // $FlowExpectedError – Flow doesn't know about IS_REACT_ACT_ENVIRONMENT global
@@ -26056,9 +26110,9 @@
         if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
             // We're inside React, so it's fine to read the actual time.
             return now();
-        } // We're not inside React, so we may be in the middle of a browser event.
+        }
 
-
+        // We're not inside React, so we may be in the middle of a browser event.
         if (currentEventTime !== NoTimestamp) {
             // Use the same start time for all updates until we enter React again.
             return currentEventTime;
@@ -26070,15 +26124,17 @@
     }
     /**
      * DONE
+     * 获取更新优先级
      * @param {*} fiber 
      * @returns 
      */
     function requestUpdateLane(fiber) {
+
         // Special cases
         var mode = fiber.mode;
 
 
-        if ((mode & ConcurrentMode) === NoMode) {
+        if ((mode & ConcurrentMode) === NoMode) {//非并发模式
             return SyncLane;
         } else if ((executionContext & RenderContext) !== NoContext && workInProgressRootRenderLanes !== NoLanes) {
             // This is a render phase update. These are not officially supported. The
@@ -26121,14 +26177,15 @@
             return currentEventTransitionLane;
         }
 
-        // Updates originating(起源、发端) inside certain React methods, like flushSync, have their priority set by tracking it with a context variable.
+        // Updates originating(起源、发端) inside certain React methods, like flushSync, 
+        // have their priority set by tracking it with a context variable.
         // The opaque（不透明、不清楚） type returned by the host config is internally（内在的、内部的） a lane, so we can use that directly.
-
         var updateLane = getCurrentUpdatePriority();
 
         if (updateLane !== NoLane) {
             return updateLane;
         }
+
         // This update originated outside React. Ask the host environment for an appropriate priority, based on the type of event.
         // The opaque type returned by the host config is internally a lane, so we can use that directly.
 
@@ -26263,7 +26320,6 @@
     // root has work on. This function is called on every update, and right before
     // exiting a task.
     function ensureRootIsScheduled(root, currentTime) {
-        debugger
         var existingCallbackNode = root.callbackNode;
 
         // Check if any lanes are being starved by other work. If so, mark them as expired so we know to work on those next.
@@ -26349,16 +26405,17 @@
         } else {
             var schedulerPriorityLevel;
 
+            //将lanes转为事件优先级，然后根据事件优先级计算调度优先级
             switch (lanesToEventPriority(nextLanes)) {
-                case DiscreteEventPriority:
+                case DiscreteEventPriority://1
                     schedulerPriorityLevel = ImmediatePriority;
                     break;
 
-                case ContinuousEventPriority:
+                case ContinuousEventPriority://4
                     schedulerPriorityLevel = UserBlockingPriority;
                     break;
 
-                case DefaultEventPriority:
+                case DefaultEventPriority://16
                     schedulerPriorityLevel = NormalPriority;
                     break;
 
@@ -26376,17 +26433,17 @@
 
         root.callbackPriority = newCallbackPriority;
         root.callbackNode = newCallbackNode;
-    } // This is the entry point for every concurrent task, i.e. anything that
-    // goes through Scheduler.
-
+    }
 
     /**
      * DONE
+     * This is the entry point for every concurrent task, i.e. anything that goes through Scheduler.
      * @param {*} root 
      * @param {*} didTimeout 
      * @returns 
      */
     function performConcurrentWorkOnRoot(root, didTimeout) {
+        debugger
         {
             resetNestedUpdateFlag();
         }
@@ -26423,13 +26480,8 @@
         }
 
         // We disable time-slicing in some cases: if the work has been CPU-bound
-        // for too long ("expired" work, to prevent starvation), or we're in
-        // sync-updates-by-default mode.
-        // TODO: We only check `didTimeout` defensively（防御的）, to account for a Scheduler
-        // bug we're still investigating. Once the bug in Scheduler is fixed,
-        // we can remove this, since we track expiration ourselves.
-
-
+        // for too long ("expired" work, to prevent starvation), or we're in sync-updates-by-default mode.
+        //未超时、不包含过期lanes、不包含阻塞lanes
         var shouldTimeSlice = !includesBlockingLane(root, lanes) && !includesExpiredLane(root, lanes) && (!didTimeout);
         var exitStatus = shouldTimeSlice ? renderRootConcurrent(root, lanes) : renderRootSync(root, lanes);
         if (exitStatus !== RootInProgress) {
@@ -26495,10 +26547,10 @@
                         ensureRootIsScheduled(root, now());
                         throw _fatalError;
                     }
-                } // We now have a consistent tree. The next step is either to commit it,
+                }
+
+                // We now have a consistent tree. The next step is either to commit it,
                 // or, if something suspended, wait to commit it after a timeout.
-
-
                 root.finishedWork = finishedWork;
                 root.finishedLanes = lanes;
                 finishConcurrentRender(root, exitStatus, lanes);
@@ -26578,6 +26630,7 @@
      * @param {*} lanes 
      */
     function finishConcurrentRender(root, exitStatus, lanes) {
+        debugger
         switch (exitStatus) {
             case RootInProgress:
             case RootFatalErrored:
@@ -26605,7 +26658,8 @@
                         !shouldForceFlushFallbacksInDEV()) {
                         // This render only included retries, no updates. Throttle committing
                         // retries so that we don't show too many loading states too quickly.
-                        var msUntilTimeout = globalMostRecentFallbackTime + FALLBACK_THROTTLE_MS - now(); // Don't bother with a very short suspense time.
+                        var msUntilTimeout = globalMostRecentFallbackTime + FALLBACK_THROTTLE_MS - now();
+                        // Don't bother with a very short suspense time.
 
                         if (msUntilTimeout > 10) {
                             var nextLanes = getNextLanes(root, NoLanes);
@@ -26930,12 +26984,13 @@
      * @returns 
      */
     function prepareFreshStack(root, lanes) {
+        debugger
         root.finishedWork = null;
         root.finishedLanes = NoLanes;
         var timeoutHandle = root.timeoutHandle;
 
         if (timeoutHandle !== noTimeout) {
-            // The root previous suspended and scheduled a timeout to commit a fallback
+            // The root previous suspended and scheduled a timeout to commit a fallback(退路，应变计划)
             // state. Now that we have additional work, cancel the timeout.
             root.timeoutHandle = noTimeout; // $FlowFixMe Complains noTimeout is not a TimeoutID, despite the check above
 
@@ -26963,6 +27018,7 @@
         workInProgressRootPingedLanes = NoLanes;
         workInProgressRootConcurrentErrors = null;
         workInProgressRootRecoverableErrors = null;
+        //setState的新值在此处放入 queue.pending中，函数再次渲染时能到读到最新的。
         finishQueueingConcurrentUpdates();
 
         {
@@ -26981,8 +27037,7 @@
                 // Reset module-level state that was set during the render phase.
                 resetContextDependencies();
                 resetHooksAfterThrow();
-                resetCurrentFiber(); // TODO: I found and added this missing line while investigating a
-                // separate issue. Write a regression test using string refs.
+                resetCurrentFiber();
 
                 ReactCurrentOwner$2.current = null;
 
@@ -27050,7 +27105,7 @@
         ReactCurrentDispatcher$2.current = ContextOnlyDispatcher;
 
         if (prevDispatcher === null) {
-            // The React isomorphic package does not include a default dispatcher.
+            // The React isomorphic(同形态的) package does not include a default dispatcher.
             // Instead the first renderer will lazily attach one, in order to give
             // nicer error messages.
             return ContextOnlyDispatcher;
@@ -27067,6 +27122,7 @@
     function markCommitTimeOfFallback() {
         globalMostRecentFallbackTime = now();
     }
+    //DONE
     function markSkippedUpdateLanes(lane) {
         workInProgressRootSkippedLanes = mergeLanes(lane, workInProgressRootSkippedLanes);
     }
@@ -27116,6 +27172,7 @@
 
     /**
      * DONE
+     * 协调工作
      * @param {*} root 
      * @param {*} lanes 
      * @returns 
@@ -27147,6 +27204,7 @@
             }
 
             workInProgressTransitions = getTransitionsForLanes();
+            //新建rootFiber对应的workInProgress并返回
             prepareFreshStack(root, lanes);
         }
 
@@ -27181,7 +27239,7 @@
         return workInProgressRootExitStatus;
     } // The work loop is an extremely hot path. Tell Closure not to inline it.
 
-    /** @noinline */
+    //DONE
     function workLoopSync() {
         // Already timed out, so perform work without checking if we need to yield.
         while (workInProgress !== null) {
@@ -27269,10 +27327,12 @@
     }
 
     /**
-     * 
+     * DONE 
+     * 协调工作
      * @param {*} unitOfWork 
      */
     function performUnitOfWork(unitOfWork) {
+        debugger
         // The current, flushed, state of this fiber is the alternate. Ideally
         // nothing should rely on this, but relying on it here means that we don't
         // need an additional field on the work in progress.
@@ -27404,7 +27464,8 @@
     }
 
     /**
-     * 
+     * DONE 
+     * commit 阶段
      */
     function commitRoot(root, recoverableErrors, transitions) {
         // TODO: This no longer makes any sense. We already wrap the mutation and
@@ -28173,8 +28234,10 @@
     var beginWork$1;
 
     {
+        //dummy (假的)
         var dummyFiber = null;
 
+        //DONE
         beginWork$1 = function (current, unitOfWork, lanes) {
             // If a component throws an error, we replay it again in a synchronously
             // dispatched event, so that the debugg8er will treat it as an uncaught
@@ -28321,6 +28384,7 @@
         return ReactCurrentActQueue$1.current !== null;
     }
 
+    //DONE
     function warnIfUpdatesNotWrappedWithActDEV(fiber) {
         {
             if (fiber.mode & ConcurrentMode) {
@@ -28354,7 +28418,16 @@
                 try {
                     setCurrentFiber(fiber);
 
-                    error('An update to %s inside a test was not wrapped in act(...).\n\n' + 'When testing, code that causes React state updates should be ' + 'wrapped into act(...):\n\n' + 'act(() => {\n' + '  /* fire events that update state */\n' + '});\n' + '/* assert on the output */\n\n' + "This ensures that you're testing the behavior the user would see " + 'in the browser.' + ' Learn more at https://reactjs.org/link/wrap-tests-with-act', getComponentNameFromFiber(fiber));
+                    error('An update to %s inside a test was not wrapped in act(...).\n\n'
+                        + 'When testing, code that causes React state updates should be '
+                        + 'wrapped into act(...):\n\n'
+                        + 'act(() => {\n'
+                        + '  /* fire events that update state */\n'
+                        + '});\n'
+                        + '/* assert on the output */\n\n'
+                        + "This ensures that you're testing the behavior the user would see "
+                        + 'in the browser.'
+                        + ' Learn more at https://reactjs.org/link/wrap-tests-with-act', getComponentNameFromFiber(fiber));
                 } finally {
                     if (previousFiber) {
                         setCurrentFiber(fiber);
@@ -28875,6 +28948,7 @@
         }
     }
 
+    //DONE
     // This is a constructor function, rather than a POJO constructor, still
     // please ensure we do the following:
     // 1) Nobody should add any instance methods on this. Instance methods can be
@@ -28919,7 +28993,10 @@
         return IndeterminateComponent;
     }
 
-    // This is used to create an alternate fiber to do work on.
+    /**
+     * This is used to create an alternate fiber to do work on.
+     * DONE
+     */
     function createWorkInProgress(current, pendingProps) {
         var workInProgress = current.alternate;
 
@@ -28962,17 +29039,18 @@
                 workInProgress.actualDuration = 0;
                 workInProgress.actualStartTime = -1;
             }
-        } // Reset all effects except static ones.
+        }
+
+        // Reset all effects except static ones.
         // Static effects are not specific to a render.
-
-
         workInProgress.flags = current.flags & StaticMask;
         workInProgress.childLanes = current.childLanes;
         workInProgress.lanes = current.lanes;
         workInProgress.child = current.child;
         workInProgress.memoizedProps = current.memoizedProps;
         workInProgress.memoizedState = current.memoizedState;
-        workInProgress.updateQueue = current.updateQueue; // Clone the dependencies object. This is mutated during the render phase, so
+        workInProgress.updateQueue = current.updateQueue;
+        // Clone the dependencies object. This is mutated during the render phase, so
         // it cannot be shared with the current fiber.
 
         var currentDependencies = current.dependencies;
@@ -29332,19 +29410,24 @@
             implementation: portal.implementation
         };
         return fiber;
-    } // Used for stashing WIP properties to replay failed work in DEV.
+    }
 
+    /**
+     * DONE
+     *  Used for stashing WIP properties to replay failed work in DEV.
+     */
     function assignFiberPropertiesInDEV(target, source) {
         if (target === null) {
             // This Fiber's initial properties will always be overwritten.
             // We only use a Fiber to ensure the same hidden class so DEV isn't slow.
             target = createFiber(IndeterminateComponent, null, null, NoMode);
-        } // This is intentionally written as a list of all properties.
+        }
+
+        // This is intentionally written as a list of all properties.
         // We tried to use Object.assign() instead but this is called in
         // the hottest path, and Object.assign() was too slow:
         // https://github.com/facebook/react/issues/12502
         // This code is DEV-only so size is not a concern.
-
 
         target.tag = source.tag;
         target.key = source.key;
@@ -29640,6 +29723,7 @@
 
         var current$1 = container.current;//rootFiber
         var eventTime = requestEventTime();
+        //获取更新优先级
         var lane = requestUpdateLane(current$1);
 
         {
@@ -29664,7 +29748,7 @@
                     + 'Check the render method of %s.', getComponentNameFromFiber(current) || 'Unknown');
             }
         }
-
+        //创建更新对象并返回
         var update = createUpdate(eventTime, lane);
         update.payload = {
             element: element
@@ -29681,7 +29765,7 @@
             update.callback = callback;
         }
 
-        var root = enqueueUpdate(current$1, update, lane);
+        var root = enqueueUpdate(current$1, update, lane);//fiberRoot
 
         if (root !== null) {
             scheduleUpdateOnFiber(root, current$1, lane, eventTime);

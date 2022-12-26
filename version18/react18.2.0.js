@@ -2455,6 +2455,13 @@
         heap.push(node);
         siftUp(heap, node, index);
     }
+    /**
+     * DONE
+     * peek(偷看、窥视)；
+     * 去除数组中的第一个
+     * @param {*} heap 
+     * @returns 
+     */
     function peek(heap) {
         return heap.length === 0 ? null : heap[0];
     }
@@ -2575,8 +2582,9 @@
     var IDLE_PRIORITY_TIMEOUT = maxSigned31BitInt; // Tasks are stored on a min heap
 
     var taskQueue = [];
-    var timerQueue = []; // Incrementing id counter. Used to maintain insertion order.
+    var timerQueue = [];
 
+    // Incrementing id counter. Used to maintain insertion order.
     var taskIdCounter = 1; // Pausing the scheduler is useful for debugging.
     var currentTask = null;
     var currentPriorityLevel = NormalPriority; // This is set while performing work, to prevent re-entrance.
@@ -2592,6 +2600,7 @@
     var isInputPending = typeof navigator !== 'undefined' && navigator.scheduling !== undefined && navigator.scheduling.isInputPending !== undefined ? navigator.scheduling.isInputPending.bind(navigator.scheduling) : null;
 
     /**
+     * DONE
      * 将等待队列中所有已过期的任务放到任务队列
      * @param {*} currentTime 
      * @returns 
@@ -2641,12 +2650,14 @@
     }
 
     /**
+     * DONE
      * MessageChannel的真正执行函数
      * @param {*} hasTimeRemaining 
      * @param {*} initialTime 
      * @returns 
      */
     function flushWork(hasTimeRemaining, initialTime) {
+        // debugger
 
         isHostCallbackScheduled = false;
 
@@ -2657,7 +2668,7 @@
         }
 
         isPerformingWork = true;
-        var previousPriorityLevel = currentPriorityLevel;
+        var previousPriorityLevel = currentPriorityLevel;//调度优先级
 
         try {
             if (enableProfiling) {
@@ -2694,15 +2705,14 @@
         var currentTime = initialTime;
         //将等待队列中所有已过期的任务放到任务队列
         advanceTimers(currentTime);
+        //取出任务队列的第一个
         currentTask = peek(taskQueue);
 
-        console.log(JSON.stringify(currentTask))
-        console.log(currentTime, currentTask.expirationTime)
-
+        //遍历任务队列中的任务，依次执行
         while (currentTask !== null && !(enableSchedulerDebugging)) {
+            // This currentTask hasn't expired, and we've reached the deadline.
+            //当前任务还没过期，但是已经到了交还控制权的时候了。
             if (currentTask.expirationTime > currentTime && (!hasTimeRemaining || shouldYieldToHost())) {
-                // This currentTask hasn't expired, and we've reached the deadline.
-                //当前任务还没过期，但是已经到了交还控制权的时候了。
                 break;
             }
 
@@ -2710,11 +2720,11 @@
 
             if (typeof callback === 'function') {
                 currentTask.callback = null;
-                currentPriorityLevel = currentTask.priorityLevel;
+                currentPriorityLevel = currentTask.priorityLevel;//调度优先级
                 //是否已超时
                 var didUserCallbackTimeout = currentTask.expirationTime <= currentTime;
 
-                // debugger
+                debugger
                 var continuationCallback = callback(didUserCallbackTimeout);
                 currentTime = getCurrentTime();
 
@@ -2723,11 +2733,11 @@
                 } else {
 
                     if (currentTask === peek(taskQueue)) {
-                        //执行完之后，移除。
+                        //执行完之后，移除任务队列中对应的任务
                         pop(taskQueue);
                     }
                 }
-
+                //将等待队列中所有已过期的任务放到任务队列
                 advanceTimers(currentTime);
             } else {
                 pop(taskQueue);
@@ -2825,6 +2835,7 @@
      * @returns 
      */
     function unstable_scheduleCallback(priorityLevel, callback, options) {
+        // debugger
         var currentTime = getCurrentTime();
         var startTime;
 
@@ -2836,45 +2847,47 @@
             } else {
                 startTime = currentTime;
             }
-        } else {
+        } else {//获取当前时间作为开始时间
             startTime = currentTime;
         }
 
         var timeout;
 
         switch (priorityLevel) {
-            case ImmediatePriority:
-                timeout = IMMEDIATE_PRIORITY_TIMEOUT;
+            case ImmediatePriority://1
+                timeout = IMMEDIATE_PRIORITY_TIMEOUT;//-1
                 break;
 
-            case UserBlockingPriority:
-                timeout = USER_BLOCKING_PRIORITY_TIMEOUT;
+            case UserBlockingPriority://2
+                timeout = USER_BLOCKING_PRIORITY_TIMEOUT;//250
                 break;
 
-            case IdlePriority:
-                timeout = IDLE_PRIORITY_TIMEOUT;
+            case IdlePriority://5
+                timeout = IDLE_PRIORITY_TIMEOUT;//1073741823
                 break;
 
-            case LowPriority:
-                timeout = LOW_PRIORITY_TIMEOUT;
+            case LowPriority://4
+                timeout = LOW_PRIORITY_TIMEOUT;//10s
                 break;
 
-            case NormalPriority:
+            case NormalPriority://3
             default:
-                timeout = NORMAL_PRIORITY_TIMEOUT;
+                timeout = NORMAL_PRIORITY_TIMEOUT;//5s
                 break;
         }
 
         var expirationTime = startTime + timeout;
+        //新建任务
         var newTask = {
             id: taskIdCounter++,
             callback: callback,
-            priorityLevel: priorityLevel,
+            priorityLevel: priorityLevel,//调度优先级
             startTime: startTime,
             expirationTime: expirationTime,
             sortIndex: -1
         };
 
+        //延时任务
         if (startTime > currentTime) {
             // This is a delayed task.
             newTask.sortIndex = startTime;
@@ -2892,12 +2905,12 @@
 
                 requestHostTimeout(handleTimeout, startTime - currentTime);
             }
-        } else {
+        } else {//非延时任务
             newTask.sortIndex = expirationTime;
+            //任务入队列
             push(taskQueue, newTask);
+
             // wait until the next time we yield.
-
-
             if (!isHostCallbackScheduled && !isPerformingWork) {
                 isHostCallbackScheduled = true;
                 requestHostCallback(flushWork);
@@ -2947,17 +2960,18 @@
     var startTime = -1;
 
     /**
+     * DONE
      * 是否应该将执行权交还给主线程。
      */
     function shouldYieldToHost() {
         var timeElapsed = getCurrentTime() - startTime;
 
-        if (timeElapsed < frameInterval) {//主线程被阻塞还不到一帧的时间，继续等待
+        if (timeElapsed < frameInterval) {//主线程被阻塞还不到5ms的时间，继续等待
             // The main thread has only been blocked for a really short amount of time;
             // smaller than a single frame. Don't yield yet.
             return false;
         }
-        // The main thread has been blocked for a non-negligible amount of time. We
+        // The main thread has been blocked for a non-negligible amount of time
         return true;
     }
 
@@ -2981,6 +2995,7 @@
     }
 
     /**
+     * DONE
      * MessageChannel的监听函数
      */
     var performWorkUntilDeadline = function () {
@@ -2991,16 +3006,17 @@
             startTime = currentTime;
             var hasTimeRemaining = true;
             // If a scheduler task throws, exit the current browser task so the error can be observed.
-            //
-            // Intentionally not using a try-catch, since that makes some debugging
+            // Intentionally(故意; 有意地; 蓄意地;) not using a try-catch, since that makes some debugging
             // techniques harder. Instead, if `scheduledHostCallback` errors, then
             // `hasMoreWork` will remain true, and we'll continue the work loop.
 
             var hasMoreWork = true;
 
             try {
+                //flushWork
                 hasMoreWork = scheduledHostCallback(hasTimeRemaining, currentTime);
             } finally {
+                // debugger
                 if (hasMoreWork) {
                     // If there's more work, schedule the next message event at the end of the preceding one.
                     //还有未执行完的任务，在下个宏任务中继续执行
@@ -3012,7 +3028,7 @@
             }
         } else {
             isMessageLoopRunning = false;
-        } // Yielding to the browser will give it a chance to paint, so we can
+        } // Yielding to the browser will give it a chance to paint
     };
 
     var schedulePerformWorkUntilDeadline;
@@ -3032,14 +3048,15 @@
         schedulePerformWorkUntilDeadline = function () {
             localSetImmediate(performWorkUntilDeadline);
         };
-    } else if (typeof MessageChannel !== 'undefined') {
+    } else if (typeof MessageChannel !== 'undefined') {//DONE
         // DOM and Worker environments.
-        // We prefer MessageChannel because of the 4ms setTimeout clamping.
+        // We prefer MessageChannel because of the 4ms setTimeout clamping(夹紧，夹住，固定)
         var channel = new MessageChannel();
         var port = channel.port2;
         channel.port1.onmessage = performWorkUntilDeadline;
 
         schedulePerformWorkUntilDeadline = function () {
+            console.log("..........")
             port.postMessage(null);
         };
     } else {
@@ -3050,8 +3067,9 @@
     }
 
     /**
-     * 
-     * @param {*} callback 
+     * DONE
+     * React 做任务调度的时候，如果任务没有延期，会调用 requestHostCallback(flushWork) 方法来执行任务
+     * @param {*} callback  flushWork
      */
     function requestHostCallback(callback) {
         scheduledHostCallback = callback;
