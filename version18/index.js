@@ -28,14 +28,16 @@ function ABC() {
     }
 
     const handleClick = () => {
-        startTransition(() => {
-            setShowList(list)
-        })
+        // startTransition(() => {
+        // setShowList(list)
+        // })
+        setAge(20)
     }
 
 
 
-    return e('div', { onClick: handleClick, style: { color: 'red' } }, isPending && "xxxxxx...", ...showList)
+    // return e('div', { onClick: handleClick, style: { color: 'red' } }, isPending && "xxxxxx...", ...showList)
+    return e('div', { onClick: handleClick, style: { color: 'red' } }, age)
 }
 
 let arr3 = [];
@@ -44,6 +46,7 @@ for (let i = 0; i < 100000; i++) {
 }
 
 root.render(666);
+// root.render(e(React.Fragment, null, 111));
 // root.render(e("div", { style: { color: 'red' } }, e("div", { style: { color: 'red' }, key: 1 }, 555)));
 // root.render(e(ABC));
 

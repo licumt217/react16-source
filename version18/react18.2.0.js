@@ -2657,7 +2657,6 @@
      * @returns 
      */
     function flushWork(hasTimeRemaining, initialTime) {
-        // debugger
 
         isHostCallbackScheduled = false;
 
@@ -2695,13 +2694,12 @@
     }
 
     /**
-     * 
+     * DONE
      * @param {*} hasTimeRemaining 
      * @param {*} initialTime 
      * @returns 
      */
     function workLoop(hasTimeRemaining, initialTime) {
-        // debugger
         var currentTime = initialTime;
         //将等待队列中所有已过期的任务放到任务队列
         advanceTimers(currentTime);
@@ -2711,7 +2709,7 @@
         //遍历任务队列中的任务，依次执行
         while (currentTask !== null && !(enableSchedulerDebugging)) {
             // This currentTask hasn't expired, and we've reached the deadline.
-            //当前任务还没过期，但是已经到了交还控制权的时候了。
+            //当前任务还没过期，但是已经到了交还控制权的时候了，则跳出遍历任务的循环
             if (currentTask.expirationTime > currentTime && (!hasTimeRemaining || shouldYieldToHost())) {
                 break;
             }
@@ -2724,7 +2722,6 @@
                 //是否已超时
                 var didUserCallbackTimeout = currentTask.expirationTime <= currentTime;
 
-                debugger
                 var continuationCallback = callback(didUserCallbackTimeout);
                 currentTime = getCurrentTime();
 
@@ -2747,6 +2744,7 @@
         } // Return whether there's additional work
 
 
+        //当前任务没执行结束，则在下个时间片继续执行
         if (currentTask !== null) {
             return true;
         } else {
@@ -2828,14 +2826,13 @@
     }
 
     /**
-     * 
+     * DONE
      * @param {*} priorityLevel 
      * @param {*} callback 
      * @param {*} options 
      * @returns 
      */
     function unstable_scheduleCallback(priorityLevel, callback, options) {
-        // debugger
         var currentTime = getCurrentTime();
         var startTime;
 
@@ -3013,12 +3010,9 @@
             var hasMoreWork = true;
 
             try {
-                //flushWork
-                hasMoreWork = scheduledHostCallback(hasTimeRemaining, currentTime);
+                hasMoreWork = scheduledHostCallback(hasTimeRemaining, currentTime);//flushWork
             } finally {
-                // debugger
                 if (hasMoreWork) {
-                    // If there's more work, schedule the next message event at the end of the preceding one.
                     //还有未执行完的任务，在下个宏任务中继续执行
                     schedulePerformWorkUntilDeadline();
                 } else {
