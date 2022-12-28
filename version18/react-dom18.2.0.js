@@ -272,6 +272,7 @@
         return '' + value;
     }
 
+    //DONE
     function checkAttributeStringCoercion(value, attributeName) {
         {
             if (willCoercionThrow(value)) {
@@ -302,6 +303,7 @@
             }
         }
     }
+    //DONE
     function checkCSSPropertyStringCoercion(value, propName) {
         {
             if (willCoercionThrow(value)) {
@@ -369,6 +371,7 @@
     var VALID_ATTRIBUTE_NAME_REGEX = new RegExp('^[' + ATTRIBUTE_NAME_START_CHAR + '][' + ATTRIBUTE_NAME_CHAR + ']*$');
     var illegalAttributeNameCache = {};
     var validatedAttributeNameCache = {};
+    //DONE
     function isAttributeNameSafe(attributeName) {
         if (hasOwnProperty.call(validatedAttributeNameCache, attributeName)) {
             return true;
@@ -391,6 +394,7 @@
 
         return false;
     }
+    //DONE
     function shouldIgnoreAttribute(name, propertyInfo, isCustomComponentTag) {
         if (propertyInfo !== null) {
             return propertyInfo.type === RESERVED;
@@ -406,6 +410,7 @@
 
         return false;
     }
+    //DONE
     function shouldRemoveAttributeWithWarning(name, value, propertyInfo, isCustomComponentTag) {
         if (propertyInfo !== null && propertyInfo.type === RESERVED) {
             return false;
@@ -436,6 +441,7 @@
                 return false;
         }
     }
+    //DONE
     function shouldRemoveAttribute(name, value, propertyInfo, isCustomComponentTag) {
         if (value === null || typeof value === 'undefined') {
             return true;
@@ -469,6 +475,7 @@
 
         return false;
     }
+    //DONE
     function getPropertyInfo(name) {
         return properties.hasOwnProperty(name) ? properties[name] : null;
     }
@@ -668,6 +675,7 @@
     var isJavaScriptProtocol = /^[\u0000-\u001F ]*j[\r\n\t]*a[\r\n\t]*v[\r\n\t]*a[\r\n\t]*s[\r\n\t]*c[\r\n\t]*r[\r\n\t]*i[\r\n\t]*p[\r\n\t]*t[\r\n\t]*\:/i;
     var didWarn = false;
 
+    //DONE
     function sanitizeURL(url) {
         {
             if (!didWarn && isJavaScriptProtocol.test(url)) {
@@ -789,12 +797,11 @@
     }
     /**
      * Sets the value for a property on a node.
-     *
+     * DONE
      * @param {DOMElement} node
      * @param {string} name
      * @param {*} value
      */
-
     function setValueForProperty(node, name, value, isCustomComponentTag) {
         var propertyInfo = getPropertyInfo(name);
 
@@ -840,7 +847,8 @@
             }
 
             return;
-        } // The rest are treated as attributes with special cases.
+        }
+        // The rest are treated as attributes with special cases.
 
 
         var attributeName = propertyInfo.attributeName,
@@ -904,6 +912,7 @@
     var REACT_TRACING_MARKER_TYPE = Symbol.for('react.tracing_marker');
     var MAYBE_ITERATOR_SYMBOL = Symbol.iterator;
     var FAUX_ITERATOR_SYMBOL = '@@iterator';
+
     function getIteratorFn(maybeIterable) {
         if (maybeIterable === null || typeof maybeIterable !== 'object') {
             return null;
@@ -1535,6 +1544,7 @@
     var ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
     var current = null;
     var isRendering = false;
+    //DONE
     function getCurrentFiberOwnerNameInDevOrNull() {
         {
             if (current === null) {
@@ -2494,6 +2504,7 @@
 
     /**
      * Create a function which has 'unsafe' privileges (required by windows8 apps)
+     * DONE
      */
     var createMicrosoftUnsafeLocalFunction = function (func) {
         if (typeof MSApp !== 'undefined' && MSApp.execUnsafeLocalFunction) {
@@ -2510,12 +2521,11 @@
     var reusableSVGContainer;
     /**
      * Set the innerHTML property of a node
-     *
+     * DONE
      * @param {DOMElement} node
      * @param {string} html
      * @internal
      */
-
     var setInnerHTML = createMicrosoftUnsafeLocalFunction(function (node, html) {
         if (node.namespaceURI === SVG_NAMESPACE) {
 
@@ -2558,12 +2568,12 @@
      * Set the textContent property of a node. For text updates, it's faster
      * to set the `nodeValue` of the Text node directly instead of using
      * `.textContent` which will remove the existing node and create a new one.
-     *
+     * DONE
+     * span之类的节点，直接设置对应的内容
      * @param {DOMElement} node
      * @param {string} text
      * @internal
      */
-
     var setTextContent = function (node, text) {
         if (text) {
             var firstChild = node.firstChild;
@@ -2708,12 +2718,11 @@
      * Convert a value into the proper css writable value. The style name `name`
      * should be logical (no hyphens), as specified
      * in `CSSProperty.isUnitlessNumber`.
-     *
+     * DONE
      * @param {string} name CSS property name such as `topMargin`.
      * @param {*} value CSS property value such as `10px`.
      * @return {string} Normalized style value with dimensions applied.
      */
-
     function dangerousStyleValue(name, value, isCustomProperty) {
         // Note that we've removed escapeTextForBrowser() calls here since the
         // whole string will be escaped when the attribute is injected into
@@ -2893,11 +2902,10 @@
     /**
      * Sets the value for multiple styles on a node.  If a value is specified as
      * '' (empty string), the corresponding style property will be unset.
-     *
+     *  DONE
      * @param {DOMElement} node
      * @param {object} styles
      */
-
     function setValueForStyles(node, styles) {
         var style = node.style;
 
@@ -3032,10 +3040,12 @@
 
     var HTML = '__html';
 
+    //DONE
     function assertValidProps(tag, props) {
         if (!props) {
             return;
-        } // Note the use of `==` which checks for null or undefined.
+        }
+        // Note the use of `==` which checks for null or undefined.
 
 
         if (voidElementTags[tag]) {
@@ -3071,6 +3081,7 @@
         }
     }
 
+    //DONE
     function isCustomComponent(tagName, props) {
         if (tagName.indexOf('-') === -1) {
             return typeof props.is === 'string';
@@ -3653,6 +3664,7 @@
     var rARIA = new RegExp('^(aria)-[' + ATTRIBUTE_NAME_CHAR + ']*$');
     var rARIACamel = new RegExp('^(aria)[A-Z][' + ATTRIBUTE_NAME_CHAR + ']*$');
 
+    //DONE
     function validateProperty(tagName, name) {
         {
             if (hasOwnProperty.call(warnedProperties, name) && warnedProperties[name]) {
@@ -3661,7 +3673,8 @@
 
             if (rARIACamel.test(name)) {
                 var ariaName = 'aria-' + name.slice(4).toLowerCase();
-                var correctName = ariaProperties.hasOwnProperty(ariaName) ? ariaName : null; // If this is an aria-* attribute, but is not listed in the known DOM
+                var correctName = ariaProperties.hasOwnProperty(ariaName) ? ariaName : null;
+                // If this is an aria-* attribute, but is not listed in the known DOM
                 // DOM properties, then it is an invalid aria-* attribute.
 
                 if (correctName == null) {
@@ -3669,8 +3682,8 @@
 
                     warnedProperties[name] = true;
                     return true;
-                } // aria-* attributes should be lowercase; suggest the lowercase version.
-
+                }
+                // aria-* attributes should be lowercase; suggest the lowercase version.
 
                 if (name !== correctName) {
                     error('Invalid ARIA attribute `%s`. Did you mean `%s`?', name, correctName);
@@ -3689,8 +3702,8 @@
                 if (standardName == null) {
                     warnedProperties[name] = true;
                     return false;
-                } // aria-* attributes should be lowercase; suggest the lowercase version.
-
+                }
+                // aria-* attributes should be lowercase; suggest the lowercase version.
 
                 if (name !== standardName) {
                     error('Unknown ARIA attribute `%s`. Did you mean `%s`?', name, standardName);
@@ -3704,6 +3717,7 @@
         return true;
     }
 
+    //DONE
     function warnInvalidARIAProps(type, props) {
         {
             var invalidProps = [];
@@ -3730,6 +3744,7 @@
         }
     }
 
+    //DONE
     function validateProperties(type, props) {
         if (isCustomComponent(type, props)) {
             return;
@@ -3739,6 +3754,7 @@
     }
 
     var didWarnValueNull = false;
+    //DONE
     function validateProperties$1(type, props) {
         {
             if (type !== 'input' && type !== 'textarea' && type !== 'select') {
@@ -3769,7 +3785,7 @@
         var INVALID_EVENT_NAME_REGEX = /^on[^A-Z]/;
         var rARIA$1 = new RegExp('^(aria)-[' + ATTRIBUTE_NAME_CHAR + ']*$');
         var rARIACamel$1 = new RegExp('^(aria)[A-Z][' + ATTRIBUTE_NAME_CHAR + ']*$');
-
+        //DONE
         validateProperty$1 = function (tagName, name, value, eventRegistry) {
             if (hasOwnProperty.call(warnedProperties$1, name) && warnedProperties$1[name]) {
                 return true;
@@ -3784,8 +3800,8 @@
 
                 warnedProperties$1[name] = true;
                 return true;
-            } // We can't rely on the event system being injected on the server.
-
+            }
+            // We can't rely on the event system being injected on the server.
 
             if (eventRegistry != null) {
                 var registrationNameDependencies = eventRegistry.registrationNameDependencies,
@@ -3821,8 +3837,8 @@
 
                 warnedProperties$1[name] = true;
                 return true;
-            } // Let the ARIA attribute hook validate ARIA attributes
-
+            }
+            // Let the ARIA attribute hook validate ARIA attributes
 
             if (rARIA$1.test(name) || rARIACamel$1.test(name)) {
                 return true;
@@ -3901,25 +3917,30 @@
 
                 warnedProperties$1[name] = true;
                 return true;
-            } // Now that we've validated casing, do not validate
+            }
+            // Now that we've validated casing, do not validate
             // data types for reserved props
 
 
             if (isReserved) {
                 return true;
-            } // Warn when a known attribute is a bad type
+            }
+            // Warn when a known attribute is a bad type
 
 
             if (shouldRemoveAttributeWithWarning(name, value, propertyInfo, false)) {
                 warnedProperties$1[name] = true;
                 return false;
-            } // Warn when passing the strings 'false' or 'true' into a boolean prop
+            }
+            // Warn when passing the strings 'false' or 'true' into a boolean prop
 
 
             if ((value === 'false' || value === 'true') && propertyInfo !== null && propertyInfo.type === BOOLEAN) {
                 error('Received the string `%s` for the boolean attribute `%s`. '
                     + '%s '
-                    + 'Did you mean %s={%s}?', value, name, value === 'false' ? 'The browser will interpret it as a truthy value.' : 'Although this works, it will not work as expected if you pass the string "false".', name, value);
+                    + 'Did you mean %s={%s}?', value, name, value === 'false'
+                    ? 'The browser will interpret it as a truthy value.'
+                    : 'Although this works, it will not work as expected if you pass the string "false".', name, value);
 
                 warnedProperties$1[name] = true;
                 return true;
@@ -3929,6 +3950,7 @@
         };
     }
 
+    //DONE
     var warnUnknownProperties = function (type, props, eventRegistry) {
         {
             var unknownProps = [];
@@ -3957,6 +3979,7 @@
         }
     };
 
+    //DONE
     function validateProperties$2(type, props, eventRegistry) {
         if (isCustomComponent(type, props)) {
             return;
@@ -9596,10 +9619,12 @@
         processDispatchQueue(dispatchQueue, eventSystemFlags);
     }
 
+    //DONE
     function listenToNonDelegatedEvent(domEventName, targetElement) {
         {
             if (!nonDelegatedEvents.has(domEventName)) {
-                error('Did not expect a listenToNonDelegatedEvent() call for "%s". ' + 'This is a bug in React. Please file an issue.', domEventName);
+                error('Did not expect a listenToNonDelegatedEvent() call for "%s". '
+                    + 'This is a bug in React. Please file an issue.', domEventName);
             }
         }
 
@@ -10061,6 +10086,7 @@
             accumulateEnterLeaveListenersForEvent(dispatchQueue, enterEvent, to, common, true);
         }
     }
+    //DONE
     function getListenerSetKey(domEventName, capture) {
         return domEventName + "__" + (capture ? 'capture' : 'bubble');
     }
@@ -10092,7 +10118,7 @@
             // @see https://electronjs.org/docs/api/webview-tag
             webview: true
         };
-
+        //DONE
         validatePropertiesInDevelopment = function (type, props) {
             validateProperties(type, props);
             validateProperties$1(type, props);
@@ -10100,7 +10126,9 @@
                 registrationNameDependencies: registrationNameDependencies,
                 possibleRegistrationNames: possibleRegistrationNames
             });
-        }; // IE 11 parses & normalizes the style attribute as opposed to other
+        };
+
+        // IE 11 parses & normalizes the style attribute as opposed to other
         // browsers. It adds spaces and sorts the properties in some
         // non-alphabetical order. Handling that would require sorting CSS
         // properties in the client & server versions or applying
@@ -10108,7 +10136,6 @@
         // normalized. Since it only affects IE, we're skipping style warnings
         // in that browser completely in favor of doing all that work.
         // See https://github.com/facebook/react/issues/11807
-
 
         canDiffStyleForHydrationWarning = canUseDOM && !document.documentMode;
 
@@ -10143,14 +10170,18 @@
             error('Extra attributes from the server: %s', names);
         };
 
+        //DONE
         warnForInvalidEventListener = function (registrationName, listener) {
             if (listener === false) {
-                error('Expected `%s` listener to be a function, instead got `false`.\n\n' + 'If you used to conditionally omit it with %s={condition && value}, ' + 'pass %s={condition ? value : undefined} instead.', registrationName, registrationName, registrationName);
+                error('Expected `%s` listener to be a function, instead got `false`.\n\n'
+                    + 'If you used to conditionally omit it with %s={condition && value}, '
+                    + 'pass %s={condition ? value : undefined} instead.', registrationName, registrationName, registrationName);
             } else {
                 error('Expected `%s` listener to be a function, instead got a value of `%s` type.', registrationName, typeof listener);
             }
-        }; // Parse the HTML and read it back to normalize the HTML string so that it
-        // can be used for comparison.
+        };
+
+        // Parse the HTML and read it back to normalize the HTML string so that it can be used for comparison.
 
 
         normalizeHTML = function (parent, html) {
@@ -10229,6 +10260,12 @@
         node.onclick = noop;
     }
 
+    /**
+     * DONE
+     * 设置样式、children等
+     * 1、children: 给span等设置textContent
+     * 2、style : 给dom设置样式
+     */
     function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
         for (var propKey in nextProps) {
             if (!nextProps.hasOwnProperty(propKey)) {
@@ -10237,16 +10274,15 @@
 
             var nextProp = nextProps[propKey];
 
-            if (propKey === STYLE) {
+            if (propKey === STYLE) {//DONE
                 {
                     if (nextProp) {
                         // Freeze the next style object so that we can assume it won't be
                         // mutated. We have already warned for this in the past.
                         Object.freeze(nextProp);
                     }
-                } // Relies on `updateStylesByID` not mutating `styleUpdates`.
-
-
+                }
+                // Relies on `updateStylesByID` not mutating `styleUpdates`.
                 setValueForStyles(domElement, nextProp);
             } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
                 var nextHtml = nextProp ? nextProp[HTML$1] : undefined;
@@ -10254,7 +10290,7 @@
                 if (nextHtml != null) {
                     setInnerHTML(domElement, nextHtml);
                 }
-            } else if (propKey === CHILDREN) {
+            } else if (propKey === CHILDREN) {//DONE
                 if (typeof nextProp === 'string') {
                     // Avoid setting initial textContent when the text is empty. In IE11 setting
                     // textContent on a <textarea> will cause the placeholder to not
@@ -10302,9 +10338,10 @@
         }
     }
 
+    //DONE
     function createElement(type, props, rootContainerElement, parentNamespace) {
-        var isCustomComponentTag; // We create tags in the namespace of their parent container, except HTML
-        // tags get no namespace.
+        var isCustomComponentTag;
+        // We create tags in the namespace of their parent container, except HTML tags get no namespace.
 
         var ownerDocument = getOwnerDocumentFromRootContainer(rootContainerElement);
         var domElement;
@@ -10316,17 +10353,18 @@
 
         if (namespaceURI === HTML_NAMESPACE) {
             {
-                isCustomComponentTag = isCustomComponent(type, props); // Should this check be gated by parent namespace? Not sure we want to
-                // allow <SVG> or <mATH>.
+                isCustomComponentTag = isCustomComponent(type, props);
+                // Should this check be gated by parent namespace? Not sure we want to allow <SVG> or <mATH>.
 
                 if (!isCustomComponentTag && type !== type.toLowerCase()) {
-                    error('<%s /> is using incorrect casing. ' + 'Use PascalCase for React components, ' + 'or lowercase for HTML elements.', type);
+                    error('<%s /> is using incorrect casing. '
+                        + 'Use PascalCase for React components, '
+                        + 'or lowercase for HTML elements.', type);
                 }
             }
 
             if (type === 'script') {
-                // Create the script via .innerHTML so its "parser-inserted" flag is
-                // set to true and it does not execute
+                // Create the script via .innerHTML so its "parser-inserted" flag is set to true and it does not execute
                 var div = ownerDocument.createElement('div');
 
                 div.innerHTML = '<script><' + '/script>'; // eslint-disable-line
@@ -10343,7 +10381,8 @@
                 // Separate else branch instead of using `props.is || undefined` above because of a Firefox bug.
                 // See discussion in https://github.com/facebook/react/pull/6896
                 // and discussion in https://bugzilla.mozilla.org/show_bug.cgi?id=1276240
-                domElement = ownerDocument.createElement(type); // Normally attributes are assigned in `setInitialDOMProperties`, however the `multiple` and `size`
+                domElement = ownerDocument.createElement(type);
+                // Normally attributes are assigned in `setInitialDOMProperties`, however the `multiple` and `size`
                 // attributes on `select`s needs to be added before `option`s are inserted.
                 // This prevents:
                 // - a bug where the `select` does not scroll to the correct option because singular
@@ -10360,7 +10399,6 @@
                     } else if (props.size) {
                         // Setting a size greater than 1 causes a select to behave like `multiple=true`, where
                         // it is possible that no option is selected.
-                        //
                         // This is only necessary when a select in "single selection mode".
                         node.size = props.size;
                     }
@@ -10372,10 +10410,13 @@
 
         {
             if (namespaceURI === HTML_NAMESPACE) {
-                if (!isCustomComponentTag && Object.prototype.toString.call(domElement) === '[object HTMLUnknownElement]' && !hasOwnProperty.call(warnedUnknownTags, type)) {
+                if (!isCustomComponentTag && Object.prototype.toString.call(domElement) === '[object HTMLUnknownElement]'
+                    && !hasOwnProperty.call(warnedUnknownTags, type)) {
                     warnedUnknownTags[type] = true;
 
-                    error('The tag <%s> is unrecognized in this browser. ' + 'If you meant to render a React component, start its name with ' + 'an uppercase letter.', type);
+                    error('The tag <%s> is unrecognized in this browser. '
+                        + 'If you meant to render a React component, start its name with '
+                        + 'an uppercase letter.', type);
                 }
             }
         }
@@ -10392,14 +10433,21 @@
     function createTextNode(text, rootContainerElement) {
         return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text);
     }
+    /**
+     * 设置样式、children等
+     * DONE
+     * @param {*} domElement 
+     * @param {*} tag 
+     * @param {*} rawProps 
+     * @param {*} rootContainerElement 
+     */
     function setInitialProperties(domElement, tag, rawProps, rootContainerElement) {
         var isCustomComponentTag = isCustomComponent(tag, rawProps);
 
         {
             validatePropertiesInDevelopment(tag, rawProps);
-        } // TODO: Make sure that we check isMounted before firing any of these events.
-
-
+        }
+        // TODO: Make sure that we check isMounted before firing any of these events.
         var props;
 
         switch (tag) {
@@ -10455,7 +10503,8 @@
 
             case 'input':
                 initWrapperState(domElement, rawProps);
-                props = getHostProps(domElement, rawProps); // We listen to this event in case to ensure emulated bubble
+                props = getHostProps(domElement, rawProps);
+                // We listen to this event in case to ensure emulated bubble
                 // listeners still fire for the invalid event.
 
                 listenToNonDelegatedEvent('invalid', domElement);
@@ -10468,7 +10517,8 @@
 
             case 'select':
                 initWrapperState$1(domElement, rawProps);
-                props = getHostProps$1(domElement, rawProps); // We listen to this event in case to ensure emulated bubble
+                props = getHostProps$1(domElement, rawProps);
+                // We listen to this event in case to ensure emulated bubble
                 // listeners still fire for the invalid event.
 
                 listenToNonDelegatedEvent('invalid', domElement);
@@ -10476,7 +10526,8 @@
 
             case 'textarea':
                 initWrapperState$2(domElement, rawProps);
-                props = getHostProps$2(domElement, rawProps); // We listen to this event in case to ensure emulated bubble
+                props = getHostProps$2(domElement, rawProps);
+                // We listen to this event in case to ensure emulated bubble
                 // listeners still fire for the invalid event.
 
                 listenToNonDelegatedEvent('invalid', domElement);
@@ -10487,6 +10538,7 @@
         }
 
         assertValidProps(tag, props);
+        //设置样式、children等
         setInitialDOMProperties(tag, domElement, rootContainerElement, props, isCustomComponentTag);
 
         switch (tag) {
@@ -11508,6 +11560,7 @@
         eventsEnabled = null;
         selectionInformation = null;
     }
+    //DONE
     function createInstance(type, props, rootContainerInstance, hostContext, internalInstanceHandle) {
         var parentNamespace;
 
@@ -11526,13 +11579,15 @@
         }
 
         var domElement = createElement(type, props, rootContainerInstance, parentNamespace);
-        precacheFiberNode(internalInstanceHandle, domElement);
+        precacheFiberNode(internalInstanceHandle, domElement);//建立dom节点和对应fiber的关联
         updateFiberProps(domElement, props);
         return domElement;
     }
+    //DONE
     function appendInitialChild(parentInstance, child) {
         parentInstance.appendChild(child);
     }
+    //DONE
     function finalizeInitialChildren(domElement, type, props, rootContainerInstance, hostContext) {
         setInitialProperties(domElement, type, props, rootContainerInstance);
 
@@ -11651,6 +11706,7 @@
 
         updateFiberProps(domElement, newProps);
     }
+    //DONE
     function resetTextContent(domElement) {
         setTextContent(domElement, '');
     }
@@ -11658,6 +11714,7 @@
     function commitTextUpdate(textInstance, oldText, newText) {
         textInstance.nodeValue = newText;
     }
+    //DONE
     function appendChild(parentInstance, child) {
         parentInstance.appendChild(child);
     }
@@ -11689,6 +11746,7 @@
             trapClickOnNonInteractiveElement(parentNode);
         }
     }
+    //DONE
     function insertBefore(parentInstance, child, beforeChild) {
         parentInstance.insertBefore(child, beforeChild);
     }
@@ -11782,7 +11840,6 @@
     }
     //DONE
     function clearContainer(container) {
-        debugger
         if (container.nodeType === ELEMENT_NODE) {
             container.textContent = '';
         } else if (container.nodeType === DOCUMENT_NODE) {
@@ -12125,7 +12182,12 @@
         delete node[internalEventHandlerListenersKey];
         delete node[internalEventHandlesSetKey];
     }
-    //DONE
+    /**
+     * DONE
+     * 建立dom节点和对应fiber的关联
+     * @param {*} hostInst 
+     * @param {*} node 
+     */
     function precacheFiberNode(hostInst, node) {
         node[internalInstanceKey] = hostInst;
     }
@@ -12265,9 +12327,16 @@
     function getFiberCurrentPropsFromNode(node) {
         return node[internalPropsKey] || null;
     }
+    /**
+     * DONE
+     * 将props附加到dom节点
+     * @param {*} node 
+     * @param {*} props 
+     */
     function updateFiberProps(node, props) {
         node[internalPropsKey] = props;
     }
+    //DONE
     function getEventListenerSet(node) {
         var elementListenerSet = node[internalEventHandlersKey];
 
@@ -12293,6 +12362,7 @@
         }
     }
 
+    //DONE
     function checkPropTypes(typeSpecs, values, location, componentName, element) {
         {
             // $FlowFixMe This is okay but Flow doesn't know it.
@@ -12309,12 +12379,17 @@
                         // behavior as without this statement except with a better message.
                         if (typeof typeSpecs[typeSpecName] !== 'function') {
                             // eslint-disable-next-line react-internal/prod-error-codes
-                            var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.' + 'This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.');
+                            var err = Error((componentName || 'React class') + ': ' + location + ' type `'
+                                + typeSpecName + '` is invalid; '
+                                + 'it must be a function, usually from the `prop-types` package, but received `'
+                                + typeof typeSpecs[typeSpecName] + '`.'
+                                + 'This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.');
                             err.name = 'Invariant Violation';
                             throw err;
                         }
 
-                        error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED');
+                        error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null,
+                            'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED');
                     } catch (ex) {
                         error$1 = ex;
                     }
@@ -12322,14 +12397,17 @@
                     if (error$1 && !(error$1 instanceof Error)) {
                         setCurrentlyValidatingElement(element);
 
-                        error('%s: type specification of %s' + ' `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error$1);
+                        error('%s: type specification of %s' + ' `%s` is invalid; the type checker '
+                            + 'function must return `null` or an `Error` but returned a %s. '
+                            + 'You may have forgotten to pass an argument to the type checker '
+                            + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and '
+                            + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error$1);
 
                         setCurrentlyValidatingElement(null);
                     }
 
                     if (error$1 instanceof Error && !(error$1.message in loggedTypeFailures)) {
-                        // Only monitor this failure once because there tends to be a lot of the
-                        // same error.
+                        // Only monitor this failure once because there tends to be a lot of the same error.
                         loggedTypeFailures[error$1.message] = true;
                         setCurrentlyValidatingElement(element);
 
@@ -12433,6 +12511,7 @@
         }
     }
 
+    //DONE
     function cacheContext(workInProgress, unmaskedContext, maskedContext) {
         {
             var instance = workInProgress.stateNode;
@@ -15577,10 +15656,13 @@
 
             ownerHasKeyUseWarning[componentName] = true;
 
-            error('Each child in a list should have a unique ' + '"key" prop. See https://reactjs.org/link/warning-keys for ' + 'more information.');
+            error('Each child in a list should have a unique '
+                + '"key" prop. See https://reactjs.org/link/warning-keys for '
+                + 'more information.');
         };
     }
 
+    //DONE
     function coerceRef(returnFiber, current, element) {
         var mixedRef = element.ref;
 
@@ -15588,7 +15670,8 @@
             {
                 // TODO: Clean this up once we turn on the string ref warning for
                 // everyone, because the strict mode case will no longer be relevant
-                if ((returnFiber.mode & StrictLegacyMode || warnAboutStringRefs) && // We warn in ReactElement.js if owner and self are equal for string refs
+                if ((returnFiber.mode & StrictLegacyMode || warnAboutStringRefs) &&
+                    // We warn in ReactElement.js if owner and self are equal for string refs
                     // because these cannot be automatically converted to an arrow function
                     // using a codemod. Therefore, we don't have to warn about string refs again.
                     !(element._owner && element._self && element._owner.stateNode !== element._self)) {
@@ -15596,7 +15679,11 @@
 
                     if (!didWarnAboutStringRefs[componentName]) {
                         {
-                            error('A string ref, "%s", has been found within a strict mode tree. ' + 'String refs are a source of potential bugs and should be avoided. ' + 'We recommend using useRef() or createRef() instead. ' + 'Learn more about using refs safely here: ' + 'https://reactjs.org/link/strict-mode-string-ref', mixedRef);
+                            error('A string ref, "%s", has been found within a strict mode tree. '
+                                + 'String refs are a source of potential bugs and should be avoided. '
+                                + 'We recommend using useRef() or createRef() instead. '
+                                + 'Learn more about using refs safely here: '
+                                + 'https://reactjs.org/link/strict-mode-string-ref', mixedRef);
                         }
 
                         didWarnAboutStringRefs[componentName] = true;
@@ -15612,24 +15699,29 @@
                     var ownerFiber = owner;
 
                     if (ownerFiber.tag !== ClassComponent) {
-                        throw new Error('Function components cannot have string refs. ' + 'We recommend using useRef() instead. ' + 'Learn more about using refs safely here: ' + 'https://reactjs.org/link/strict-mode-string-ref');
+                        throw new Error('Function components cannot have string refs. '
+                            + 'We recommend using useRef() instead. '
+                            + 'Learn more about using refs safely here: '
+                            + 'https://reactjs.org/link/strict-mode-string-ref');
                     }
 
                     inst = ownerFiber.stateNode;
                 }
 
                 if (!inst) {
-                    throw new Error("Missing owner for string ref " + mixedRef + ". This error is likely caused by a " + 'bug in React. Please file an issue.');
-                } // Assigning this to a const so Flow knows it won't change in the closure
-
-
+                    throw new Error("Missing owner for string ref "
+                        + mixedRef + ". This error is likely caused by a "
+                        + 'bug in React. Please file an issue.');
+                }
+                // Assigning this to a const so Flow knows it won't change in the closure
                 var resolvedInst = inst;
 
                 {
                     checkPropStringCoercion(mixedRef, 'ref');
                 }
 
-                var stringRef = '' + mixedRef; // Check if previous string ref matches new string ref
+                var stringRef = '' + mixedRef;
+                // Check if previous string ref matches new string ref
 
                 if (current !== null && current.ref !== null && typeof current.ref === 'function' && current.ref._stringRef === stringRef) {
                     return current.ref;
@@ -15658,7 +15750,14 @@
                 }
 
                 if (!element._owner) {
-                    throw new Error("Element ref was specified as a string (" + mixedRef + ") but no owner was set. This could happen for one of" + ' the following reasons:\n' + '1. You may be adding a ref to a function component\n' + "2. You may be adding a ref to a component that was not created inside a component's render method\n" + '3. You have multiple copies of React loaded\n' + 'See https://reactjs.org/link/refs-must-have-owner for more information.');
+                    throw new Error("Element ref was specified as a string ("
+                        + mixedRef
+                        + ") but no owner was set. This could happen for one of"
+                        + ' the following reasons:\n'
+                        + '1. You may be adding a ref to a function component\n'
+                        + "2. You may be adding a ref to a component that was not created inside a component's render method\n"
+                        + '3. You have multiple copies of React loaded\n'
+                        + 'See https://reactjs.org/link/refs-must-have-owner for more information.');
                 }
             }
         }
@@ -16093,6 +16192,7 @@
         }
 
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, lanes) {
+            debugger
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
             // with that model. If it ends up not being worth the tradeoffs, we can
@@ -16215,7 +16315,8 @@
             } // Add all children to a key map for quick lookups.
 
 
-            var existingChildren = mapRemainingChildren(returnFiber, oldFiber); // Keep scanning and use the map to restore deleted items as moves.
+            var existingChildren = mapRemainingChildren(returnFiber, oldFiber);
+            // Keep scanning and use the map to restore deleted items as moves.
 
             for (; newIdx < newChildren.length; newIdx++) {
                 var _newFiber2 = updateFromMap(existingChildren, returnFiber, newIdx, newChildren[newIdx], lanes);
@@ -16470,6 +16571,7 @@
             return created;
         }
 
+        //DONE
         function reconcileSingleElement(returnFiber, currentFirstChild, element, lanes) {
             var key = element.key;
             var child = currentFirstChild;
@@ -16570,7 +16672,9 @@
 
         // This API will tag the children with the side-effect of the reconciliation
         // itself. They will be added to the side-effect list as we pass through the children and the parent.
+        //协调中心
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, lanes) {
+            debugger
             // This function is not recursive(递归的; 循环的;)
             // If the top level item is an array, we treat it as a set of children,
             // not as a fragment. Nested arrays on the other hand will be treated as
@@ -16588,7 +16692,7 @@
             // Handle object types
             if (typeof newChild === 'object' && newChild !== null) {
                 switch (newChild.$$typeof) {
-                    case REACT_ELEMENT_TYPE:
+                    case REACT_ELEMENT_TYPE://DONE
                         return placeSingleChild(reconcileSingleElement(returnFiber, currentFirstChild, newChild, lanes));
 
                     case REACT_PORTAL_TYPE:
@@ -16617,13 +16721,11 @@
                 return placeSingleChild(reconcileSingleTextNode(returnFiber, currentFirstChild, '' + newChild, lanes));
             }
 
-            {
-                if (typeof newChild === 'function') {
-                    warnOnFunctionType(returnFiber);
-                }
-            } // Remaining cases are all treated as empty.
-
-
+            if (typeof newChild === 'function') {
+                warnOnFunctionType(returnFiber);
+            }
+            // Remaining cases are all treated as empty.
+            //true/false
             return deleteRemainingChildren(returnFiber, currentFirstChild);
         }
 
@@ -16740,6 +16842,7 @@
         push(contextStackCursor$1, nextContext, fiber);
     }
 
+    //DONE
     function popHostContext(fiber) {
         // Do not pop unless this Fiber provided the current context.
         // pushHostContext() only pushes Fibers that provide unique contexts.
@@ -17106,7 +17209,7 @@
         // didScheduleRenderPhaseUpdate = false;
         // localIdCounter = 0;
         // TODO Warn if no hooks are used at all during mount, then some are used during update.
-        // Currently we will identify the update render as a mount because memoizedState === null.
+        // Currently we will identify(识别、确认) the update render as a mount because memoizedState === null.
         // This is tricky because it's valid for certain types of components (e.g. React.lazy)
         // Using memoizedState to differentiate between mount/update only works if at least one stateful hook is used.
         // Non-stateful hooks (e.g. context) don't get added to memoizedState,
@@ -17127,7 +17230,8 @@
             }
         }
 
-        var children = Component(props, secondArg); // Check if there was a render phase update
+        var children = Component(props, secondArg);
+        // Check if there was a render phase update
 
         if (didScheduleRenderPhaseUpdateDuringThisPass) {
             // Keep rendering in a loop for as long as render phase updates continue to
@@ -17163,18 +17267,18 @@
                 ReactCurrentDispatcher$1.current = HooksDispatcherOnRerenderInDEV;
                 children = Component(props, secondArg);
             } while (didScheduleRenderPhaseUpdateDuringThisPass);
-        } // We can assume the previous dispatcher is always this one, since we set it
+        }
+
+        // We can assume the previous dispatcher is always this one, since we set it
         // at the beginning of the render phase and there's no re-entrance.
-
-
         ReactCurrentDispatcher$1.current = ContextOnlyDispatcher;
 
         {
             workInProgress._debugHookTypes = hookTypesDev;
-        } // This check uses currentHook so that it works the same in DEV and prod bundles.
+        }
+
+        // This check uses currentHook so that it works the same in DEV and prod bundles.
         // hookTypesDev could catch more cases (e.g. context) but only in DEV bundles.
-
-
         var didRenderTooFewHooks = currentHook !== null && currentHook.next !== null;
         renderLanes = NoLanes;
         currentlyRenderingFiber$1 = null;
@@ -17189,7 +17293,8 @@
             // flags in some other part of the codebase. This has happened before, for
             // example, in the SuspenseList implementation.
 
-            if (current !== null && (current.flags & StaticMask) !== (workInProgress.flags & StaticMask) && // Disable this warning in legacy mode, because legacy Suspense is weird
+            if (current !== null && (current.flags & StaticMask) !== (workInProgress.flags & StaticMask) &&
+                // Disable this warning in legacy mode, because legacy Suspense is weird
                 // and creates false positives. To make this work in legacy mode, we'd
                 // need to mark fibers that commit in an incomplete state, somehow. For
                 // now I'll disable the warning that most of the bugs that would trigger
@@ -17199,7 +17304,8 @@
             }
         }
 
-        didScheduleRenderPhaseUpdate = false; // This is reset by checkDidRenderIdHook
+        didScheduleRenderPhaseUpdate = false;
+        // This is reset by checkDidRenderIdHook
         // localIdCounter = 0;
 
         if (didRenderTooFewHooks) {
@@ -20459,6 +20565,7 @@
         return workInProgress.child;
     }
 
+    //DONE
     function markRef(current, workInProgress) {
         var ref = workInProgress.ref;
 
@@ -20822,6 +20929,7 @@
         return workInProgress.child;
     }
 
+    //DONE
     function updateHostComponent(current, workInProgress, renderLanes) {
         pushHostContext(workInProgress);
 
@@ -20835,11 +20943,11 @@
         var nextChildren = nextProps.children;
         var isDirectTextChild = shouldSetTextContent(type, nextProps);
 
-        if (isDirectTextChild) {
+        if (isDirectTextChild) {//子节点是直接文本节点
             // We special case a direct text child of a host node. This is a common
             // case. We won't handle it as a reified child. We will instead handle
             // this in the host environment that also has access to this prop. That
-            // avoids allocating another HostText fiber and traversing it.
+            // avoids allocating(分配) another HostText fiber and traversing it.
             nextChildren = null;
         } else if (prevProps !== null && shouldSetTextContent(type, prevProps)) {
             // If we're switching from a direct text child to a normal child, or to
@@ -21010,14 +21118,14 @@
 
         {
             markComponentRenderStopped();
-        } // React DevTools reads this flag.
-
-
+        }
+        // React DevTools reads this flag.
         workInProgress.flags |= PerformedWork;
 
         {
             // Support for module components is deprecated and is removed behind a flag.
             // Whether or not it would crash later, we want to show a good message in DEV first.
+            //函数组件返回了一个类实例！！
             if (typeof value === 'object' && value !== null && typeof value.render === 'function' && value.$$typeof === undefined) {
                 var _componentName = getComponentNameFromType(Component) || 'Unknown';
 
@@ -21033,9 +21141,10 @@
             }
         }
 
-        if ( // Run these checks in production only if the flag is off.
-            // Eventually we'll delete this branch altogether.
-            typeof value === 'object' && value !== null && typeof value.render === 'function' && value.$$typeof === undefined) {
+        // Run these checks in production only if the flag is off.
+        // Eventually we'll delete this branch altogether.
+        //类组件
+        if (typeof value === 'object' && value !== null && typeof value.render === 'function' && value.$$typeof === undefined) {
             {
                 var _componentName2 = getComponentNameFromType(Component) || 'Unknown';
 
@@ -21073,7 +21182,7 @@
             adoptClassInstance(workInProgress, value);
             mountClassInstance(workInProgress, Component, props, renderLanes);
             return finishClassComponent(null, workInProgress, Component, true, hasContext, renderLanes);
-        } else {
+        } else {//函数组件
             // Proceed under the assumption that this is a function component
             workInProgress.tag = FunctionComponent;
 
@@ -21110,7 +21219,8 @@
         {
             if (Component) {
                 if (Component.childContextTypes) {
-                    error('%s(...): childContextTypes cannot be defined on a function component.', Component.displayName || Component.name || 'Component');
+                    error('%s(...): childContextTypes cannot be defined on a function component.',
+                        Component.displayName || Component.name || 'Component');
                 }
             }
 
@@ -22568,7 +22678,7 @@
         workInProgress.lanes = NoLanes;
 
         switch (workInProgress.tag) {
-            case IndeterminateComponent://2
+            case IndeterminateComponent://2 DONE 函数组件或类组件
                 {
                     return mountIndeterminateComponent(current, workInProgress, workInProgress.type, renderLanes);
                 }
@@ -22600,7 +22710,7 @@
             case HostRoot://3 DONE
                 return updateHostRoot(current, workInProgress, renderLanes);
 
-            case HostComponent:
+            case HostComponent://5 DONE
                 return updateHostComponent(current, workInProgress, renderLanes);
 
             case HostText://6 DONE
@@ -22718,9 +22828,9 @@
     var updateHostText$1;
 
     {
-        // Mutation mode
+        // DONE Mutation mode
         appendAllChildren = function (parent, workInProgress, needsVisibilityToggle, isHidden) {
-            // We only have the top Fiber that was created but we need recurse down its
+            // We only have the top Fiber that was created but we need recurse(递归) down its
             // children to find all the terminal nodes.
             var node = workInProgress.child;
 
@@ -22872,7 +22982,12 @@
         }
     }
 
-    //DONE
+    /**
+     * DONE
+     * 收集子节点的completedWork.subtreeFlags和completedWork.subLanes
+     * @param {*} completedWork 
+     * @returns 
+     */
     function bubbleProperties(completedWork) {
         var didBailout = completedWork.alternate !== null && completedWork.alternate.child === completedWork.child;
         var newChildLanes = NoLanes;
@@ -23141,10 +23256,10 @@
                     return null;
                 }
 
-            case HostComponent:
+            case HostComponent://DONE
                 {
                     popHostContext(workInProgress);
-                    var rootContainerInstance = getRootHostContainer();
+                    var rootContainerInstance = getRootHostContainer();//container
                     var type = workInProgress.type;
 
                     if (current !== null && workInProgress.stateNode != null) {
@@ -23156,15 +23271,16 @@
                     } else {
                         if (!newProps) {
                             if (workInProgress.stateNode === null) {
-                                throw new Error('We must have new props for new mounts. This error is likely ' + 'caused by a bug in React. Please file an issue.');
-                            } // This can happen when we abort work.
-
-
+                                throw new Error('We must have new props for new mounts. This error is likely '
+                                    + 'caused by a bug in React. Please file an issue.');
+                            }
+                            // This can happen when we abort work.
                             bubbleProperties(workInProgress);
                             return null;
                         }
 
-                        var currentHostContext = getHostContext(); // TODO: Move createInstance to beginWork and keep it on a context
+                        var currentHostContext = getHostContext();
+                        // TODO: Move createInstance to beginWork and keep it on a context
                         // "stack" as the parent. Then append children as we go in beginWork
                         // or completeWork depending on whether we want to add them top->down or
                         // bottom->up. Top->down is faster in IE11.
@@ -23172,20 +23288,19 @@
                         var _wasHydrated = popHydrationState(workInProgress);
 
                         if (_wasHydrated) {
-                            // TODO: Move this and createInstance step into the beginPhase
-                            // to consolidate.
+                            // TODO: Move this and createInstance step into the beginPhase to consolidate.
                             if (prepareToHydrateHostInstance(workInProgress, rootContainerInstance, currentHostContext)) {
-                                // If changes to the hydrated node need to be applied at the
-                                // commit-phase we mark this as such.
+                                // If changes to the hydrated node need to be applied at the commit-phase we mark this as such.
                                 markUpdate(workInProgress);
                             }
                         } else {
                             var instance = createInstance(type, newProps, rootContainerInstance, currentHostContext, workInProgress);
                             appendAllChildren(instance, workInProgress, false, false);
-                            workInProgress.stateNode = instance; // Certain renderers require commit-time effects for initial mount.
+                            workInProgress.stateNode = instance;
+                            // Certain renderers require commit-time effects for initial mount.
                             // (eg DOM renderer supports auto-focus for certain elements).
                             // Make sure such renderers get scheduled for later work.
-
+                            //设置样式、children等
                             if (finalizeInitialChildren(instance, type, newProps, rootContainerInstance)) {
                                 markUpdate(workInProgress);
                             }
@@ -24918,7 +25033,7 @@
         // Note: these two variables *must* always be updated together.
 
         switch (parentFiber.tag) {
-            case HostComponent:
+            case HostComponent://
                 {
                     var parent = parentFiber.stateNode;
 
@@ -24966,7 +25081,7 @@
             } else {
                 appendChildToContainer(parent, stateNode);
             }
-        } else if (tag === HostPortal); else {
+        } else if (tag === HostPortal); else {//函数组件
             var child = node.child;
 
             if (child !== null) {
@@ -24981,6 +25096,7 @@
         }
     }
 
+    //DONE
     function insertOrAppendPlacementNode(node, before, parent) {
         var tag = node.tag;
         var isHost = tag === HostComponent || tag === HostText;
@@ -25413,7 +25529,7 @@
         // to reconcilation, because those can be set on all fiber types.
 
         switch (finishedWork.tag) {
-            case FunctionComponent:
+            case FunctionComponent://DONE
             case ForwardRef:
             case MemoComponent:
             case SimpleMemoComponent:
@@ -25469,7 +25585,7 @@
                     return;
                 }
 
-            case HostComponent:
+            case HostComponent://DONE
                 {
                     recursivelyTraverseMutationEffects(root, finishedWork);
                     commitReconciliationEffects(finishedWork);
@@ -25502,12 +25618,13 @@
 
                             if (_instance4 != null) {
                                 // Commit the work prepared earlier.
-                                var newProps = finishedWork.memoizedProps; // For hydration we reuse the update path but we treat the oldProps
-                                // as the newProps. The updatePayload will contain the real change in
-                                // this case.
+                                var newProps = finishedWork.memoizedProps;
+                                // For hydration we reuse the update path but we treat the oldProps
+                                // as the newProps. The updatePayload will contain the real change in this case.
 
                                 var oldProps = current !== null ? current.memoizedProps : newProps;
-                                var type = finishedWork.type; // TODO: Type the updateQueue to be specific to host components.
+                                var type = finishedWork.type;
+                                // TODO: Type the updateQueue to be specific to host components.
 
                                 var updatePayload = finishedWork.updateQueue;
                                 finishedWork.updateQueue = null;
@@ -27981,7 +28098,6 @@
         var remainingLanes = mergeLanes(finishedWork.lanes, finishedWork.childLanes);
         markRootFinished(root, remainingLanes);
 
-        debugger
         if (root === workInProgressRoot) {
             // We can reset these now that they are finished.
             workInProgressRoot = null;
@@ -29437,7 +29553,10 @@
         return new FiberNode(tag, pendingProps, key, mode);
     };
 
-    //DONE
+    /**
+     * DONE
+     * 是否类组件
+     */
     function shouldConstruct$1(Component) {
         var prototype = Component.prototype;
         return !!(prototype && prototype.isReactComponent);
@@ -29658,16 +29777,18 @@
 
         return createFiber(HostRoot, null, null, mode);
     }
-    //DONE
-    function createFiberFromTypeAndProps(type, // React$ElementType
-        key, pendingProps, owner, mode, lanes) {
+    /**
+     * DONE
+     * @param type React$ElementType
+     */
+    function createFiberFromTypeAndProps(type, key, pendingProps, owner, mode, lanes) {
         var fiberTag = IndeterminateComponent;
         // The resolved type is set if we know what the final type will be. I.e. it's not lazy.
 
         var resolvedType = type;
 
         if (typeof type === 'function') {
-            if (shouldConstruct$1(type)) {
+            if (shouldConstruct$1(type)) {//类组件
                 fiberTag = ClassComponent;
 
                 {
@@ -29794,6 +29915,7 @@
 
         return fiber;
     }
+    //DONE
     function createFiberFromElement(element, mode, lanes) {
         var owner = null;
 
