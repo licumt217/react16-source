@@ -46,7 +46,28 @@ function Test() {
 
 let arr3 = [];
 for (let i = 0; i < 100000; i++) {
-    arr3.push(e("div", { style: { color: 'red' }, key: i }, 555 + ":" + i))
+    // arr3.push(e("div", { style: { color: 'red' }, key: i }, 555 + ":" + i))
+}
+
+
+class MyClassTest extends React.Component {
+    constructor (props) {
+        super(props)
+        this.state = {
+            myText: '按钮',
+            age: 18
+        }
+    }
+    handleClick() {
+        this.setState({ myText: "xxx按钮xxx" })
+    }
+    render() {
+        return e(
+            'button',
+            { onClick: () => this.handleClick() },
+            this.state.myText
+        );
+    }
 }
 
 // root.render(666);
@@ -56,7 +77,8 @@ for (let i = 0; i < 100000; i++) {
 // root.render(e("div", { style: { color: 'red' } }, e("div", { style: { color: 'red' }, key: 1 }, 555)));
 // root.render(e(ABC));
 // root.render(e(Test));
-root.render([1, 2, 3]);
+// root.render([1, 2, 3]);
+root.render(e(MyClassTest));
 
 
 

@@ -325,6 +325,7 @@
             }
         }
     }
+    //DONE
     function checkFormFieldValueStringCoercion(value) {
         {
             if (willCoercionThrow(value)) {
@@ -1068,6 +1069,7 @@
         }
 
         var control;
+        //再入，折返、再进入
         reentry = true;
         var previousPrepareStackTrace = Error.prepareStackTrace; // $FlowFixMe It does accept undefined.
 
@@ -1076,8 +1078,7 @@
 
         {
             previousDispatcher = ReactCurrentDispatcher.current;
-            // Set the dispatcher in DEV because this might be call in the render function
-            // for warnings.
+            // Set the dispatcher in DEV because this might be call in the render function for warnings.
 
             ReactCurrentDispatcher.current = null;
             disableLogs();
@@ -1091,7 +1092,7 @@
                     throw Error();
                 }; // $FlowFixMe
 
-
+                //下边 Reflect.construct(fn, [], Fake); 在再次执行构造函数时，Component的this.props=props时报错，进入catch中
                 Object.defineProperty(Fake.prototype, 'props', {
                     set: function () {
                         // We use a throwing setter instead of frozen or non-writable props
@@ -1309,7 +1310,7 @@
             case ForwardRef:
                 return describeFunctionComponentFrame(fiber.type.render);
 
-            case ClassComponent:
+            case ClassComponent://DONE
                 return describeClassComponentFrame(fiber.type);
 
             default:
@@ -1561,14 +1562,14 @@
         return null;
     }
 
+    //DONE
     function getCurrentFiberStackInDev() {
         {
             if (current === null) {
                 return '';
-            } // Safe because if current fiber exists, we are reconciling,
+            }
+            // Safe because if current fiber exists, we are reconciling,
             // and it is guaranteed to be the work-in-progress version.
-
-
             return getStackByFiberInDevAndProd(current);
         }
     }
@@ -1584,6 +1585,7 @@
     //DONE
     function setCurrentFiber(fiber) {
         {
+            //将getCurrentFiberStackInDev赋值给ReactDebugCurrentFrame.getCurrentStack，方便报错调试使用
             ReactDebugCurrentFrame.getCurrentStack = fiber === null ? null : getCurrentFiberStackInDev;
             current = fiber;
             isRendering = false;
@@ -1609,6 +1611,7 @@
         // eslint-disable-next-line react-internal/safe-string-coercion
         return '' + value;
     }
+    //DONE
     function getToStringValue(value) {
         switch (typeof value) {
             case 'boolean':
@@ -1807,7 +1810,9 @@
         var usesChecked = props.type === 'checkbox' || props.type === 'radio';
         return usesChecked ? props.checked != null : props.value != null;
     }
+
     /**
+     * DONE
      * Implements an <input> host component that allows setting these optional
      * props: `checked`, `value`, `defaultChecked`, and `defaultValue`.
      *
@@ -1823,8 +1828,6 @@
      *
      * See http://www.w3.org/TR/2012/WD-html5-20121025/the-input-element.html
      */
-
-
     function getHostProps(element, props) {
         var node = element;
         var checked = props.checked;
@@ -1871,6 +1874,7 @@
             controlled: isControlled(props)
         };
     }
+    //DONE
     function updateChecked(element, props) {
         var node = element;
         var checked = props.checked;
@@ -1879,6 +1883,8 @@
             setValueForProperty(node, 'checked', checked, false);
         }
     }
+
+    //DONE
     function updateWrapper(element, props) {
         var node = element;
 
@@ -2195,6 +2201,7 @@
         }
     }
 
+    //DONE
     function updateOptions(node, multiple, propValue, setDefaultSelected) {
         var options = node.options;
 
@@ -2247,6 +2254,7 @@
         }
     }
     /**
+     * DONE
      * Implements a <select> host component that allows optionally setting the
      * props `value` and `defaultValue`. If `multiple` is false, the prop must be a
      * stringable. If `multiple` is true, the prop must be an array of stringables.
@@ -2261,8 +2269,6 @@
      * If `defaultValue` is provided, any options with the supplied values will be
      * selected.
      */
-
-
     function getHostProps$1(element, props) {
         return assign({}, props, {
             value: undefined
@@ -2302,6 +2308,7 @@
             updateOptions(node, !!props.multiple, props.defaultValue, true);
         }
     }
+    //DONE
     function postUpdateWrapper(element, props) {
         var node = element;
         var wasMultiple = node._wrapperState.wasMultiple;
@@ -2332,6 +2339,7 @@
     var didWarnValDefaultVal = false;
 
     /**
+     * DONE
      * Implements a <textarea> host component that allows setting `value`, and
      * `defaultValue`. This differs from the traditional DOM API because value is
      * usually set as PCDATA children.
@@ -2424,6 +2432,7 @@
             initialValue: getToStringValue(initialValue)
         };
     }
+    //DONE
     function updateWrapper$1(element, props) {
         var node = element;
         var value = getToStringValue(props.value);
@@ -2936,10 +2945,12 @@
         }
     }
 
+    //DONE
     function isValueEmpty(value) {
         return value == null || typeof value === 'boolean' || value === '';
     }
     /**
+     * DONE
      * Given {color: 'red', overflow: 'hidden'} returns {
      *   color: 'color',
      *   overflowX: 'overflow',
@@ -2947,8 +2958,6 @@
      * }. This can be read as "the overflowY property was set by the overflow
      * shorthand". That is, the values are the property that each was derived from.
      */
-
-
     function expandShorthandMap(styles) {
         var expanded = {};
 
@@ -2963,6 +2972,7 @@
         return expanded;
     }
     /**
+     * DONE
      * When mixing shorthand and longhand property names, we warn during updates if
      * we expect an incorrect result to occur. In particular, we warn for:
      *
@@ -2976,8 +2986,6 @@
      *   {font: 'foo', fontVariant: 'bar'} -> {font: 'foo'}
      *   becomes .style.fontVariant = ''
      */
-
-
     function validateShorthandPropertyCollisionInDev(styleUpdates, nextStyles) {
         {
             if (!nextStyles) {
@@ -3005,7 +3013,8 @@
                         + 'conflicting property is set (%s) can lead to styling bugs. To '
                         + "avoid this, don't mix shorthand and non-shorthand properties "
                         + 'for the same value; instead, replace the shorthand with '
-                        + 'separate values.', isValueEmpty(styleUpdates[originalKey]) ? 'Removing' : 'Updating', originalKey, correctOriginalKey);
+                        + 'separate values.', isValueEmpty(styleUpdates[originalKey])
+                        ? 'Removing' : 'Updating', originalKey, correctOriginalKey);
                 }
             }
         }
@@ -3991,6 +4000,7 @@
     var IS_EVENT_HANDLE_NON_MANAGED_NODE = 1;
     var IS_NON_DELEGATED = 1 << 1;
     var IS_CAPTURE_PHASE = 1 << 2;
+
     // set to LEGACY_FB_SUPPORT. LEGACY_FB_SUPPORT only gets set when
     // we call willDeferLaterForLegacyFBSupport, thus not bailing out
     // will result in endless cycles like an infinite loop.
@@ -4021,14 +4031,16 @@
 
         currentReplayingEvent = null;
     }
+    //DONE
     function isReplayingEvent(event) {
         return event === currentReplayingEvent;
     }
 
     /**
      * Gets the target node from a native browser event by accounting for
-     * inconsistencies in browser DOM APIs.
+     * inconsistencies(前后矛盾; 不一致) in browser DOM APIs.
      * DONE
+     * 获取目标Dom元素
      * @param {object} nativeEvent Native browser event.
      * @return {DOMEventTarget} Target node.
      */
@@ -4040,10 +4052,9 @@
 
         if (target.correspondingUseElement) {
             target = target.correspondingUseElement;
-        } // Safari may fire events on text nodes (Node.TEXT_NODE is 3).
+        }
+        // Safari may fire events on text nodes (Node.TEXT_NODE is 3).
         // @see http://www.quirksmode.org/js/events_properties.html
-
-
         return target.nodeType === TEXT_NODE ? target.parentNode : target;
     }
 
@@ -4163,7 +4174,8 @@
             isInsideEventHandler = false;
             finishEventHandler();
         }
-    } // TODO: Replace with flushSync
+    }
+    // TODO: Replace with flushSync
     function setBatchingImplementation(_batchedUpdatesImpl, _discreteUpdatesImpl, _flushSyncImpl) {
         batchedUpdatesImpl = _batchedUpdatesImpl;
         flushSyncImpl = _flushSyncImpl;
@@ -4201,7 +4213,7 @@
     }
     /**
      * DONE
-     * @param {object} inst The instance, which is the source of events.
+     * @param {object} inst The instance, which is the source of events. fiber
      * @param {string} registrationName Name of listener (e.g. `onClick`).
      * @return {?function} The stored callback.
      */
@@ -4547,6 +4559,8 @@
         unstable_setDisableYieldValue = _ReactInternals$Sched.unstable_setDisableYieldValue;
 
     /**
+     * DONE
+     * 通过类实例对象获取类对应的fiber
      * `ReactInstanceMap` maintains a mapping from a public facing stateful
      * instance (key) and the internal representation (value). This allows public
      * methods to accept the user facing instance as an argument and map them back
@@ -4709,10 +4723,9 @@
             // TODO: Check if this was a nested HostRoot when used with
             // renderContainerIntoSubtree.
             return nearestMounted;
-        } // If we didn't hit the root, that means that we're in an disconnected tree
+        }
+        // If we didn't hit the root, that means that we're in an disconnected tree
         // that has been unmounted.
-
-
         return null;
     }
 
@@ -4745,6 +4758,7 @@
     function isFiberMounted(fiber) {
         return getNearestMountedFiber(fiber) === fiber;
     }
+    //DONE
     function isMounted(component) {
         {
             var owner = ReactCurrentOwner.current;
@@ -5424,7 +5438,7 @@
         }
     }
     /**
-     * 
+     * DONE
      * @param {*} fiber 
      * @param {*} lane 
      */
@@ -5437,22 +5451,12 @@
     }
 
     {
-        var NoMode =
-            /*                         */
-            0; // TODO: Remove ConcurrentMode by reading from the root tag instead
-
-        var ConcurrentMode =
-            /*                 */
-            1;
-        var ProfileMode =
-            /*                    */
-            2;
-        var StrictLegacyMode =
-            /*               */
-            8;
-        var StrictEffectsMode =
-            /*              */
-            16;
+        var NoMode = 0;
+        // TODO: Remove ConcurrentMode by reading from the root tag instead
+        var ConcurrentMode = 1;
+        var ProfileMode = 2;
+        var StrictLegacyMode = 8;
+        var StrictEffectsMode = 16;
     }
 
     //Math.clz32()方法的作用就是计算一个32位无符号整数的二进制表示中有多少个前导0，
@@ -6358,6 +6362,7 @@
     }
 
     {
+        //事件优先级
         var DiscreteEventPriority = SyncLane;
         var ContinuousEventPriority = InputContinuousLane;
         var DefaultEventPriority = DefaultLane;
@@ -6368,7 +6373,10 @@
     function getCurrentUpdatePriority() {
         return currentUpdatePriority;
     }
-    //DONE
+    /**
+     * DONE
+     * 更新优先级
+     */
     function setCurrentUpdatePriority(newPriority) {
         currentUpdatePriority = newPriority;
     }
@@ -6562,21 +6570,24 @@
             case 'focusin':
                 {
                     var focusEvent = nativeEvent;
-                    queuedFocus = accumulateOrCreateContinuousQueuedReplayableEvent(queuedFocus, blockedOn, domEventName, eventSystemFlags, targetContainer, focusEvent);
+                    queuedFocus = accumulateOrCreateContinuousQueuedReplayableEvent(queuedFocus, blockedOn,
+                        domEventName, eventSystemFlags, targetContainer, focusEvent);
                     return true;
                 }
 
             case 'dragenter':
                 {
                     var dragEvent = nativeEvent;
-                    queuedDrag = accumulateOrCreateContinuousQueuedReplayableEvent(queuedDrag, blockedOn, domEventName, eventSystemFlags, targetContainer, dragEvent);
+                    queuedDrag = accumulateOrCreateContinuousQueuedReplayableEvent(queuedDrag, blockedOn,
+                        domEventName, eventSystemFlags, targetContainer, dragEvent);
                     return true;
                 }
 
             case 'mouseover':
                 {
                     var mouseEvent = nativeEvent;
-                    queuedMouse = accumulateOrCreateContinuousQueuedReplayableEvent(queuedMouse, blockedOn, domEventName, eventSystemFlags, targetContainer, mouseEvent);
+                    queuedMouse = accumulateOrCreateContinuousQueuedReplayableEvent(queuedMouse, blockedOn,
+                        domEventName, eventSystemFlags, targetContainer, mouseEvent);
                     return true;
                 }
 
@@ -6584,7 +6595,8 @@
                 {
                     var pointerEvent = nativeEvent;
                     var pointerId = pointerEvent.pointerId;
-                    queuedPointers.set(pointerId, accumulateOrCreateContinuousQueuedReplayableEvent(queuedPointers.get(pointerId) || null, blockedOn, domEventName, eventSystemFlags, targetContainer, pointerEvent));
+                    queuedPointers.set(pointerId, accumulateOrCreateContinuousQueuedReplayableEvent(
+                        queuedPointers.get(pointerId) || null, blockedOn, domEventName, eventSystemFlags, targetContainer, pointerEvent));
                     return true;
                 }
 
@@ -6592,7 +6604,8 @@
                 {
                     var _pointerEvent = nativeEvent;
                     var _pointerId2 = _pointerEvent.pointerId;
-                    queuedPointerCaptures.set(_pointerId2, accumulateOrCreateContinuousQueuedReplayableEvent(queuedPointerCaptures.get(_pointerId2) || null, blockedOn, domEventName, eventSystemFlags, targetContainer, _pointerEvent));
+                    queuedPointerCaptures.set(_pointerId2, accumulateOrCreateContinuousQueuedReplayableEvent(
+                        queuedPointerCaptures.get(_pointerId2) || null, blockedOn, domEventName, eventSystemFlags, targetContainer, _pointerEvent));
                     return true;
                 }
         }
@@ -6860,6 +6873,8 @@
      * DONE
      */
     function dispatchDiscreteEvent(domEventName, eventSystemFlags, container, nativeEvent) {
+        if (domEventName === 'click') {
+        }
         var previousPriority = getCurrentUpdatePriority();
         var prevTransition = ReactCurrentBatchConfig.transition;
         ReactCurrentBatchConfig.transition = null;
@@ -6917,9 +6932,11 @@
      * @returns 
      */
     function dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
+        if (domEventName === 'click') {
+        }
         var blockedOn = findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent);
 
-        if (blockedOn === null) {
+        if (blockedOn === null) {//DONE
             dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, return_targetInst, targetContainer);
             clearIfContinuousEvent(domEventName, nativeEvent);
             return;
@@ -6928,10 +6945,9 @@
         if (queueIfContinuousEvent(blockedOn, domEventName, eventSystemFlags, targetContainer, nativeEvent)) {
             nativeEvent.stopPropagation();
             return;
-        } // We need to clear only if we didn't queue because
-        // queueing is accumulative.
+        }
 
-
+        // We need to clear only if we didn't queue because queueing is accumulative.(累积的)
         clearIfContinuousEvent(domEventName, nativeEvent);
 
         if (eventSystemFlags & IS_CAPTURE_PHASE && isDiscreteEventThatRequiresHydration(domEventName)) {
@@ -6960,10 +6976,9 @@
             }
 
             return;
-        } // This is not replayable so we'll invoke it but without a target,
+        }
+        // This is not replayable so we'll invoke it but without a target,
         // in case the event system needs to trace it.
-
-
         dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, null, targetContainer);
     }
 
@@ -6971,12 +6986,13 @@
 
     //DONE
     // Returns a SuspenseInstance or Container if it's blocked.
-    // The return_targetInst field above is conceptually part of the return value.
-    //
+    // The return_targetInst field above is conceptually(在概念上) part of the return value.
     function findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
         // TODO: Warn if _enabled is false.
         return_targetInst = null;
+        //获取目标Dom元素
         var nativeEventTarget = getEventTarget(nativeEvent);
+        //根据dom节点，返回它所属于的最近的fiber
         var targetInst = getClosestInstanceFromNode(nativeEventTarget);
 
         if (targetInst !== null) {
@@ -7007,8 +7023,7 @@
                     var root = nearestMounted.stateNode;
 
                     if (isRootDehydrated(root)) {
-                        // If this happens during a replay something went wrong and it might block
-                        // the whole system.
+                        // If this happens during a replay something went wrong and it might block the whole system.
                         return getContainerFromFiber(nearestMounted);
                     }
 
@@ -7023,8 +7038,8 @@
             }
         }
 
-        return_targetInst = targetInst; // We're not blocked on anything.
-
+        return_targetInst = targetInst;
+        // We're not blocked on anything.
         return null;
     }
     /**
@@ -7849,7 +7864,8 @@
      * (cut, copy, select-all, etc.) even though no character is inserted.
      */
     function isKeypressCommand(nativeEvent) {
-        return (nativeEvent.ctrlKey || nativeEvent.altKey || nativeEvent.metaKey) && // ctrlKey && altKey is equivalent to AltGr, and is not a command.
+        return (nativeEvent.ctrlKey || nativeEvent.altKey || nativeEvent.metaKey) &&
+            // ctrlKey && altKey is equivalent to AltGr, and is not a command.
             !(nativeEvent.ctrlKey && nativeEvent.altKey);
     }
     /**
@@ -7921,6 +7937,7 @@
         return null;
     }
     /**
+     * DONE
      * Check if a composition event was triggered by Korean IME.
      * Our fallback mode does not work well with IE's Korean IME,
      * so just use native composition events when Korean IME is used.
@@ -7932,9 +7949,9 @@
      */
     function isUsingKoreanIME(nativeEvent) {
         return nativeEvent.locale === 'ko';
-    } // Track the current IME composition status, if any.
+    }
 
-
+    // Track the current IME composition status, if any.
     var isComposing = false;
     /**
      * DONE
@@ -8121,10 +8138,9 @@
             chars = getNativeBeforeInputChars(domEventName, nativeEvent);
         } else {
             chars = getFallbackBeforeInputChars(domEventName, nativeEvent);
-        } // If no characters are being inserted, no BeforeInput event should
-        // be fired.
+        }
 
-
+        // If no characters are being inserted, no BeforeInput event should be fired.
         if (!chars) {
             return null;
         }
@@ -8263,6 +8279,7 @@
     var activeElementInst = null;
     /**
      * SECTION: handle `change` event
+     * DONE
      */
     function shouldUseChangeEvent(elem) {
         var nodeName = elem.nodeName && elem.nodeName.toLowerCase();
@@ -8382,6 +8399,7 @@
     }
 
     // For IE8 and IE9.
+    //DONE
     function getTargetInstForInputEventPolyfill(domEventName, targetInst) {
         if (domEventName === 'selectionchange' || domEventName === 'keyup' || domEventName === 'keydown') {
             // On the selectionchange event, the target is just document which isn't
@@ -8439,7 +8457,7 @@
     /**
      * This plugin creates an `onChange` event that normalizes change events
      * across form elements. This event fires at a time when it's possible to
-     * change the element's value without seeing a flicker.
+     * change the element's value without seeing a flicker(闪烁)
      * DONE
      * Supported elements are:
      * - input (see `isTextInputElement`)
@@ -8474,9 +8492,9 @@
 
         if (handleEventFunc) {
             handleEventFunc(domEventName, targetNode, targetInst);
-        } // When blurring, set the value attribute for number inputs
+        }
 
-
+        // When blurring, set the value attribute for number inputs
         if (domEventName === 'focusout') {
             handleControlledInputBlur(targetNode);
         }
@@ -8491,9 +8509,10 @@
     }
     /**
      * DONE
+     * mouseover/mouseout事件
      * For almost every interaction we care about, there will be both a top-level
      * `mouseover` and `mouseout` event that occurs. Only use `mouseout` so that
-     * we do not extract duplicate events. However, moving the mouse into the
+     * we do not extract(提取) duplicate events. However, moving the mouse into the
      * browser from outside will not fire a `mouseout` event. In this case, we use
      * the `mouseover` top-level event.
      */
@@ -8582,7 +8601,8 @@
         var leave = new SyntheticEventCtor(leaveEventType, eventTypePrefix + 'leave', from, nativeEvent, nativeEventTarget);
         leave.target = fromNode;
         leave.relatedTarget = toNode;
-        var enter = null; // We should only process this nativeEvent if we are processing
+        var enter = null;
+        // We should only process this nativeEvent if we are processing
         // the first ancestor. Next time, we will ignore the event.
 
         var nativeTargetInst = getClosestInstanceFromNode(nativeEventTarget);
@@ -9120,9 +9140,9 @@
 
         if (mouseDown || activeElement$1 == null || activeElement$1 !== getActiveElement(doc)) {
             return;
-        } // Only fire when selection has actually changed.
+        }
 
-
+        // Only fire when selection has actually changed.
         var currentSelection = getSelection$1(activeElement$1);
 
         if (!lastSelection || !shallowEqual(lastSelection, currentSelection)) {
@@ -9141,6 +9161,7 @@
     }
     /**
      * DONE
+     * onSelect
      * This plugin creates an `onSelect` event that normalizes select events
      * across form elements.
      *
@@ -9186,6 +9207,7 @@
                 mouseDown = false;
                 constructSelectEvent(dispatchQueue, nativeEvent, nativeEventTarget);
                 break;
+
             // Chrome and IE fire non-standard event when selection is changed (and
             // sometimes when it hasn't). IE's event fires out of order with respect
             // to key and input events on deletion, so we discard it.
@@ -9354,9 +9376,11 @@
      * @returns 
      */
     function extractEvents$4(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags, targetContainer) {
+        if (domEventName === 'click') {
+        }
         var reactName = topLevelEventsToReactNames.get(domEventName);
 
-        if (reactName === undefined) {
+        if (reactName === undefined) {//比如document对应是selectionchange事件
             return;
         }
 
@@ -9395,8 +9419,7 @@
                 break;
 
             case 'click':
-                // Firefox creates a click event on right mouse clicks. This removes the
-                // unwanted click events.
+                // Firefox creates a click event on right mouse clicks. This removes the unwanted click events.
                 if (nativeEvent.button === 2) {
                     return;
                 }
@@ -9510,34 +9533,41 @@
     function extractEvents$5(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags, targetContainer) {
         // TODO: we should remove the concept of a "SimpleEventPlugin".
         // This is the basic functionality of the event system. All
-        // the other plugins are essentially polyfills. So the plugin
+        // the other plugins are essentially(本质上) polyfills. So the plugin
         // should probably be inlined somewhere and have its logic
         // be core the to event system. This would potentially allow
         // us to ship builds of React without the polyfilled plugins below.
+        if (domEventName === 'click') {
+        }
         extractEvents$4(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags);
+
         var shouldProcessPolyfillPlugins = (eventSystemFlags & SHOULD_NOT_PROCESS_POLYFILL_EVENT_PLUGINS) === 0;
+
         // We don't process these events unless we are in the
         // event's native "bubble" phase, which means that we're
-        // not in the capture phase. That's because we emulate
-        // the capture phase here still. This is a trade-off,
+        // not in the capture phase. That's because we emulate（模仿）
+        // the capture phase here still. This is a trade-off（权衡、协调）,
         // because in an ideal world we would not emulate and use
         // the phases properly, like we do with the SimpleEvent
         // plugin. However, the plugins below either expect
-        // emulation (EnterLeave) or use state localized to that
+        // emulation (EnterLeave) or use state localized（局部的） to that
         // plugin (BeforeInput, Change, Select). The state in
-        // these modules complicates things, as you'll essentially
+        // these modules complicates things, as you'll essentially（本质上）
         // get the case where the capture phase event might change
         // state, only for the following bubble event to come in
         // later and not trigger anything as the state now
-        // invalidates the heuristics of the event plugin. We
-        // could alter all these plugins to work in such ways, but
+        // invalidates the heuristics（探索法; 启发式） of the event plugin. We
+        // could alter（更改、改动） all these plugins to work in such ways, but
         // that might cause other unknown side-effects that we
         // can't foresee right now.
-
         if (shouldProcessPolyfillPlugins) {
+            //mouseover/mouseout事件
             extractEvents$2(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget);
+            //onChange
             extractEvents$1(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget);
+            //onSelect
             extractEvents$3(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget);
+            //onBeforeInput
             extractEvents(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget);
         }
     }
@@ -9556,6 +9586,7 @@
     function executeDispatch(event, listener, currentTarget) {
         var type = event.type || 'unknown-event';
         event.currentTarget = currentTarget;
+
         invokeGuardedCallbackAndCatchFirstError(type, listener, undefined, event);
         event.currentTarget = null;
     }
@@ -9599,6 +9630,7 @@
     function processDispatchQueue(dispatchQueue, eventSystemFlags) {
         var inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
 
+
         for (var i = 0; i < dispatchQueue.length; i++) {
             var _dispatchQueue$i = dispatchQueue[i],
                 event = _dispatchQueue$i.event,
@@ -9616,6 +9648,8 @@
         var nativeEventTarget = getEventTarget(nativeEvent);
         var dispatchQueue = [];
         extractEvents$5(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags);
+        if (domEventName === 'click') {
+        }
         processDispatchQueue(dispatchQueue, eventSystemFlags);
     }
 
@@ -9663,6 +9697,7 @@
 
     // This is only used by createEventHandle when the
     var listeningMarker = '_reactListening' + Math.random().toString(36).slice(2);
+
     /**
      * DONE
      * @param {*} rootContainerElement 
@@ -9673,10 +9708,12 @@
             allNativeEvents.forEach(function (domEventName) {
                 // We handle selectionchange separately because it doesn't bubble and needs to be on the document.
                 if (domEventName !== 'selectionchange') {
+                    //不是非代理的事件
                     if (!nonDelegatedEvents.has(domEventName)) {
+                        //冒泡
                         listenToNativeEvent(domEventName, false, rootContainerElement);
                     }
-
+                    //捕获
                     listenToNativeEvent(domEventName, true, rootContainerElement);
                 }
             });
@@ -9687,6 +9724,7 @@
                 // but it is attached to the document.
                 if (!ownerDocument[listeningMarker]) {
                     ownerDocument[listeningMarker] = true;
+                    //此事件绑定在document上，左键、右键、滚轮点击都会触发
                     listenToNativeEvent('selectionchange', false, ownerDocument);
                 }
             }
@@ -9698,9 +9736,10 @@
      * trapped(受限制的、受困的)
      */
     function addTrappedEventListener(targetContainer, domEventName, eventSystemFlags, isCapturePhaseListener, isDeferredListenerForLegacyFBSupport) {
-        var listener = createEventListenerWrapperWithPriority(targetContainer, domEventName, eventSystemFlags);//dispatchDiscreteEvent 等
-        // If passive option is not supported, then the event will be active and not passive.
+        //dispatchDiscreteEvent 等
+        var listener = createEventListenerWrapperWithPriority(targetContainer, domEventName, eventSystemFlags);
 
+        // If passive option is not supported, then the event will be active and not passive.
         var isPassiveListener = undefined;
 
         if (passiveBrowserEventsSupported) {
@@ -9716,7 +9755,8 @@
         }
 
         targetContainer = targetContainer;
-        var unsubscribeListener; // When legacyFBSupport is enabled, it's for when we
+        var unsubscribeListener;
+
 
 
         if (isCapturePhaseListener) {//捕获
@@ -9751,8 +9791,9 @@
     function dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, targetInst, targetContainer) {
         var ancestorInst = targetInst;
 
+
         if ((eventSystemFlags & IS_EVENT_HANDLE_NON_MANAGED_NODE) === 0 && (eventSystemFlags & IS_NON_DELEGATED) === 0) {
-            var targetContainerNode = targetContainer; // If we are using the legacy FB support flag, we
+            var targetContainerNode = targetContainer;
 
             if (targetInst !== null) {
                 // The below logic attempts to work out if we need to change
@@ -9805,13 +9846,13 @@
 
                                 grandNode = grandNode.return;
                             }
-                        } // Now we need to find it's corresponding host fiber in the other
+                        }
+
+                        // Now we need to find it's corresponding host fiber in the other
                         // tree. To do this we can use getClosestInstanceFromNode, but we
                         // need to validate that the fiber is a host instance, otherwise
                         // we need to traverse up through the DOM till we find the correct
                         // node that is from the other tree.
-
-
                         while (container !== null) {
                             var parentNode = getClosestInstanceFromNode(container);
 
@@ -9841,7 +9882,7 @@
     }
 
     /**
-     * 
+     * DONE
      * @param {*} instance 
      * @param {*} listener 
      * @param {*} currentTarget 
@@ -9866,6 +9907,8 @@
      * @returns 
      */
     function accumulateSinglePhaseListeners(targetFiber, reactName, nativeEventType, inCapturePhase, accumulateTargetOnly, nativeEvent) {
+        if (reactName === 'onClick') {
+        }
         var captureName = reactName !== null ? reactName + 'Capture' : null;
         var reactEventName = inCapturePhase ? captureName : reactName;
         var listeners = [];
@@ -9888,7 +9931,8 @@
                         listeners.push(createDispatchListener(instance, listener, lastHostComponent));
                     }
                 }
-            } // If we are only accumulating events for the target, then we don't
+            }
+            // If we are only accumulating events for the target, then we don't
             // continue to propagate through the React fiber tree to find other
             // listeners.
 
@@ -10320,6 +10364,7 @@
         }
     }
 
+    //DONE
     function updateDOMProperties(domElement, updatePayload, wasCustomComponentTag, isCustomComponentTag) {
         // TODO: Handle wasCustomComponentTag
         for (var i = 0; i < updatePayload.length; i += 2) {
@@ -10572,8 +10617,18 @@
 
                 break;
         }
-    } // Calculate the diff between the two objects.
+    }
 
+    /**
+     * DONE
+     * Calculate the diff between the two objects.
+     * @param {*} domElement 
+     * @param {*} tag 
+     * @param {*} lastRawProps 
+     * @param {*} nextRawProps 
+     * @param {*} rootContainerElement 
+     * @returns 
+     */
     function diffProperties(domElement, tag, lastRawProps, nextRawProps, rootContainerElement) {
         {
             validatePropertiesInDevelopment(tag, nextRawProps);
@@ -10750,6 +10805,7 @@
         return updatePayload;
     } // Apply the diff.
 
+    //DONE
     function updateProperties(domElement, updatePayload, tag, lastRawProps, nextRawProps) {
         // Update checked *before* name.
         // In the middle of an update, it is possible to have multiple checked.
@@ -10761,7 +10817,8 @@
         var wasCustomComponentTag = isCustomComponent(tag, lastRawProps);
         var isCustomComponentTag = isCustomComponent(tag, nextRawProps); // Apply the diff.
 
-        updateDOMProperties(domElement, updatePayload, wasCustomComponentTag, isCustomComponentTag); // TODO: Ensure that an update gets scheduled if any of the special props
+        updateDOMProperties(domElement, updatePayload, wasCustomComponentTag, isCustomComponentTag);
+        // TODO: Ensure that an update gets scheduled if any of the special props
         // changed.
 
         switch (tag) {
@@ -11605,11 +11662,13 @@
                 return false;
         }
     }
+    //DONE
     function prepareUpdate(domElement, type, oldProps, newProps, rootContainerInstance, hostContext) {
         {
             var hostContextDev = hostContext;
 
-            if (typeof newProps.children !== typeof oldProps.children && (typeof newProps.children === 'string' || typeof newProps.children === 'number')) {
+            if (typeof newProps.children !== typeof oldProps.children && (typeof newProps.children === 'string'
+                || typeof newProps.children === 'number')) {
                 var string = '' + newProps.children;
                 var ownAncestorInfo = updatedAncestorInfo(hostContextDev.ancestorInfo, type);
                 validateDOMNesting(null, string, ownAncestorInfo);
@@ -11661,16 +11720,20 @@
     var scheduleTimeout = typeof setTimeout === 'function' ? setTimeout : undefined;
     var cancelTimeout = typeof clearTimeout === 'function' ? clearTimeout : undefined;
     var noTimeout = -1;
-    var localPromise = typeof Promise === 'function' ? Promise : undefined; // -------------------
+    var localPromise = typeof Promise === 'function' ? Promise : undefined;
+
+    // -------------------调度一个微任务的函数（Promise.resolve().then()）
     var scheduleMicrotask = typeof queueMicrotask === 'function' ? queueMicrotask : typeof localPromise !== 'undefined' ? function (callback) {
         return localPromise.resolve(null).then(callback).catch(handleErrorInNextTick);
-    } : scheduleTimeout; // TODO: Determine the best fallback here.
+    } : scheduleTimeout;
 
+    //DONE
     function handleErrorInNextTick(error) {
         setTimeout(function () {
             throw error;
         });
-    } // -------------------
+    }
+    // -------------------
     function commitMount(domElement, type, newProps, internalInstanceHandle) {
         // Despite the naming that might imply otherwise, this method only
         // fires if there is an `Update` effect scheduled during mounting.
@@ -11699,9 +11762,11 @@
                 }
         }
     }
+    //DONE setState
     function commitUpdate(domElement, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
         // Apply the diff to the DOM node.
-        updateProperties(domElement, updatePayload, type, oldProps, newProps); // Update the props handle so that we know which props are the ones with
+        updateProperties(domElement, updatePayload, type, oldProps, newProps);
+        // Update the props handle so that we know which props are the ones with
         // with current event handlers.
 
         updateFiberProps(domElement, newProps);
@@ -12202,7 +12267,6 @@
         return !!node[internalContainerInstanceKey];
     }
 
-    //DONE
     // Given a DOM node, return the closest HostComponent or HostText fiber ancestor.
     // If the target node is part of a hydrated or not yet rendered subtree, then
     // this may also return a SuspenseComponent or HostRoot to indicate that.
@@ -12210,16 +12274,20 @@
     // pass the Container node as the targetNode, you will not actually get the
     // HostRoot back. To get to the HostRoot, you need to pass a child of it.
     // The same thing applies to Suspense boundaries.
+    /**
+     * DONE
+     * 根据dom节点，返回它所属于的最近的fiber
+     * 如果dom有直接关联的fiber，则直接返回；否则向上从祖先dom中查找是否有对应的fiber
+     */
     function getClosestInstanceFromNode(targetNode) {
         var targetInst = targetNode[internalInstanceKey];
 
         if (targetInst) {
             // Don't return HostRoot or SuspenseComponent here.
             return targetInst;
-        } // If the direct event target isn't a React owned DOM node, we need to look
+        }
+        // If the direct event target isn't a React owned DOM node, we need to look
         // to see if one of its parents is a React owned DOM node.
-
-
         var parentNode = targetNode.parentNode;
 
         while (parentNode) {
@@ -12273,7 +12341,8 @@
                         // the outer most that is known.
 
 
-                        suspenseInstance = getParentSuspenseInstance(suspenseInstance); // If we don't find one, then that should mean that the parent
+                        suspenseInstance = getParentSuspenseInstance(suspenseInstance);
+                        // If we don't find one, then that should mean that the parent
                         // host component also hasn't hydrated yet. We can return it
                         // below since it will bail out on the isMounted check later.
                     }
@@ -12317,10 +12386,10 @@
             // In Fiber this, is just the state node right now. We assume it will be
             // a host component or host text.
             return inst.stateNode;
-        } // Without this first invariant, passing a non-DOM-component triggers the next
+        }
+
+        // Without this first invariant, passing a non-DOM-component triggers the next
         // invariant for a missing parent, which is super confusing.
-
-
         throw new Error('getNodeFromInstance: Invalid argument.');
     }
     //DONE
@@ -12607,10 +12676,12 @@
         }
     }
 
+    //DONE
     function processChildContext(fiber, type, parentContext) {
         {
             var instance = fiber.stateNode;
-            var childContextTypes = type.childContextTypes; // TODO (bvaughn) Replace this behavior with an invariant() in the future.
+            var childContextTypes = type.childContextTypes;
+            // TODO (bvaughn) Replace this behavior with an invariant() in the future.
             // It has only been added in Fiber to match the (unintentional) behavior in Stack.
 
             if (typeof instance.getChildContext !== 'function') {
@@ -12620,7 +12691,9 @@
                     if (!warnedAboutMissingGetChildContext[componentName]) {
                         warnedAboutMissingGetChildContext[componentName] = true;
 
-                        error('%s.childContextTypes is specified but there is no getChildContext() method ' + 'on the instance. You can either define getChildContext() on %s or remove ' + 'childContextTypes from it.', componentName, componentName);
+                        error('%s.childContextTypes is specified but there is no getChildContext() method '
+                            + 'on the instance. You can either define getChildContext() on %s or remove '
+                            + 'childContextTypes from it.', componentName, componentName);
                     }
                 }
 
@@ -12631,7 +12704,8 @@
 
             for (var contextKey in childContext) {
                 if (!(contextKey in childContextTypes)) {
-                    throw new Error((getComponentNameFromFiber(fiber) || 'Unknown') + ".getChildContext(): key \"" + contextKey + "\" is not defined in childContextTypes.");
+                    throw new Error((getComponentNameFromFiber(fiber) || 'Unknown')
+                        + ".getChildContext(): key \"" + contextKey + "\" is not defined in childContextTypes.");
                 }
             }
 
@@ -12663,12 +12737,14 @@
         }
     }
 
+    //DONE
     function invalidateContextProvider(workInProgress, type, didChange) {
         {
             var instance = workInProgress.stateNode;
 
             if (!instance) {
-                throw new Error('Expected to have an instance by this point. ' + 'This error is likely caused by a bug in React. Please file an issue.');
+                throw new Error('Expected to have an instance by this point. '
+                    + 'This error is likely caused by a bug in React. Please file an issue.');
             }
 
             if (didChange) {
@@ -12676,11 +12752,13 @@
                 // Skip this if we're not updating due to sCU.
                 // This avoids unnecessarily recomputing memoized values.
                 var mergedContext = processChildContext(workInProgress, type, previousContext);
-                instance.__reactInternalMemoizedMergedChildContext = mergedContext; // Replace the old (or empty) context with the new one.
+                instance.__reactInternalMemoizedMergedChildContext = mergedContext;
+                // Replace the old (or empty) context with the new one.
                 // It is important to unwind the context in the reverse order.
 
                 pop(didPerformWorkStackCursor, workInProgress);
-                pop(contextStackCursor, workInProgress); // Now push the new context and mark that it has changed.
+                pop(contextStackCursor, workInProgress);
+                // Now push the new context and mark that it has changed.
 
                 push(contextStackCursor, mergedContext, workInProgress);
                 push(didPerformWorkStackCursor, didChange, workInProgress);
@@ -12731,6 +12809,7 @@
     var syncQueue = null;
     var includesLegacySyncCallbacks = false;
     var isFlushingSyncQueue = false;
+    //DONE
     function scheduleSyncCallback(callback) {
         // Push this callback into an internal queue. We'll flush these either in
         // the next tick, or earlier if something calls `flushSyncCallbackQueue`.
@@ -12769,7 +12848,8 @@
 
             try {
                 var isSync = true;
-                var queue = syncQueue; // TODO: Is this necessary anymore? The only user code that runs in this
+                var queue = syncQueue;
+                // TODO: Is this necessary anymore? The only user code that runs in this
                 // queue is in the render or commit phases.
 
                 setCurrentUpdatePriority(DiscreteEventPriority);
@@ -13758,6 +13838,7 @@
         };
     }
 
+    //DONE
     function resolveDefaultProps(Component, baseProps) {
         if (Component && Component.defaultProps) {
             // Resolve default props. Taken from ReactElement
@@ -14024,12 +14105,16 @@
             }
         }
     }
+    //DONE
     function readContext(context) {
         {
             // This warning would fire if you read context inside a Hook like useMemo.
             // Unlike the class check below, it's not enforced in production for perf.
             if (isDisallowedContextReadInDEV) {
-                error('Context can only be read while React is rendering. ' + 'In classes, you can read it in the render method or getDerivedStateFromProps. ' + 'In function components, you can read it directly in the function body, but not ' + 'inside Hooks like useReducer() or useMemo().');
+                error('Context can only be read while React is rendering. '
+                    + 'In classes, you can read it in the render method or getDerivedStateFromProps. '
+                    + 'In function components, you can read it directly in the function body, but not '
+                    + 'inside Hooks like useReducer() or useMemo().');
             }
         }
 
@@ -14044,8 +14129,12 @@
 
             if (lastContextDependency === null) {
                 if (currentlyRenderingFiber === null) {
-                    throw new Error('Context can only be read while React is rendering. ' + 'In classes, you can read it in the render method or getDerivedStateFromProps. ' + 'In function components, you can read it directly in the function body, but not ' + 'inside Hooks like useReducer() or useMemo().');
-                } // This is the first dependency for this component. Create a new list.
+                    throw new Error('Context can only be read while React is rendering. '
+                        + 'In classes, you can read it in the render method or getDerivedStateFromProps. '
+                        + 'In function components, you can read it directly in the function body, but not '
+                        + 'inside Hooks like useReducer() or useMemo().');
+                }
+                // This is the first dependency for this component. Create a new list.
 
 
                 lastContextDependency = contextItem;
@@ -14781,9 +14870,11 @@
         callback.call(context);
     }
 
+    //DONE
     function resetHasForceUpdateBeforeProcessing() {
         hasForceUpdate = false;
     }
+    //DONE
     function checkHasForceUpdateAfterProcessing() {
         return hasForceUpdate;
     }
@@ -14805,7 +14896,8 @@
         }
     }
 
-    var fakeInternalInstance = {}; // React.Component uses a shared frozen object by default.
+    var fakeInternalInstance = {};
+    // React.Component uses a shared frozen object by default.
     // We'll use it to determine whether we need to initialize legacy refs.
 
     var emptyRefsObject = new React.Component().refs;
@@ -14831,6 +14923,7 @@
         didWarnAboutInvalidateContextType = new Set();
         var didWarnOnInvalidCallback = new Set();
 
+        //DONE
         warnOnInvalidCallback = function (callback, callerName) {
             if (callback === null || typeof callback === 'function') {
                 return;
@@ -14841,7 +14934,8 @@
             if (!didWarnOnInvalidCallback.has(key)) {
                 didWarnOnInvalidCallback.add(key);
 
-                error('%s(...): Expected the last optional `callback` argument to be a ' + 'function. Instead received: %s.', callerName, callback);
+                error('%s(...): Expected the last optional `callback` argument to be a '
+                    + 'function. Instead received: %s.', callerName, callback);
             }
         };
 
@@ -14865,12 +14959,18 @@
         Object.defineProperty(fakeInternalInstance, '_processChildContext', {
             enumerable: false,
             value: function () {
-                throw new Error('_processChildContext is not available in React 16+. This likely ' + 'means you have multiple copies of React and are attempting to nest ' + 'a React 15 tree inside a React 16 tree using ' + "unstable_renderSubtreeIntoContainer, which isn't supported. Try " + 'to make sure you have only one copy of React (and ideally, switch ' + 'to ReactDOM.createPortal).');
+                throw new Error('_processChildContext is not available in React 16+. This likely '
+                    + 'means you have multiple copies of React and are attempting to nest '
+                    + 'a React 15 tree inside a React 16 tree using '
+                    + "unstable_renderSubtreeIntoContainer, which isn't supported. Try "
+                    + 'to make sure you have only one copy of React (and ideally, switch '
+                    + 'to ReactDOM.createPortal).');
             }
         });
         Object.freeze(fakeInternalInstance);
     }
 
+    //DONE
     function applyDerivedStateFromProps(workInProgress, ctor, getDerivedStateFromProps, nextProps) {
         var prevState = workInProgress.memoizedState;
         var partialState = getDerivedStateFromProps(nextProps, prevState);
@@ -14888,12 +14988,12 @@
             }
 
             warnOnUndefinedDerivedState(ctor, partialState);
-        } // Merge the partial state and the previous state.
+        }
 
-
+        // Merge the partial state and the previous state.
         var memoizedState = partialState === null || partialState === undefined ? prevState : assign({}, prevState, partialState);
-        workInProgress.memoizedState = memoizedState; // Once the update queue is empty, persist the derived state onto the
-        // base state.
+        workInProgress.memoizedState = memoizedState;
+        // Once the update queue is empty, persist the derived state onto the base state.
 
         if (workInProgress.lanes === NoLanes) {
             // Queue is always non-null for classes
@@ -14902,12 +15002,18 @@
         }
     }
 
+    //DONE
     var classComponentUpdater = {
         isMounted: isMounted,
+        /**
+         * @param inst 类实例
+         * @param payload 
+         * @param callback 
+         */
         enqueueSetState: function (inst, payload, callback) {
             var fiber = get(inst);
             var eventTime = requestEventTime();
-            var lane = requestUpdateLane(fiber);
+            var lane = requestUpdateLane(fiber);//更新lane
             var update = createUpdate(eventTime, lane);
             update.payload = payload;
 
@@ -14985,6 +15091,7 @@
         }
     };
 
+    //DONE
     function checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext) {
         var instance = workInProgress.stateNode;
 
@@ -15004,7 +15111,8 @@
                 }
 
                 if (shouldUpdate === undefined) {
-                    error('%s.shouldComponentUpdate(): Returned undefined instead of a ' + 'boolean value. Make sure to return true or false.', getComponentNameFromType(ctor) || 'Component');
+                    error('%s.shouldComponentUpdate(): Returned undefined instead of a '
+                        + 'boolean value. Make sure to return true or false.', getComponentNameFromType(ctor) || 'Component');
                 }
             }
 
@@ -15018,6 +15126,7 @@
         return true;
     }
 
+    //DONE
     function checkClassInstance(workInProgress, ctor, newProps) {
         var instance = workInProgress.stateNode;
 
@@ -15027,90 +15136,121 @@
 
             if (!renderPresent) {
                 if (ctor.prototype && typeof ctor.prototype.render === 'function') {
-                    error('%s(...): No `render` method found on the returned component ' + 'instance: did you accidentally return an object from the constructor?', name);
+                    error('%s(...): No `render` method found on the returned component '
+                        + 'instance: did you accidentally return an object from the constructor?', name);
                 } else {
-                    error('%s(...): No `render` method found on the returned component ' + 'instance: you may have forgotten to define `render`.', name);
+                    error('%s(...): No `render` method found on the returned component '
+                        + 'instance: you may have forgotten to define `render`.', name);
                 }
             }
 
             if (instance.getInitialState && !instance.getInitialState.isReactClassApproved && !instance.state) {
-                error('getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', name);
+                error('getInitialState was defined on %s, a plain JavaScript class. '
+                    + 'This is only supported for classes created using React.createClass. '
+                    + 'Did you mean to define a state property instead?', name);
             }
 
             if (instance.getDefaultProps && !instance.getDefaultProps.isReactClassApproved) {
-                error('getDefaultProps was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Use a static property to define defaultProps instead.', name);
+                error('getDefaultProps was defined on %s, a plain JavaScript class. '
+                    + 'This is only supported for classes created using React.createClass. '
+                    + 'Use a static property to define defaultProps instead.', name);
             }
 
             if (instance.propTypes) {
-                error('propTypes was defined as an instance property on %s. Use a static ' + 'property to define propTypes instead.', name);
+                error('propTypes was defined as an instance property on %s. Use a static '
+                    + 'property to define propTypes instead.', name);
             }
 
             if (instance.contextType) {
-                error('contextType was defined as an instance property on %s. Use a static ' + 'property to define contextType instead.', name);
+                error('contextType was defined as an instance property on %s. Use a static '
+                    + 'property to define contextType instead.', name);
             }
 
             {
                 if (instance.contextTypes) {
-                    error('contextTypes was defined as an instance property on %s. Use a static ' + 'property to define contextTypes instead.', name);
+                    error('contextTypes was defined as an instance property on %s. Use a static '
+                        + 'property to define contextTypes instead.', name);
                 }
 
                 if (ctor.contextType && ctor.contextTypes && !didWarnAboutContextTypeAndContextTypes.has(ctor)) {
                     didWarnAboutContextTypeAndContextTypes.add(ctor);
 
-                    error('%s declares both contextTypes and contextType static properties. ' + 'The legacy contextTypes property will be ignored.', name);
+                    error('%s declares both contextTypes and contextType static properties. '
+                        + 'The legacy contextTypes property will be ignored.', name);
                 }
             }
 
             if (typeof instance.componentShouldUpdate === 'function') {
-                error('%s has a method called ' + 'componentShouldUpdate(). Did you mean shouldComponentUpdate()? ' + 'The name is phrased as a question because the function is ' + 'expected to return a value.', name);
+                error('%s has a method called '
+                    + 'componentShouldUpdate(). Did you mean shouldComponentUpdate()? '
+                    + 'The name is phrased as a question because the function is '
+                    + 'expected to return a value.', name);
             }
 
             if (ctor.prototype && ctor.prototype.isPureReactComponent && typeof instance.shouldComponentUpdate !== 'undefined') {
-                error('%s has a method called shouldComponentUpdate(). ' + 'shouldComponentUpdate should not be used when extending React.PureComponent. ' + 'Please extend React.Component if shouldComponentUpdate is used.', getComponentNameFromType(ctor) || 'A pure component');
+                error('%s has a method called shouldComponentUpdate(). '
+                    + 'shouldComponentUpdate should not be used when extending React.PureComponent. '
+                    + 'Please extend React.Component if shouldComponentUpdate is used.', getComponentNameFromType(ctor) || 'A pure component');
             }
 
             if (typeof instance.componentDidUnmount === 'function') {
-                error('%s has a method called ' + 'componentDidUnmount(). But there is no such lifecycle method. ' + 'Did you mean componentWillUnmount()?', name);
+                error('%s has a method called '
+                    + 'componentDidUnmount(). But there is no such lifecycle method. '
+                    + 'Did you mean componentWillUnmount()?', name);
             }
 
             if (typeof instance.componentDidReceiveProps === 'function') {
-                error('%s has a method called ' + 'componentDidReceiveProps(). But there is no such lifecycle method. ' + 'If you meant to update the state in response to changing props, ' + 'use componentWillReceiveProps(). If you meant to fetch data or ' + 'run side-effects or mutations after React has updated the UI, use componentDidUpdate().', name);
+                error('%s has a method called '
+                    + 'componentDidReceiveProps(). But there is no such lifecycle method. '
+                    + 'If you meant to update the state in response to changing props, '
+                    + 'use componentWillReceiveProps(). If you meant to fetch data or '
+                    + 'run side-effects or mutations after React has updated the UI, use componentDidUpdate().', name);
             }
 
             if (typeof instance.componentWillRecieveProps === 'function') {
-                error('%s has a method called ' + 'componentWillRecieveProps(). Did you mean componentWillReceiveProps()?', name);
+                error('%s has a method called '
+                    + 'componentWillRecieveProps(). Did you mean componentWillReceiveProps()?', name);
             }
 
             if (typeof instance.UNSAFE_componentWillRecieveProps === 'function') {
-                error('%s has a method called ' + 'UNSAFE_componentWillRecieveProps(). Did you mean UNSAFE_componentWillReceiveProps()?', name);
+                error('%s has a method called '
+                    + 'UNSAFE_componentWillRecieveProps(). Did you mean UNSAFE_componentWillReceiveProps()?', name);
             }
 
             var hasMutatedProps = instance.props !== newProps;
 
+            //类构造函数中调用super()的参数必须是当前构造函数相同的props
             if (instance.props !== undefined && hasMutatedProps) {
-                error('%s(...): When calling super() in `%s`, make sure to pass ' + "up the same props that your component's constructor was passed.", name, name);
+                error('%s(...): When calling super() in `%s`, make sure to pass '
+                    + "up the same props that your component's constructor was passed.", name, name);
             }
 
             if (instance.defaultProps) {
-                error('Setting defaultProps as an instance property on %s is not supported and will be ignored.' + ' Instead, define defaultProps as a static property on %s.', name, name);
+                error('Setting defaultProps as an instance property on %s is not supported and will be ignored.'
+                    + ' Instead, define defaultProps as a static property on %s.', name, name);
             }
 
-            if (typeof instance.getSnapshotBeforeUpdate === 'function' && typeof instance.componentDidUpdate !== 'function' && !didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate.has(ctor)) {
+            if (typeof instance.getSnapshotBeforeUpdate === 'function' && typeof instance.componentDidUpdate !== 'function'
+                && !didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate.has(ctor)) {
                 didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate.add(ctor);
 
-                error('%s: getSnapshotBeforeUpdate() should be used with componentDidUpdate(). ' + 'This component defines getSnapshotBeforeUpdate() only.', getComponentNameFromType(ctor));
+                error('%s: getSnapshotBeforeUpdate() should be used with componentDidUpdate(). '
+                    + 'This component defines getSnapshotBeforeUpdate() only.', getComponentNameFromType(ctor));
             }
 
             if (typeof instance.getDerivedStateFromProps === 'function') {
-                error('%s: getDerivedStateFromProps() is defined as an instance method ' + 'and will be ignored. Instead, declare it as a static method.', name);
+                error('%s: getDerivedStateFromProps() is defined as an instance method '
+                    + 'and will be ignored. Instead, declare it as a static method.', name);
             }
 
             if (typeof instance.getDerivedStateFromError === 'function') {
-                error('%s: getDerivedStateFromError() is defined as an instance method ' + 'and will be ignored. Instead, declare it as a static method.', name);
+                error('%s: getDerivedStateFromError() is defined as an instance method '
+                    + 'and will be ignored. Instead, declare it as a static method.', name);
             }
 
             if (typeof ctor.getSnapshotBeforeUpdate === 'function') {
-                error('%s: getSnapshotBeforeUpdate() is defined as a static method ' + 'and will be ignored. Instead, declare it as an instance method.', name);
+                error('%s: getSnapshotBeforeUpdate() is defined as a static method '
+                    + 'and will be ignored. Instead, declare it as an instance method.', name);
             }
 
             var _state = instance.state;
@@ -15138,6 +15278,9 @@
         }
     }
 
+    /**
+     * DONE
+     */
     function constructClassInstance(workInProgress, ctor, props) {
         var isLegacyContextConsumer = false;
         var unmaskedContext = emptyContextObject;
@@ -15145,16 +15288,21 @@
         var contextType = ctor.contextType;
 
         {
+            //contextType
             if ('contextType' in ctor) {
                 var isValid = // Allow null for conditional declaration
-                    contextType === null || contextType !== undefined && contextType.$$typeof === REACT_CONTEXT_TYPE && contextType._context === undefined; // Not a <Context.Consumer>
+                    contextType === null || contextType !== undefined && contextType.$$typeof === REACT_CONTEXT_TYPE
+                    && contextType._context === undefined; // Not a <Context.Consumer>
 
                 if (!isValid && !didWarnAboutInvalidateContextType.has(ctor)) {
                     didWarnAboutInvalidateContextType.add(ctor);
                     var addendum = '';
 
                     if (contextType === undefined) {
-                        addendum = ' However, it is set to undefined. ' + 'This can be caused by a typo or by mixing up named and default imports. ' + 'This can also happen due to a circular dependency, so ' + 'try moving the createContext() call to a separate file.';
+                        addendum = ' However, it is set to undefined. '
+                            + 'This can be caused by a typo or by mixing up named and default imports. '
+                            + 'This can also happen due to a circular dependency, so '
+                            + 'try moving the createContext() call to a separate file.';
                     } else if (typeof contextType !== 'object') {
                         addendum = ' However, it is set to a ' + typeof contextType + '.';
                     } else if (contextType.$$typeof === REACT_PROVIDER_TYPE) {
@@ -15166,7 +15314,9 @@
                         addendum = ' However, it is set to an object with keys {' + Object.keys(contextType).join(', ') + '}.';
                     }
 
-                    error('%s defines an invalid contextType. ' + 'contextType should point to the Context object returned by React.createContext().%s', getComponentNameFromType(ctor) || 'Component', addendum);
+                    error('%s defines an invalid contextType. '
+                        + 'contextType should point to the Context object returned by React.createContext().%s',
+                        getComponentNameFromType(ctor) || 'Component', addendum);
                 }
             }
         }
@@ -15180,7 +15330,8 @@
             context = isLegacyContextConsumer ? getMaskedContext(workInProgress, unmaskedContext) : emptyContextObject;
         }
 
-        var instance = new ctor(props, context); // Instantiate twice to help detect side-effects.
+        var instance = new ctor(props, context);
+        // Instantiate twice to help detect side-effects.
 
         {
             if (workInProgress.mode & StrictLegacyMode) {
@@ -15204,13 +15355,17 @@
                 if (!didWarnAboutUninitializedState.has(componentName)) {
                     didWarnAboutUninitializedState.add(componentName);
 
-                    error('`%s` uses `getDerivedStateFromProps` but its initial state is ' + '%s. This is not recommended. Instead, define the initial state by ' + 'assigning an object to `this.state` in the constructor of `%s`. ' + 'This ensures that `getDerivedStateFromProps` arguments have a consistent shape.', componentName, instance.state === null ? 'null' : 'undefined', componentName);
+                    error('`%s` uses `getDerivedStateFromProps` but its initial state is '
+                        + '%s. This is not recommended. Instead, define the initial state by '
+                        + 'assigning an object to `this.state` in the constructor of `%s`. '
+                        + 'This ensures that `getDerivedStateFromProps` arguments have a consistent shape.',
+                        componentName, instance.state === null ? 'null' : 'undefined', componentName);
                 }
-            } // If new component APIs are defined, "unsafe" lifecycles won't be called.
+            }
+
+            // If new component APIs are defined, "unsafe" lifecycles won't be called.
             // Warn about these lifecycles if they are present.
             // Don't warn about react-lifecycles-compat polyfilled methods though.
-
-
             if (typeof ctor.getDerivedStateFromProps === 'function' || typeof instance.getSnapshotBeforeUpdate === 'function') {
                 var foundWillMountName = null;
                 var foundWillReceivePropsName = null;
@@ -15222,7 +15377,8 @@
                     foundWillMountName = 'UNSAFE_componentWillMount';
                 }
 
-                if (typeof instance.componentWillReceiveProps === 'function' && instance.componentWillReceiveProps.__suppressDeprecationWarning !== true) {
+                if (typeof instance.componentWillReceiveProps === 'function'
+                    && instance.componentWillReceiveProps.__suppressDeprecationWarning !== true) {
                     foundWillReceivePropsName = 'componentWillReceiveProps';
                 } else if (typeof instance.UNSAFE_componentWillReceiveProps === 'function') {
                     foundWillReceivePropsName = 'UNSAFE_componentWillReceiveProps';
@@ -15237,19 +15393,27 @@
                 if (foundWillMountName !== null || foundWillReceivePropsName !== null || foundWillUpdateName !== null) {
                     var _componentName = getComponentNameFromType(ctor) || 'Component';
 
-                    var newApiName = typeof ctor.getDerivedStateFromProps === 'function' ? 'getDerivedStateFromProps()' : 'getSnapshotBeforeUpdate()';
+                    var newApiName = typeof ctor.getDerivedStateFromProps === 'function'
+                        ? 'getDerivedStateFromProps()'
+                        : 'getSnapshotBeforeUpdate()';
 
                     if (!didWarnAboutLegacyLifecyclesAndDerivedState.has(_componentName)) {
                         didWarnAboutLegacyLifecyclesAndDerivedState.add(_componentName);
 
-                        error('Unsafe legacy lifecycles will not be called for components using new component APIs.\n\n' + '%s uses %s but also contains the following legacy lifecycles:%s%s%s\n\n' + 'The above lifecycles should be removed. Learn more about this warning here:\n' + 'https://reactjs.org/link/unsafe-component-lifecycles', _componentName, newApiName, foundWillMountName !== null ? "\n  " + foundWillMountName : '', foundWillReceivePropsName !== null ? "\n  " + foundWillReceivePropsName : '', foundWillUpdateName !== null ? "\n  " + foundWillUpdateName : '');
+                        error('Unsafe legacy lifecycles will not be called for components using new component APIs.\n\n'
+                            + '%s uses %s but also contains the following legacy lifecycles:%s%s%s\n\n'
+                            + 'The above lifecycles should be removed. Learn more about this warning here:\n'
+                            + 'https://reactjs.org/link/unsafe-component-lifecycles',
+                            _componentName, newApiName, foundWillMountName !== null ? "\n  " + foundWillMountName : '',
+                            foundWillReceivePropsName !== null ? "\n  " + foundWillReceivePropsName : '',
+                            foundWillUpdateName !== null ? "\n  " + foundWillUpdateName : '');
                     }
                 }
             }
-        } // Cache unmasked context so we can avoid recreating masked context unless necessary.
+        }
+
+        // Cache unmasked context so we can avoid recreating masked context unless necessary.
         // ReactFiberContext usually updates this cache but can't for newly-created instances.
-
-
         if (isLegacyContextConsumer) {
             cacheContext(workInProgress, unmaskedContext, context);
         }
@@ -15270,7 +15434,9 @@
 
         if (oldState !== instance.state) {
             {
-                error('%s.componentWillMount(): Assigning directly to this.state is ' + "deprecated (except inside a component's " + 'constructor). Use setState instead.', getComponentNameFromFiber(workInProgress) || 'Component');
+                error('%s.componentWillMount(): Assigning directly to this.state is '
+                    + "deprecated (except inside a component's "
+                    + 'constructor). Use setState instead.', getComponentNameFromFiber(workInProgress) || 'Component');
             }
 
             classComponentUpdater.enqueueReplaceState(instance, instance.state, null);
@@ -15295,7 +15461,9 @@
                 if (!didWarnAboutStateAssignmentForComponent.has(componentName)) {
                     didWarnAboutStateAssignmentForComponent.add(componentName);
 
-                    error('%s.componentWillReceiveProps(): Assigning directly to ' + "this.state is deprecated (except inside a component's " + 'constructor). Use setState instead.', componentName);
+                    error('%s.componentWillReceiveProps(): Assigning directly to '
+                        + "this.state is deprecated (except inside a component's "
+                        + 'constructor). Use setState instead.', componentName);
                 }
             }
 
@@ -15303,7 +15471,15 @@
         }
     }
 
-    // Invokes the mount life-cycles on a previously never rendered instance.
+    /**
+     * DONE
+     * Invokes the mount life-cycles on a previously never rendered instance.
+     * 
+     * @param {*} workInProgress 
+     * @param {*} ctor 
+     * @param {*} newProps 
+     * @param {*} renderLanes 
+     */
     function mountClassInstance(workInProgress, ctor, newProps, renderLanes) {
         {
             checkClassInstance(workInProgress, ctor, newProps);
@@ -15351,14 +15527,15 @@
         if (typeof getDerivedStateFromProps === 'function') {
             applyDerivedStateFromProps(workInProgress, ctor, getDerivedStateFromProps, newProps);
             instance.state = workInProgress.memoizedState;
-        } // In order to support react-lifecycles-compat polyfilled components,
+        }
+        // In order to support react-lifecycles-compat polyfilled components,
         // Unsafe lifecycles should not be invoked for components using the new APIs.
 
 
-        if (typeof ctor.getDerivedStateFromProps !== 'function' && typeof instance.getSnapshotBeforeUpdate !== 'function' && (typeof instance.UNSAFE_componentWillMount === 'function' || typeof instance.componentWillMount === 'function')) {
+        if (typeof ctor.getDerivedStateFromProps !== 'function' && typeof instance.getSnapshotBeforeUpdate !== 'function'
+            && (typeof instance.UNSAFE_componentWillMount === 'function' || typeof instance.componentWillMount === 'function')) {
             callComponentWillMount(workInProgress, instance);
-            // If we had additional state updates during this life-cycle, let's
-            // process them now.
+            // If we had additional state updates during this life-cycle, let's process them now.
 
             processUpdateQueue(workInProgress, newProps, instance, renderLanes);
             instance.state = workInProgress.memoizedState;
@@ -15395,13 +15572,15 @@
         }
 
         var getDerivedStateFromProps = ctor.getDerivedStateFromProps;
-        var hasNewLifecycles = typeof getDerivedStateFromProps === 'function' || typeof instance.getSnapshotBeforeUpdate === 'function'; // Note: During these life-cycles, instance.props/instance.state are what
+        var hasNewLifecycles = typeof getDerivedStateFromProps === 'function' || typeof instance.getSnapshotBeforeUpdate === 'function';
+        // Note: During these life-cycles, instance.props/instance.state are what
         // ever the previously attempted to render - not the "current". However,
         // during componentDidUpdate we pass the "current" props.
         // In order to support react-lifecycles-compat polyfilled components,
         // Unsafe lifecycles should not be invoked for components using the new APIs.
 
-        if (!hasNewLifecycles && (typeof instance.UNSAFE_componentWillReceiveProps === 'function' || typeof instance.componentWillReceiveProps === 'function')) {
+        if (!hasNewLifecycles && (typeof instance.UNSAFE_componentWillReceiveProps === 'function'
+            || typeof instance.componentWillReceiveProps === 'function')) {
             if (oldProps !== newProps || oldContext !== nextContext) {
                 callComponentWillReceiveProps(workInProgress, instance, newProps, nextContext);
             }
@@ -15438,12 +15617,14 @@
             newState = workInProgress.memoizedState;
         }
 
-        var shouldUpdate = checkHasForceUpdateAfterProcessing() || checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext);
+        var shouldUpdate = checkHasForceUpdateAfterProcessing()
+            || checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext);
 
         if (shouldUpdate) {
             // In order to support react-lifecycles-compat polyfilled components,
             // Unsafe lifecycles should not be invoked for components using the new APIs.
-            if (!hasNewLifecycles && (typeof instance.UNSAFE_componentWillMount === 'function' || typeof instance.componentWillMount === 'function')) {
+            if (!hasNewLifecycles && (typeof instance.UNSAFE_componentWillMount === 'function'
+                || typeof instance.componentWillMount === 'function')) {
                 if (typeof instance.componentWillMount === 'function') {
                     instance.componentWillMount();
                 }
@@ -15495,14 +15676,24 @@
         instance.state = newState;
         instance.context = nextContext;
         return shouldUpdate;
-    } // Invokes the update life-cycles and returns false if it shouldn't rerender.
+    }
 
-
+    /**
+     * DONE
+     * Invokes the update life-cycles and returns false if it shouldn't rerender.
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} ctor 
+     * @param {*} newProps 
+     * @param {*} renderLanes 
+     * @returns 
+     */
     function updateClassInstance(current, workInProgress, ctor, newProps, renderLanes) {
         var instance = workInProgress.stateNode;
         cloneUpdateQueue(current, workInProgress);
         var unresolvedOldProps = workInProgress.memoizedProps;
-        var oldProps = workInProgress.type === workInProgress.elementType ? unresolvedOldProps : resolveDefaultProps(workInProgress.type, unresolvedOldProps);
+        var oldProps = workInProgress.type === workInProgress.elementType
+            ? unresolvedOldProps : resolveDefaultProps(workInProgress.type, unresolvedOldProps);
         instance.props = oldProps;
         var unresolvedNewProps = workInProgress.pendingProps;
         var oldContext = instance.context;
@@ -15517,13 +15708,15 @@
         }
 
         var getDerivedStateFromProps = ctor.getDerivedStateFromProps;
-        var hasNewLifecycles = typeof getDerivedStateFromProps === 'function' || typeof instance.getSnapshotBeforeUpdate === 'function'; // Note: During these life-cycles, instance.props/instance.state are what
+        var hasNewLifecycles = typeof getDerivedStateFromProps === 'function' || typeof instance.getSnapshotBeforeUpdate === 'function';
+        // Note: During these life-cycles, instance.props/instance.state are what
         // ever the previously attempted to render - not the "current". However,
         // during componentDidUpdate we pass the "current" props.
         // In order to support react-lifecycles-compat polyfilled components,
         // Unsafe lifecycles should not be invoked for components using the new APIs.
 
-        if (!hasNewLifecycles && (typeof instance.UNSAFE_componentWillReceiveProps === 'function' || typeof instance.componentWillReceiveProps === 'function')) {
+        if (!hasNewLifecycles && (typeof instance.UNSAFE_componentWillReceiveProps === 'function'
+            || typeof instance.componentWillReceiveProps === 'function')) {
             if (unresolvedOldProps !== unresolvedNewProps || oldContext !== nextContext) {
                 callComponentWillReceiveProps(workInProgress, instance, newProps, nextContext);
             }
@@ -15535,7 +15728,8 @@
         processUpdateQueue(workInProgress, newProps, instance, renderLanes);
         newState = workInProgress.memoizedState;
 
-        if (unresolvedOldProps === unresolvedNewProps && oldState === newState && !hasContextChanged() && !checkHasForceUpdateAfterProcessing() && !(enableLazyContextPropagation)) {
+        if (unresolvedOldProps === unresolvedNewProps && oldState === newState && !hasContextChanged()
+            && !checkHasForceUpdateAfterProcessing() && !(enableLazyContextPropagation)) {
             // If an update was already in progress, we should schedule an Update
             // effect even though we're bailing out, so that cWU/cDU are called.
             if (typeof instance.componentDidUpdate === 'function') {
@@ -15558,7 +15752,9 @@
             newState = workInProgress.memoizedState;
         }
 
-        var shouldUpdate = checkHasForceUpdateAfterProcessing() || checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext) || // TODO: In some cases, we'll end up checking if context has changed twice,
+        var shouldUpdate = checkHasForceUpdateAfterProcessing()
+            || checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext) ||
+            // TODO: In some cases, we'll end up checking if context has changed twice,
             // both before and after `shouldComponentUpdate` has been called. Not ideal,
             // but I'm loath to refactor this function. This only happens for memoized
             // components so it's not that common.
@@ -15567,7 +15763,8 @@
         if (shouldUpdate) {
             // In order to support react-lifecycles-compat polyfilled components,
             // Unsafe lifecycles should not be invoked for components using the new APIs.
-            if (!hasNewLifecycles && (typeof instance.UNSAFE_componentWillUpdate === 'function' || typeof instance.componentWillUpdate === 'function')) {
+            if (!hasNewLifecycles && (typeof instance.UNSAFE_componentWillUpdate === 'function'
+                || typeof instance.componentWillUpdate === 'function')) {
                 if (typeof instance.componentWillUpdate === 'function') {
                     instance.componentWillUpdate(newProps, newState, nextContext);
                 }
@@ -15597,13 +15794,15 @@
                 if (unresolvedOldProps !== current.memoizedProps || oldState !== current.memoizedState) {
                     workInProgress.flags |= Snapshot;
                 }
-            } // If shouldComponentUpdate returned false, we should still update the
+            }
+            // If shouldComponentUpdate returned false, we should still update the
             // memoized props/state to indicate that this work can be reused.
 
 
             workInProgress.memoizedProps = newProps;
             workInProgress.memoizedState = newState;
-        } // Update the existing instance's state, props, and context pointers even
+        }
+        // Update the existing instance's state, props, and context pointers even
         // if shouldComponentUpdate returns false.
 
 
@@ -15619,6 +15818,7 @@
     var ownerHasKeyUseWarning;
     var ownerHasFunctionTypeWarning;
 
+    //DONE
     var warnForMissingKey = function (child, returnFiber) {};
 
     {
@@ -15644,7 +15844,8 @@
             }
 
             if (typeof child._store !== 'object') {
-                throw new Error('React Component in warnForMissingKey should have a _store. ' + 'This error is likely caused by a bug in React. Please file an issue.');
+                throw new Error('React Component in warnForMissingKey should have a _store. '
+                    + 'This error is likely caused by a bug in React. Please file an issue.');
             }
 
             child._store.validated = true;
@@ -15767,7 +15968,9 @@
 
     function throwOnInvalidObjectType(returnFiber, newChild) {
         var childString = Object.prototype.toString.call(newChild);
-        throw new Error("Objects are not valid as a React child (found: " + (childString === '[object Object]' ? 'object with keys {' + Object.keys(newChild).join(', ') + '}' : childString) + "). " + 'If you meant to render a collection of children, use an array ' + 'instead.');
+        throw new Error("Objects are not valid as a React child (found: "
+            + (childString === '[object Object]' ? 'object with keys {' + Object.keys(newChild).join(', ')
+                + '}' : childString) + "). " + 'If you meant to render a collection of children, use an array ' + 'instead.');
     }
 
     function warnOnFunctionType(returnFiber) {
@@ -15780,7 +15983,9 @@
 
             ownerHasFunctionTypeWarning[componentName] = true;
 
-            error('Functions are not valid as a React child. This may happen if ' + 'you return a Component instead of <Component /> from render. ' + 'Or maybe you meant to call this function rather than return it.');
+            error('Functions are not valid as a React child. This may happen if '
+                + 'you return a Component instead of <Component /> from render. '
+                + 'Or maybe you meant to call this function rather than return it.');
         }
     }
 
@@ -15860,6 +16065,14 @@
             return clone;
         }
 
+        /**
+         * DONE
+         * 给newFiber的flags打上Placement等标识
+         * @param {*} newFiber 
+         * @param {*} lastPlacedIndex 
+         * @param {*} newIndex 
+         * @returns 
+         */
         function placeChild(newFiber, lastPlacedIndex, newIndex) {
             newFiber.index = newIndex;
 
@@ -15883,8 +16096,7 @@
                     // This item can stay in place.
                     return oldIndex;
                 }
-            } else {
-                // This is an insertion.
+            } else {//没有旧的，所以是插入操作，打上Placement标识
                 newFiber.flags |= Placement;
                 return lastPlacedIndex;
             }
@@ -15980,11 +16192,12 @@
             }
         }
 
+        //DONE
         function createChild(returnFiber, newChild, lanes) {
+            //文本和数字
             if (typeof newChild === 'string' && newChild !== '' || typeof newChild === 'number') {
                 // Text nodes don't have keys. If the previous node is implicitly keyed
-                // we can continue to replace it without aborting even if it is not a text
-                // node.
+                // we can continue to replace it without aborting(终止) even if it is not a text node.
                 var created = createFiberFromText('' + newChild, returnFiber.mode, lanes);
                 created.return = returnFiber;
                 return created;
@@ -16147,7 +16360,8 @@
             return null;
         }
         /**
-         * Warns if there is a duplicate or missing key
+         * DONE
+         * Warns if there is a duplicate（完全一样的） or missing key
          */
         function warnOnInvalidKey(child, knownKeys, returnFiber) {
             {
@@ -16176,7 +16390,11 @@
                             break;
                         }
 
-                        error('Encountered two children with the same key, `%s`. ' + 'Keys should be unique so that components maintain their identity ' + 'across updates. Non-unique keys may cause children to be ' + 'duplicated and/or omitted — the behavior is unsupported and ' + 'could change in a future version.', key);
+                        error('Encountered two children with the same key, `%s`. '
+                            + 'Keys should be unique so that components maintain their identity '
+                            + 'across updates. Non-unique keys may cause children to be '
+                            + 'duplicated and/or omitted — the behavior is unsupported and '
+                            + 'could change in a future version.', key);
 
                         break;
 
@@ -16191,17 +16409,17 @@
             return knownKeys;
         }
 
+        //DONE
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, lanes) {
-            debugger
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
-            // with that model. If it ends up not being worth the tradeoffs, we can
+            // with that model. If it ends up not being worth the tradeoffs（权衡、交易）, we can
             // add it later.
             // Even with a two ended optimization, we'd want to optimize for the case
-            // where there are few changes and brute force the comparison instead of
+            // where there are few changes and brute（赤裸裸的） force the comparison instead of
             // going for the Map. It'd like to explore hitting that path first in
             // forward-only mode and only go for the Map once we notice that we need
-            // lots of look ahead. This doesn't handle reversal as well as two ended
+            // lots of look ahead. This doesn't handle reversal（逆转、反转） as well as two ended
             // search but that's unusual. Besides, for the two ended optimization to
             // work on Iterables, we'd need to copy the whole set.
             // In this first iteration, we'll just live with hitting the bad case
@@ -16225,6 +16443,7 @@
             var newIdx = 0;
             var nextOldFiber = null;
 
+            //第一次循环
             for (; oldFiber !== null && newIdx < newChildren.length; newIdx++) {
                 if (oldFiber.index > newIdx) {
                     nextOldFiber = oldFiber;
@@ -16238,8 +16457,7 @@
                 if (newFiber === null) {
                     // TODO: This breaks on empty slots like null children. That's
                     // unfortunate because it triggers the slow path all the time. We need
-                    // a better way to communicate whether this was a miss or null,
-                    // boolean, undefined, etc.
+                    // a better way to communicate whether this was a miss or null, boolean, undefined, etc.
                     if (oldFiber === null) {
                         oldFiber = nextOldFiber;
                     }
@@ -16249,8 +16467,7 @@
 
                 if (shouldTrackSideEffects) {
                     if (oldFiber && newFiber.alternate === null) {
-                        // We matched the slot, but we didn't reuse the existing fiber, so we
-                        // need to delete the existing child.
+                        // We matched the slot, but we didn't reuse the existing fiber, so we need to delete the existing child.
                         deleteChild(returnFiber, oldFiber);
                     }
                 }
@@ -16284,6 +16501,7 @@
                 return resultingFirstChild;
             }
 
+            //插入操作（没有旧的）
             if (oldFiber === null) {
                 // If we don't have any more existing children we can choose a fast path
                 // since the rest will all be insertions.
@@ -16297,7 +16515,6 @@
                     lastPlacedIndex = placeChild(_newFiber, lastPlacedIndex, newIdx);
 
                     if (previousNewFiber === null) {
-                        // TODO: Move out of the loop. This only happens for the first run.
                         resultingFirstChild = _newFiber;
                     } else {
                         previousNewFiber.sibling = _newFiber;
@@ -16310,14 +16527,14 @@
                     var _numberOfForks = newIdx;
                     pushTreeFork(returnFiber, _numberOfForks);
                 }
-
+                //插入操作的话，到此就结束了，返回第一个子fiber
                 return resultingFirstChild;
-            } // Add all children to a key map for quick lookups.
+            }
 
-
+            // Add all children to a key map for quick lookups.
             var existingChildren = mapRemainingChildren(returnFiber, oldFiber);
-            // Keep scanning and use the map to restore deleted items as moves.
 
+            // Keep scanning and use the map to restore deleted items as moves.
             for (; newIdx < newChildren.length; newIdx++) {
                 var _newFiber2 = updateFromMap(existingChildren, returnFiber, newIdx, newChildren[newIdx], lanes);
 
@@ -16375,7 +16592,11 @@
                 if (typeof Symbol === 'function' && // $FlowFixMe Flow doesn't know about toStringTag
                     newChildrenIterable[Symbol.toStringTag] === 'Generator') {
                     if (!didWarnAboutGenerators) {
-                        error('Using Generators as children is unsupported and will likely yield ' + 'unexpected results because enumerating a generator mutates it. ' + 'You may convert it to an array with `Array.from()` or the ' + '`[...spread]` operator before rendering. Keep in mind ' + 'you might need to polyfill these features for older browsers.');
+                        error('Using Generators as children is unsupported and will likely yield '
+                            + 'unexpected results because enumerating a generator mutates it. '
+                            + 'You may convert it to an array with `Array.from()` or the '
+                            + '`[...spread]` operator before rendering. Keep in mind '
+                            + 'you might need to polyfill these features for older browsers.');
                     }
 
                     didWarnAboutGenerators = true;
@@ -16388,7 +16609,8 @@
                     }
 
                     didWarnAboutMaps = true;
-                } // First, validate keys.
+                }
+                // First, validate keys.
                 // We'll get a different iterator later for the main pass.
 
 
@@ -16507,10 +16729,12 @@
                 }
 
                 return resultingFirstChild;
-            } // Add all children to a key map for quick lookups.
+            }
+            // Add all children to a key map for quick lookups.
 
 
-            var existingChildren = mapRemainingChildren(returnFiber, oldFiber); // Keep scanning and use the map to restore deleted items as moves.
+            var existingChildren = mapRemainingChildren(returnFiber, oldFiber);
+            // Keep scanning and use the map to restore deleted items as moves.
 
             for (; !step.done; newIdx++, step = newChildren.next()) {
                 var _newFiber4 = updateFromMap(existingChildren, returnFiber, newIdx, step.value, lanes);
@@ -16571,7 +16795,15 @@
             return created;
         }
 
-        //DONE
+        /**
+         * DONE
+         * 创建fiber并返回
+         * @param {*} returnFiber 
+         * @param {*} currentFirstChild 
+         * @param {*} element 
+         * @param {*} lanes 
+         * @returns 
+         */
         function reconcileSingleElement(returnFiber, currentFirstChild, element, lanes) {
             var key = element.key;
             var child = currentFirstChild;
@@ -16632,7 +16864,7 @@
                 var created = createFiberFromFragment(element.props.children, returnFiber.mode, lanes, element.key);
                 created.return = returnFiber;
                 return created;
-            } else {
+            } else {//DONE
                 var _created4 = createFiberFromElement(element, returnFiber.mode, lanes);
 
                 _created4.ref = coerceRef(returnFiber, currentFirstChild, element);
@@ -16674,7 +16906,6 @@
         // itself. They will be added to the side-effect list as we pass through the children and the parent.
         //协调中心
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, lanes) {
-            debugger
             // This function is not recursive(递归的; 循环的;)
             // If the top level item is an array, we treat it as a set of children,
             // not as a fragment. Nested arrays on the other hand will be treated as
@@ -19466,6 +19697,7 @@
         }
     }
 
+    //DONE
     function syncNestedUpdateFlag() {
         {
             currentUpdateIsNested = nestedUpdateScheduled;
@@ -19582,6 +19814,7 @@
         }
     }
 
+    //DONE
     function startLayoutEffectTimer() {
 
         layoutEffectStartTime = now$1();
@@ -20197,8 +20430,9 @@
         }
     }
 
+    //DONE
     function forceUnmountCurrentAndReconcile(current, workInProgress, nextChildren, renderLanes) {
-        // This function is fork of reconcileChildren. It's used in cases where we
+        // This function is fork(分叉、岔路) of reconcileChildren. It's used in cases where we
         // want to reconcile without matching against the existing set. This has the
         // effect of all current children being unmounted; even if the type and key
         // are the same, the old child is unmounted and a new child is created.
@@ -20647,6 +20881,7 @@
         return workInProgress.child;
     }
 
+    //DONE
     function updateClassComponent(current, workInProgress, Component, nextProps, renderLanes) {
         {
             // This is used by DevTools to force a boundary to error.
@@ -20654,7 +20889,8 @@
                 case false:
                     {
                         var _instance = workInProgress.stateNode;
-                        var ctor = workInProgress.type; // TODO This way of resetting the error boundary state is a hack.
+                        var ctor = workInProgress.type;
+                        // TODO This way of resetting the error boundary state is a hack.
                         // Is there a better way to do this?
 
                         var tempInstance = new ctor(workInProgress.memoizedProps, _instance.context);
@@ -20691,11 +20927,11 @@
                         'prop', getComponentNameFromType(Component));
                 }
             }
-        } // Push context providers early to prevent context stack mismatches.
+        }
+
+        // Push context providers early to prevent context stack mismatches.
         // During mounting we don't know the child context yet as the instance doesn't exist.
-        // We will invalidate the child context in finishClassComponent() right after rendering.
-
-
+        // We will invalidate(使无效、使作废) the child context in finishClassComponent() right after rendering.
         var hasContext;
 
         if (isContextProvider(Component)) {
@@ -20709,17 +20945,17 @@
         var instance = workInProgress.stateNode;
         var shouldUpdate;
 
-        if (instance === null) {
+        if (instance === null) {//初始化
             resetSuspendedCurrentOnMountInLegacyMode(current, workInProgress);
             // In the initial pass we might need to construct the instance.
-
+            //实例化出来类实例，执行一次构造函数
             constructClassInstance(workInProgress, Component, nextProps);
             mountClassInstance(workInProgress, Component, nextProps, renderLanes);
             shouldUpdate = true;
         } else if (current === null) {
             // In a resume, we'll already have an instance we can reuse.
             shouldUpdate = resumeMountClassInstance(workInProgress, Component, nextProps, renderLanes);
-        } else {
+        } else {//DONE setState
             shouldUpdate = updateClassInstance(current, workInProgress, Component, nextProps, renderLanes);
         }
 
@@ -20741,7 +20977,16 @@
         return nextUnitOfWork;
     }
 
-    //DONE
+    /**
+     * DONE
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} Component 
+     * @param {*} shouldUpdate 
+     * @param {*} hasContext 
+     * @param {*} renderLanes 
+     * @returns 
+     */
     function finishClassComponent(current, workInProgress, Component, shouldUpdate, hasContext, renderLanes) {
         // Refs should update even if shouldComponentUpdate returns false
         markRef(current, workInProgress);
@@ -20797,9 +21042,9 @@
             {
                 markComponentRenderStopped();
             }
-        } // React DevTools reads this flag.
+        }
 
-
+        // React DevTools reads this flag.
         workInProgress.flags |= PerformedWork;
 
         if (current !== null && didCaptureError) {
@@ -20810,12 +21055,13 @@
             forceUnmountCurrentAndReconcile(current, workInProgress, nextChildren, renderLanes);
         } else {
             reconcileChildren(current, workInProgress, nextChildren, renderLanes);
-        } // Memoize state using the values we just used to render.
-        // TODO: Restructure so we never read values from the instance.
+        }
 
+        // Memoize state using the values we just used to render.
+        // TODO: Restructure（重建） so we never read values from the instance.
+        workInProgress.memoizedState = instance.state;
 
-        workInProgress.memoizedState = instance.state; // The context might have changed so we need to recalculate it.
-
+        // The context might have changed so we need to recalculate it.
         if (hasContext) {
             invalidateContextProvider(workInProgress, Component, true);
         }
@@ -22347,7 +22593,8 @@
             stopProfilerTimerIfRunning();
         }
 
-        markSkippedUpdateLanes(workInProgress.lanes); // Check if the children have any pending work.
+        markSkippedUpdateLanes(workInProgress.lanes);
+        // Check if the children have any pending work.
 
         if (!includesSomeLane(renderLanes, workInProgress.childLanes)) {
             // The children don't have any work either. We can skip them.
@@ -22356,10 +22603,10 @@
             {
                 return null;
             }
-        } // This fiber doesn't have work, but its subtree does. Clone the child
+        }
+
+        // This fiber doesn't have work, but its subtree does. Clone the child
         // fibers and continue.
-
-
         cloneChildFibers(current, workInProgress);
         return workInProgress.child;
     }
@@ -22437,7 +22684,7 @@
         // the begin phase. There's still some bookkeeping we that needs to be done
         // in this optimized path, mostly pushing stuff onto the stack.
         switch (workInProgress.tag) {
-            case HostRoot:
+            case HostRoot://DONE
                 pushHostRootContext(workInProgress);
                 var root = workInProgress.stateNode;
 
@@ -22689,7 +22936,7 @@
                     return mountLazyComponent(current, workInProgress, elementType, renderLanes);
                 }
 
-            case FunctionComponent:
+            case FunctionComponent://0 
                 {
                     var Component = workInProgress.type;
                     var unresolvedProps = workInProgress.pendingProps;
@@ -22697,7 +22944,7 @@
                     return updateFunctionComponent(current, workInProgress, Component, resolvedProps, renderLanes);
                 }
 
-            case ClassComponent:
+            case ClassComponent://1 DONE
                 {
                     var _Component = workInProgress.type;
                     var _unresolvedProps = workInProgress.pendingProps;
@@ -22863,6 +23110,7 @@
         updateHostContainer = function (current, workInProgress) {// Noop
         };
 
+        //DONE
         updateHostComponent$1 = function (current, workInProgress, type, newProps, rootContainerInstance) {
             // If we have an alternate, that means this is an update and we need to
             // schedule a side-effect to do the updates.
@@ -23195,7 +23443,7 @@
                 bubbleProperties(workInProgress);
                 return null;
 
-            case ClassComponent:
+            case ClassComponent://DONE
                 {
                     var Component = workInProgress.type;
 
@@ -23207,6 +23455,7 @@
                     return null;
                 }
 
+            //给fiber打上Snapshot标识
             case HostRoot://DONE
                 {
                     var fiberRoot = workInProgress.stateNode;
@@ -23256,7 +23505,7 @@
                     return null;
                 }
 
-            case HostComponent://DONE
+            case HostComponent://DONE 创建dom，添加样式等，并挂载到stateNode属性上
                 {
                     popHostContext(workInProgress);
                     var rootContainerInstance = getRootHostContainer();//container
@@ -23316,6 +23565,7 @@
                     return null;
                 }
 
+            //文本节点：新建Text节点，挂载到fiber的stateNode属性上
             case HostText://DONE
                 {
                     var newText = newProps;
@@ -24014,6 +24264,7 @@
         }
     }
 
+    //DONE
     function safelyDetachRef(current, nearestMountedAncestor) {
         var ref = current.ref;
 
@@ -25027,7 +25278,10 @@
         }
     }
 
-    //DONE
+    /**
+     * DONE
+     * 实际上的插入操作
+     */
     function commitPlacement(finishedWork) {
         var parentFiber = getHostParentFiber(finishedWork);//rootFiber
         // Note: these two variables *must* always be updated together.
@@ -25477,6 +25731,7 @@
 
     /**
      * DONE
+     * 给当前fiber处理删除effects commitDeletionEffects。循环子节点，执行 commitMutationEffectsOnFiber
      * @param {*} root 
      * @param {*} parentFiber 
      * @param {*} lanes 
@@ -25521,6 +25776,7 @@
      * @returns 
      */
     function commitMutationEffectsOnFiber(finishedWork, root, lanes) {
+        debugger
         var current = finishedWork.alternate;
         var flags = finishedWork.flags;
 
@@ -25571,7 +25827,7 @@
                     return;
                 }
 
-            case ClassComponent:
+            case ClassComponent://DONE
                 {
                     recursivelyTraverseMutationEffects(root, finishedWork);
                     commitReconciliationEffects(finishedWork);
@@ -25613,7 +25869,7 @@
                             }
                         }
 
-                        if (flags & Update) {
+                        if (flags & Update) {//DONE setState
                             var _instance4 = finishedWork.stateNode;
 
                             if (_instance4 != null) {
@@ -25645,6 +25901,7 @@
 
             case HostText://DONE
                 {
+                    //给当前fiber处理删除effects commitDeletionEffects 循环子节点，执行 commitMutationEffectsOnFiber
                     recursivelyTraverseMutationEffects(root, finishedWork);
                     commitReconciliationEffects(finishedWork);
 
@@ -25675,6 +25932,7 @@
 
             case HostRoot://DONE
                 {
+                    //给当前fiber处理删除effects commitDeletionEffects。循环子节点，执行 commitMutationEffectsOnFiber
                     recursivelyTraverseMutationEffects(root, finishedWork);
                     commitReconciliationEffects(finishedWork);
 
@@ -25826,7 +26084,12 @@
         }
     }
 
-    //DONE
+    /**
+     * DONE
+     * 实际上的插入操作
+     * 然后去除对应的flags标识
+     * @param {*} finishedWork 
+     */
     function commitReconciliationEffects(finishedWork) {
         // Placement effects (insertions, reorders) can be scheduled on any fiber
         // type. They needs to happen after the children effects have fired, but
@@ -26934,7 +27197,7 @@
 
         var newCallbackNode;
 
-        if (newCallbackPriority === SyncLane) {
+        if (newCallbackPriority === SyncLane) {//setState会进入此
             // Special case: Sync React callbacks are scheduled on a special internal queue
             if (root.tag === LegacyRoot) {
                 if (ReactCurrentActQueue$1.isBatchingLegacy !== null) {
@@ -26942,7 +27205,7 @@
                 }
 
                 scheduleLegacySyncCallback(performSyncWorkOnRoot.bind(null, root));
-            } else {
+            } else {//DONE
                 scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
             }
 
@@ -26950,14 +27213,14 @@
                 // Flush the queue in a microtask.
                 if (ReactCurrentActQueue$1.current !== null) {
                     // Inside `act`, use our internal `act` queue so that these get flushed
-                    // at the end of the current scope even when using the sync version
-                    // of `act`.
+                    // at the end of the current scope even when using the sync version of `act`.
                     ReactCurrentActQueue$1.current.push(flushSyncCallbacks);
                 } else {
-                    scheduleMicrotask(function () {
+                    scheduleMicrotask(function () {//DONE
                         // We don't support running callbacks in the middle of render or commit so we need to check against that.
                         if ((executionContext & (RenderContext | CommitContext)) === NoContext) {
-                            // Note that this would still prematurely（早熟地） flush the callbacks if this happens outside render or commit phase (e.g. in an event).
+                            // Note that this would still prematurely（早熟地） flush the callbacks if this happens outside render 
+                            // or commit phase(e.g.in an event).
                             flushSyncCallbacks();
                         }
                     });
@@ -26965,7 +27228,7 @@
             }
 
             newCallbackNode = null;
-        } else {
+        } else {//DONE （初始化会进入此）
             var schedulerPriorityLevel;
 
             //将lanes转为事件优先级，然后根据事件优先级计算调度优先级
@@ -27382,8 +27645,13 @@
         markRootSuspended(root, suspendedLanes);
     }
 
-    // This is the entry point for synchronous tasks that don't go
-    // through Scheduler
+    /**
+     * This is the entry point for synchronous tasks that don't go through Scheduler
+     * DONE
+     * 同步任务，不需要经过调度器
+     * @param {*} root 
+     * @returns 
+     */
     function performSyncWorkOnRoot(root) {
         {
             syncNestedUpdateFlag();
@@ -27427,16 +27695,15 @@
 
         if (exitStatus === RootDidNotComplete) {
             throw new Error('Root did not complete. This is a bug in React.');
-        } // We now have a consistent tree. Because this is a sync render, we
+        }
+
+        // We now have a consistent tree. Because this is a sync render, we
         // will commit it even if something suspended.
-
-
         var finishedWork = root.current.alternate;
         root.finishedWork = finishedWork;
         root.finishedLanes = lanes;
         commitRoot(root, workInProgressRootRecoverableErrors, workInProgressTransitions);
-        // Before exiting, make sure there's a callback scheduled for the next
-        // pending level.
+        // Before exiting, make sure there's a callback scheduled for the next pending level.
 
         ensureRootIsScheduled(root, now());
         return null;
@@ -27460,7 +27727,8 @@
         try {
             return fn(a);
         } finally {
-            executionContext = prevExecutionContext; // If there were legacy sync updates, flush them at the end of the outer
+            executionContext = prevExecutionContext;
+            // If there were legacy sync updates, flush them at the end of the outer
             // most batchedUpdates-like method.
 
             if (executionContext === NoContext && // Treat `act` as if it's inside `batchedUpdates`, even in legacy mode.
@@ -29794,12 +30062,12 @@
                 {
                     resolvedType = resolveClassForHotReloading(resolvedType);
                 }
-            } else {
+            } else {//函数组件
                 {
                     resolvedType = resolveFunctionForHotReloading(resolvedType);
                 }
             }
-        } else if (typeof type === 'string') {
+        } else if (typeof type === 'string') {//DONE
             fiberTag = HostComponent;
         } else {
             getTag: switch (type) {
@@ -30509,10 +30777,12 @@
         return hostFiber.stateNode;
     }
 
+    //DONE
     var shouldErrorImpl = function (fiber) {
         return null;
     };
 
+    //DONE
     function shouldError(fiber) {
         return shouldErrorImpl(fiber);
     }
@@ -31466,10 +31736,10 @@
     exports.flushSync = flushSync$1;
     exports.hydrate = hydrate;
     exports.hydrateRoot = hydrateRoot$1;
-    exports.render = render;// - 
+    exports.render = render;
     exports.unmountComponentAtNode = unmountComponentAtNode;
     exports.unstable_batchedUpdates = batchedUpdates$1;
     exports.unstable_renderSubtreeIntoContainer = renderSubtreeIntoContainer;
-    exports.version = ReactVersion;
+    exports.version = ReactVersion;//-
 
 })));
