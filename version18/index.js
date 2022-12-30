@@ -54,12 +54,13 @@ class MyClassTest extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            myText: '按钮',
+            myText: [1, 2, 3],
             age: 18
         }
     }
     handleClick() {
-        this.setState({ myText: "xxx按钮xxx" })
+        this.setState({ myText: [null, 3, 5] })
+
     }
     render() {
         return e(

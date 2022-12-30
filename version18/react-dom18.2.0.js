@@ -5913,8 +5913,7 @@
 
     /**
      * DONE
-     * 将对应的过期lane附加到root.expiredLanes上
-     * expirationTimes[index] = computeExpirationTime(lane, currentTime);
+     * 将对应的过期lane附加到root.expiredLanes上；expirationTimes[index] = computeExpirationTime(lane, currentTime);
      */
     function markStarvedLanesAsExpired(root, currentTime) {
         // TODO: This gets called every time we yield. We can optimize by storing
@@ -6140,8 +6139,7 @@
     }
     /**
      * DONE
-     * 给fiberRoot的eventTimes在对应跑道上设置eventTime
-     * root.pendingLanes |= updateLane;
+     * root.pendingLanes |= updateLane;给root的eventTimes在对应跑道上设置eventTime:eventTimes[index] = eventTime;
      * @param {*} root 
      * @param {*} updateLane 
      * @param {*} eventTime 
@@ -6870,7 +6868,7 @@
     }
 
     /**
-     * DONE
+     * DONE 离散事件
      */
     function dispatchDiscreteEvent(domEventName, eventSystemFlags, container, nativeEvent) {
         if (domEventName === 'click') {
@@ -6880,9 +6878,11 @@
         ReactCurrentBatchConfig.transition = null;
 
         try {
+            //设置更新优先级
             setCurrentUpdatePriority(DiscreteEventPriority);
             dispatchEvent(domEventName, eventSystemFlags, container, nativeEvent);
         } finally {
+            //重置更新优先级
             setCurrentUpdatePriority(previousPriority);
             ReactCurrentBatchConfig.transition = prevTransition;
         }
@@ -10675,6 +10675,7 @@
         var styleUpdates = null;
 
         for (propKey in lastProps) {
+            //新props中有propKey
             if (nextProps.hasOwnProperty(propKey) || !lastProps.hasOwnProperty(propKey) || lastProps[propKey] == null) {
                 continue;
             }
@@ -10803,7 +10804,9 @@
         }
 
         return updatePayload;
-    } // Apply the diff.
+    }
+
+    // Apply the diff.
 
     //DONE
     function updateProperties(domElement, updatePayload, tag, lastRawProps, nextRawProps) {
@@ -10818,9 +10821,8 @@
         var isCustomComponentTag = isCustomComponent(tag, nextRawProps); // Apply the diff.
 
         updateDOMProperties(domElement, updatePayload, wasCustomComponentTag, isCustomComponentTag);
-        // TODO: Ensure that an update gets scheduled if any of the special props
-        // changed.
 
+        // TODO: Ensure that an update gets scheduled if any of the special props changed.
         switch (tag) {
             case 'input':
                 // Update the wrapper around inputs *after* updating props. This has to
@@ -11766,9 +11768,9 @@
     function commitUpdate(domElement, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
         // Apply the diff to the DOM node.
         updateProperties(domElement, updatePayload, type, oldProps, newProps);
+
         // Update the props handle so that we know which props are the ones with
         // with current event handlers.
-
         updateFiberProps(domElement, newProps);
     }
     //DONE
@@ -12809,7 +12811,11 @@
     var syncQueue = null;
     var includesLegacySyncCallbacks = false;
     var isFlushingSyncQueue = false;
-    //DONE
+    /**
+     * DONE
+     * callback放入同步队列syncQueue
+     * @param {*} callback 
+     */
     function scheduleSyncCallback(callback) {
         // Push this callback into an internal queue. We'll flush these either in
         // the next tick, or earlier if something calls `flushSyncCallbackQueue`.
@@ -12837,6 +12843,7 @@
     }
     /**
      * DONE
+     * 执行同步队列中的回调函数列表
      * @returns 
      */
     function flushSyncCallbacks() {
@@ -12851,7 +12858,7 @@
                 var queue = syncQueue;
                 // TODO: Is this necessary anymore? The only user code that runs in this
                 // queue is in the render or commit phases.
-
+                //同步优先级
                 setCurrentUpdatePriority(DiscreteEventPriority);
 
                 for (; i < queue.length; i++) {
@@ -12868,9 +12875,8 @@
                 // If something throws, leave the remaining callbacks on the queue.
                 if (syncQueue !== null) {
                     syncQueue = syncQueue.slice(i + 1);
-                } // Resume flushing in the next tick
-
-
+                }
+                // Resume flushing in the next tick
                 scheduleCallback(ImmediatePriority, flushSyncCallbacks);
                 throw error;
             } finally {
@@ -14168,10 +14174,10 @@
     }
     /**
      * DONE
+     * concurrentQueues中的每个队列的 interleaved 转到pending上
      * setState的新值在此处放入 queue.pending中，函数再次渲染时能到读到最新的。
      */
     function finishQueueingConcurrentUpdates() {
-
         // Transfer the interleaved updates onto the main queue. Each queue has a
         // `pending` field and an `interleaved` field. When they are not null, they
         // point to the last node in a circular linked list. We need to append the
@@ -14245,7 +14251,7 @@
     }
     /**
      * DONE
-     * queue.interleaved = update;
+     * 将shared放入并发队列concurrentQueues;sharedQueue.interleaved = update;更新当前fiber的lanes；向上回溯更新所有父级的childLanes；最后返回root
      * @param {*} fiber 
      * @param {*} queue -- sharedQueue
      * @param {*} update 
@@ -14259,7 +14265,6 @@
             // This is the first update. Create a circular list.
             update.next = update;
             // At the end of the current render, this queue's interleaved(插入的) updates will be transferred to the pending queue.
-
             pushConcurrentUpdateQueue(queue);
         } else {
             update.next = interleaved.next;
@@ -14267,6 +14272,7 @@
         }
 
         queue.interleaved = update;
+        //更新当前fiber的lanes；向上回溯更新所有父级的childLanes；最后返回root
         return markUpdateLaneFromFiberToRoot(fiber, lane);
     }
 
@@ -14279,6 +14285,7 @@
 
     /**
      * DONE
+     * 更新当前fiber的lanes；向上回溯更新所有父级的childLanes；最后返回root
      * @param {*} sourceFiber 
      * @param {*} lane 
      * @returns 
@@ -14296,9 +14303,9 @@
             if (alternate === null && (sourceFiber.flags & (Placement | Hydrating)) !== NoFlags) {
                 warnAboutUpdateOnNotYetMountedFiberInDEV(sourceFiber);
             }
-        } // Walk the parent path to the root and update the child lanes.
+        }
 
-
+        // Walk the parent path to the root and update the child lanes.
         var node = sourceFiber;
         var parent = sourceFiber.return;
 
@@ -14321,7 +14328,7 @@
         }
 
         if (node.tag === HostRoot) {
-            var root = node.stateNode;
+            var root = node.stateNode;//fiberRoot
             return root;
         } else {
             return null;
@@ -14407,6 +14414,7 @@
     }
     /**
      * DONE
+     * 将shared放入并发队列concurrentQueues;sharedQueue.interleaved = update;更新当前fiber的lanes；向上回溯更新所有父级的childLanes；最后返回root
      */
     function enqueueUpdate(fiber, update, lane) {
         var updateQueue = fiber.updateQueue;
@@ -14449,7 +14457,8 @@
             // currently renderings (a pattern that is accompanied by a warning).
 
             return unsafe_markUpdateLaneFromFiberToRoot(fiber, lane);
-        } else {
+        } else {//setState更新进入此流程
+            //将shared放入并发队列concurrentQueues;sharedQueue.interleaved = update;更新当前fiber的lanes；向上回溯更新所有父级的childLanes；最后返回root
             return enqueueConcurrentClassUpdate(fiber, sharedQueue, update, lane);
         }
     }
@@ -14572,6 +14581,7 @@
 
     /**
      * DONE
+     * UpdateState: 从update的payload中取出setState()的参数对象，和之前的state合并并返回
      */
     function getStateFromUpdate(workInProgress, queue, update, prevState, nextProps, instance) {
         switch (update.tag) {
@@ -14614,7 +14624,7 @@
                 }
             // Intentional fallthrough
 
-            case UpdateState://0 DONE 从update中取出element放到newState中
+            case UpdateState://0 DONE 从update的payload中取出setState()的参数对象，和之前的state合并并返回
                 {
                     var _payload = update.payload;
                     var partialState;
@@ -14666,6 +14676,9 @@
 
     /**
      * DONE
+     * 1、将queue.shared.pending中的更新转换到 current.updateQueue.firstBaseUpdate和current.updateQueue.lastBaseUpdate上
+     * 2、从更新对象中获取合并后的newState：newState = getStateFromUpdate(workInProgress, queue, update, newState, props, instance);
+     * 3、将合并后的newState赋值给workInProgress的updateQueue.baseState = newBaseState;
      * @param {*} workInProgress 
      * @param {*} props 
      * @param {*} instance 
@@ -14683,7 +14696,7 @@
         var firstBaseUpdate = queue.firstBaseUpdate;
         var lastBaseUpdate = queue.lastBaseUpdate;
 
-        // Check if there are pending updates. If so, transfer them to the base queue.
+        // Check if there are pending updates. If so, transfer them to the base queue.(放到了current的更新队列上)
         var pendingQueue = queue.shared.pending;
 
         if (pendingQueue !== null) {
@@ -14700,8 +14713,8 @@
             } else {
                 lastBaseUpdate.next = firstPendingUpdate;
             }
-
             lastBaseUpdate = lastPendingUpdate;
+
             // If there's a current queue, and it's different from the base queue, then
             // we need to transfer the updates to that queue, too. Because the base
             // queue is a singly-linked list with no cycles, we can append to both
@@ -14763,7 +14776,7 @@
 
 
                     newLanes = mergeLanes(newLanes, updateLane);
-                } else {
+                } else {//DONE
                     // This update does have sufficient(足够的; 充足的) priority.
                     if (newLastBaseUpdate !== null) {
                         var _clone = {
@@ -14780,7 +14793,7 @@
                         newLastBaseUpdate = newLastBaseUpdate.next = _clone;
                     }
 
-                    // Process this update.
+                    // Process this update. 从update的payload中取出setState()的参数对象，和之前的state合并并返回
                     newState = getStateFromUpdate(workInProgress, queue, update, newState, props, instance);
                     var callback = update.callback;
 
@@ -15006,6 +15019,8 @@
     var classComponentUpdater = {
         isMounted: isMounted,
         /**
+         * DONE
+         * scheduleUpdateOnFiber(root, fiber, lane, eventTime);
          * @param inst 类实例
          * @param payload 
          * @param callback 
@@ -15013,6 +15028,7 @@
         enqueueSetState: function (inst, payload, callback) {
             var fiber = get(inst);
             var eventTime = requestEventTime();
+            //离散事件对应的更新优先级是1（同步优先级）
             var lane = requestUpdateLane(fiber);//更新lane
             var update = createUpdate(eventTime, lane);
             update.payload = payload;
@@ -15025,6 +15041,7 @@
                 update.callback = callback;
             }
 
+            //将shared放入并发队列concurrentQueues;sharedQueue.interleaved = update;更新当前fiber的lanes；向上回溯更新所有父级的childLanes；最后返回root
             var root = enqueueUpdate(fiber, update, lane);
 
             if (root !== null) {
@@ -15681,6 +15698,9 @@
     /**
      * DONE
      * Invokes the update life-cycles and returns false if it shouldn't rerender.
+     * 1、将current的更新队列更新到workInProgress，断开两者的关系：cloneUpdateQueue(current, workInProgress);
+     * 2、将合并后的newState赋值给workInProgress的updateQueue.baseState = newBaseState;：processUpdateQueue();
+     * 3、将newProps和newState赋值给实例对象
      * @param {*} current 
      * @param {*} workInProgress 
      * @param {*} ctor 
@@ -15690,6 +15710,7 @@
      */
     function updateClassInstance(current, workInProgress, ctor, newProps, renderLanes) {
         var instance = workInProgress.stateNode;
+        // 将current的更新队列更新到workInProgress，断开两者的关系
         cloneUpdateQueue(current, workInProgress);
         var unresolvedOldProps = workInProgress.memoizedProps;
         var oldProps = workInProgress.type === workInProgress.elementType
@@ -15725,6 +15746,7 @@
         resetHasForceUpdateBeforeProcessing();
         var oldState = workInProgress.memoizedState;
         var newState = instance.state = oldState;
+        //将合并后的newState赋值给workInProgress的updateQueue.baseState = newBaseState;
         processUpdateQueue(workInProgress, newProps, instance, renderLanes);
         newState = workInProgress.memoizedState;
 
@@ -15802,10 +15824,9 @@
             workInProgress.memoizedProps = newProps;
             workInProgress.memoizedState = newState;
         }
+
         // Update the existing instance's state, props, and context pointers even
         // if shouldComponentUpdate returns false.
-
-
         instance.props = newProps;
         instance.state = newState;
         instance.context = nextContext;
@@ -15966,6 +15987,7 @@
         return mixedRef;
     }
 
+    //DONE
     function throwOnInvalidObjectType(returnFiber, newChild) {
         var childString = Object.prototype.toString.call(newChild);
         throw new Error("Objects are not valid as a React child (found: "
@@ -15989,6 +16011,7 @@
         }
     }
 
+    //DONE
     function resolveLazy(lazyType) {
         var payload = lazyType._payload;
         var init = lazyType._init;
@@ -16018,7 +16041,7 @@
             }
         }
 
-        //DONE
+        //DONE：删除currentFirstChild和它所有的后续兄弟节点
         function deleteRemainingChildren(returnFiber, currentFirstChild) {
             if (!shouldTrackSideEffects) {
                 // Noop.
@@ -16036,7 +16059,9 @@
             return null;
         }
 
+        //DONE
         function mapRemainingChildren(returnFiber, currentFirstChild) {
+            debugger
             // Add the remaining children to a temporary map so that we can find them by
             // keys quickly. Implicit (null) keys get added to this set with their index
             // instead.
@@ -16055,7 +16080,7 @@
 
             return existingChildren;
         }
-
+        //DONE 创建fiber的alternate【新建或复用】
         function useFiber(fiber, pendingProps) {
             // We currently set sibling to null and index to 0 here because it is easy
             // to forget to do before returning it. E.g. for the single child case.
@@ -16074,6 +16099,7 @@
          * @returns 
          */
         function placeChild(newFiber, lastPlacedIndex, newIndex) {
+            debugger
             newFiber.index = newIndex;
 
             if (!shouldTrackSideEffects) {
@@ -16116,6 +16142,7 @@
         }
 
         function updateTextNode(returnFiber, current, textContent, lanes) {
+            debugger
             if (current === null || current.tag !== HostText) {
                 // Insert
                 var created = createFiberFromText(textContent, returnFiber.mode, lanes);
@@ -16130,6 +16157,7 @@
         }
 
         function updateElement(returnFiber, current, element, lanes) {
+            debugger
             var elementType = element.type;
 
             if (elementType === REACT_FRAGMENT_TYPE) {
@@ -16194,6 +16222,7 @@
 
         //DONE
         function createChild(returnFiber, newChild, lanes) {
+            debugger
             //文本和数字
             if (typeof newChild === 'string' && newChild !== '' || typeof newChild === 'number') {
                 // Text nodes don't have keys. If the previous node is implicitly keyed
@@ -16250,13 +16279,13 @@
         }
 
         function updateSlot(returnFiber, oldFiber, newChild, lanes) {
+            debugger
             // Update the fiber if the keys match, otherwise return null.
             var key = oldFiber !== null ? oldFiber.key : null;
 
             if (typeof newChild === 'string' && newChild !== '' || typeof newChild === 'number') {
                 // Text nodes don't have keys. If the previous node is implicitly keyed
-                // we can continue to replace it without aborting even if it is not a text
-                // node.
+                // we can continue to replace it without aborting even if it is not a text node.
                 if (key !== null) {
                     return null;
                 }
@@ -16312,7 +16341,9 @@
             return null;
         }
 
+        //DONE array
         function updateFromMap(existingChildren, returnFiber, newIdx, newChild, lanes) {
+            debugger
             if (typeof newChild === 'string' && newChild !== '' || typeof newChild === 'number') {
                 // Text nodes don't have keys, so we neither have to check the old nor
                 // new node for the key. If both are text nodes, they match.
@@ -16411,6 +16442,7 @@
 
         //DONE
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, lanes) {
+            debugger
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
             // with that model. If it ends up not being worth the tradeoffs（权衡、交易）, we can
@@ -16443,7 +16475,7 @@
             var newIdx = 0;
             var nextOldFiber = null;
 
-            //第一次循环
+            //第一次循环【尽量复用】
             for (; oldFiber !== null && newIdx < newChildren.length; newIdx++) {
                 if (oldFiber.index > newIdx) {
                     nextOldFiber = oldFiber;
@@ -16489,6 +16521,7 @@
                 oldFiber = nextOldFiber;
             }
 
+            //新数组已经结束；删除旧数组剩余的节点
             if (newIdx === newChildren.length) {
                 // We've reached the end of the new children. We can delete the rest.
                 deleteRemainingChildren(returnFiber, oldFiber);
@@ -16501,7 +16534,7 @@
                 return resultingFirstChild;
             }
 
-            //插入操作（没有旧的）
+            //第二次循环【旧节点已执行完，没法继续复用旧节点，直接新增】
             if (oldFiber === null) {
                 // If we don't have any more existing children we can choose a fast path
                 // since the rest will all be insertions.
@@ -16535,6 +16568,7 @@
             var existingChildren = mapRemainingChildren(returnFiber, oldFiber);
 
             // Keep scanning and use the map to restore deleted items as moves.
+            //第3次循环，构建旧节点的map
             for (; newIdx < newChildren.length; newIdx++) {
                 var _newFiber2 = updateFromMap(existingChildren, returnFiber, newIdx, newChildren[newIdx], lanes);
 
@@ -16564,6 +16598,7 @@
             if (shouldTrackSideEffects) {
                 // Any existing children that weren't consumed above were deleted. We need
                 // to add them to the deletion list.
+                //不能复用的剩余的旧子节点，添加到删除列表中去
                 existingChildren.forEach(function (child) {
                     return deleteChild(returnFiber, child);
                 });
@@ -16805,10 +16840,11 @@
          * @returns 
          */
         function reconcileSingleElement(returnFiber, currentFirstChild, element, lanes) {
+            debugger
             var key = element.key;
             var child = currentFirstChild;
 
-            while (child !== null) {
+            while (child !== null) {//更新流程
                 // TODO: If key === null and child.key === null, then this only applies to
                 // the first item in the list.
                 if (child.key === key) {
@@ -16833,7 +16869,9 @@
                             // We need to do this after the Hot Reloading check above,
                             // because hot reloading has different semantics than prod because
                             // it doesn't resuspend. So we can't let the call below suspend.
-                            typeof elementType === 'object' && elementType !== null && elementType.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType) === child.type) {
+                            typeof elementType === 'object' && elementType !== null
+                            && elementType.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType) === child.type) {
+
                             deleteRemainingChildren(returnFiber, child.sibling);
 
                             var _existing = useFiber(child, element.props);
@@ -16848,9 +16886,9 @@
 
                             return _existing;
                         }
-                    } // Didn't match.
+                    }
 
-
+                    // Didn't match.
                     deleteRemainingChildren(returnFiber, child);
                     break;
                 } else {
@@ -16906,6 +16944,7 @@
         // itself. They will be added to the side-effect list as we pass through the children and the parent.
         //协调中心
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, lanes) {
+            debugger
             // This function is not recursive(递归的; 循环的;)
             // If the top level item is an array, we treat it as a set of children,
             // not as a fragment. Nested arrays on the other hand will be treated as
@@ -16965,7 +17004,14 @@
 
     var reconcileChildFibers = ChildReconciler(true);
     var mountChildFibers = ChildReconciler(false);
-    //DONE
+
+    /**
+     * DONE
+     * 1、workInProgress.child 还是上次的旧的fiber
+     * 2、通过 createWorkInProgress(currentChild, currentChild.pendingProps) 创建child的新副本：newChild
+     * 3、设置workInProgress的child为最新的newChild ：workInProgress.child = newChild;
+     * 4、将旧的child的所有兄弟节点执行2/3步骤的操作，并建立和workInProgress的关联（通过return）
+     */
     function cloneChildFibers(current, workInProgress) {
         if (current !== null && workInProgress.child !== current.child) {
             throw new Error('Resuming work not yet implemented.');
@@ -16987,8 +17033,9 @@
         }
 
         newChild.sibling = null;
-    } // Reset a workInProgress child set to prepare it for a second pass.
+    }
 
+    // Reset a workInProgress child set to prepare it for a second pass.
     function resetChildFibers(workInProgress, lanes) {
         var child = workInProgress.child;
 
@@ -17372,15 +17419,20 @@
                     error('React has detected a change in the order of Hooks called by %s. '
                         + 'This will lead to bugs and errors if not fixed. '
                         + 'For more information, read the Rules of Hooks: https://reactjs.org/link/rules-of-hooks\n\n'
-                        + '   Previous render            Next render\n' + '   ------------------------------------------------------\n'
-                        + '%s' + '   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n', componentName, table);
+                        + '   Previous render            Next render\n'
+                        + '   ------------------------------------------------------\n'
+                        + '%s'
+                        + '   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n', componentName, table);
                 }
             }
         }
     }
 
     function throwInvalidHookError() {
-        throw new Error('Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for' + ' one of the following reasons:\n' + '1. You might have mismatching versions of React and the renderer (such as React DOM)\n' + '2. You might be breaking the Rules of Hooks\n' + '3. You might have more than one copy of React in the same app\n' + 'See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.');
+        throw new Error('Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for'
+            + ' one of the following reasons:\n' + '1. You might have mismatching versions of React and the renderer (such as React DOM)\n'
+            + '2. You might be breaking the Rules of Hooks\n' + '3. You might have more than one copy of React in the same app\n'
+            + 'See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.');
     }
 
     function areHookInputsEqual(nextDeps, prevDeps) {
@@ -17393,7 +17445,9 @@
 
         if (prevDeps === null) {
             {
-                error('%s received a final argument during this render, but not during ' + 'the previous render. Even though the final argument is optional, ' + 'its type cannot change between renders.', currentHookNameInDev);
+                error('%s received a final argument during this render, but not during '
+                    + 'the previous render. Even though the final argument is optional, '
+                    + 'its type cannot change between renders.', currentHookNameInDev);
             }
 
             return false;
@@ -17403,7 +17457,12 @@
             // Don't bother comparing lengths in prod because these arrays should be
             // passed inline.
             if (nextDeps.length !== prevDeps.length) {
-                error('The final argument passed to %s changed size between renders. The ' + 'order and size of this array must remain constant.\n\n' + 'Previous: %s\n' + 'Incoming: %s', currentHookNameInDev, "[" + prevDeps.join(', ') + "]", "[" + nextDeps.join(', ') + "]");
+                error('The final argument passed to %s changed size between renders. The '
+                    + 'order and size of this array must remain constant.\n\n'
+                    + 'Previous: %s\n'
+                    + 'Incoming: %s', currentHookNameInDev, "["
+                    + prevDeps.join(', ') + "]", "[" + nextDeps.join(', ')
+                + "]");
             }
         }
 
@@ -18363,7 +18422,8 @@
     function updateImperativeHandle(ref, create, deps) {
         {
             if (typeof create !== 'function') {
-                error('Expected useImperativeHandle() second argument to be a function ' + 'that creates a handle. Instead received: %s.', create !== null ? typeof create : 'null');
+                error('Expected useImperativeHandle() second argument to be a function '
+                    + 'that creates a handle. Instead received: %s.', create !== null ? typeof create : 'null');
             }
         } // TODO: If deps are provided, should we skip comparing the ref itself?
 
@@ -20942,6 +21002,7 @@
         }
 
         prepareToReadContext(workInProgress, renderLanes);
+        //上次的实例对象
         var instance = workInProgress.stateNode;
         var shouldUpdate;
 
@@ -20979,6 +21040,9 @@
 
     /**
      * DONE
+     * 1、执行类实例的render方法：nextChildren = instance.render();
+     * 2、reconcileChildren(current, workInProgress, nextChildren, renderLanes);
+     * 3、return workInProgress.child;
      * @param {*} current 
      * @param {*} workInProgress 
      * @param {*} Component 
@@ -22581,7 +22645,15 @@
         }
     }
 
-    //DONE
+    /**
+     * DONE
+     * cloneChildFibers(current, workInProgress);
+     * return workInProgress.child;
+     * @param {*} current 
+     * @param {*} workInProgress 
+     * @param {*} renderLanes 
+     * @returns 
+     */
     function bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes) {
         if (current !== null) {
             // Reuse previous dependencies
@@ -22594,8 +22666,8 @@
         }
 
         markSkippedUpdateLanes(workInProgress.lanes);
-        // Check if the children have any pending work.
 
+        // Check if the children have any pending work.
         if (!includesSomeLane(renderLanes, workInProgress.childLanes)) {
             // The children don't have any work either. We can skip them.
             // TODO: Once we add back resuming, we should check if the children are
@@ -22666,7 +22738,13 @@
         }
     }
 
-    //DONE
+    /**
+     * DONE
+     * 判断current中的lanes是否包含要进行的渲染lanes:renderLanes
+     * @param {*} current 
+     * @param {*} renderLanes 
+     * @returns 
+     */
     function checkScheduledUpdateOrContext(current, renderLanes) {
         // Before performing an early bailout, we must check if there are pending updates or context.
         var updateLanes = current.lanes;
@@ -22881,12 +22959,14 @@
                 didReceiveUpdate = true;
             } else {
                 // Neither props nor legacy context changes. Check if there's a pending update or context change.
+                //判断current中的lanes是否包含要进行的渲染lanes:renderLanes
                 var hasScheduledUpdateOrContext = checkScheduledUpdateOrContext(current, renderLanes);
 
                 if (!hasScheduledUpdateOrContext && // If this is the second pass of an error or suspense boundary, there
                     // may not be work scheduled on `current`, so we check for this flag.
                     (workInProgress.flags & DidCapture) === NoFlags) {
                     // No pending updates or context. Bail out now.
+                    //当前fiber没有更新
                     didReceiveUpdate = false;
                     return attemptEarlyBailoutIfNoScheduledUpdate(current, workInProgress, renderLanes);
                 }
@@ -22895,7 +22975,7 @@
                     // This is a special case that only exists for legacy mode.
                     // See https://github.com/facebook/react/pull/19216.
                     didReceiveUpdate = true;
-                } else {
+                } else {//当前fiber有更新，但是没有新的props和legacy context
                     // An update was scheduled on this fiber, but there are no new props
                     // nor legacy context. Set this to false. If an update queue or context
                     // consumer produces a changed value, it will set this to true. Otherwise,
@@ -23061,6 +23141,7 @@
         workInProgress.flags |= Update;
     }
 
+    //DONE
     function markRef$1(workInProgress) {
         workInProgress.flags |= Ref;
 
@@ -23120,21 +23201,23 @@
                 // In mutation mode, this is sufficient for a bailout because
                 // we won't touch this node even if children changed.
                 return;
-            } // If we get updated because one of our children updated, we don't
+            }
+
+            // If we get updated because one of our children updated, we don't
             // have newProps so we'll have to reuse them.
             // TODO: Split the update API as separate for the props vs. children.
             // Even better would be if children weren't special cased at all tho.
-
-
             var instance = workInProgress.stateNode;
-            var currentHostContext = getHostContext(); // TODO: Experiencing an error where oldProps is null. Suggests a host
+            var currentHostContext = getHostContext();
+
+            // TODO: Experiencing an error where oldProps is null. Suggests a host
             // component is hitting the resume path. Figure out why. Possibly
             // related to `hidden`.
-
             var updatePayload = prepareUpdate(instance, type, oldProps, newProps, rootContainerInstance, currentHostContext);
-            // TODO: Type this specific to this type of component.
 
-            workInProgress.updateQueue = updatePayload; // If the update payload indicates that there is a change or if there
+            // TODO: Type this specific to this type of component.
+            workInProgress.updateQueue = updatePayload;
+            // If the update payload indicates that there is a change or if there
             // is a new ref we mark this as an update. All the work is done in commitWork.
 
             if (updatePayload) {
@@ -23511,7 +23594,7 @@
                     var rootContainerInstance = getRootHostContainer();//container
                     var type = workInProgress.type;
 
-                    if (current !== null && workInProgress.stateNode != null) {
+                    if (current !== null && workInProgress.stateNode != null) {//update流程
                         updateHostComponent$1(current, workInProgress, type, newProps, rootContainerInstance);
 
                         if (current.ref !== workInProgress.ref) {
@@ -25776,7 +25859,6 @@
      * @returns 
      */
     function commitMutationEffectsOnFiber(finishedWork, root, lanes) {
-        debugger
         var current = finishedWork.alternate;
         var flags = finishedWork.flags;
 
@@ -25843,7 +25925,9 @@
 
             case HostComponent://DONE
                 {
+
                     recursivelyTraverseMutationEffects(root, finishedWork);
+                    //新增的操作【commitPlacement】
                     commitReconciliationEffects(finishedWork);
 
                     if (flags & Ref) {
@@ -25887,6 +25971,7 @@
 
                                 if (updatePayload !== null) {
                                     try {
+                                        //button的文字修改等
                                         commitUpdate(_instance4, updatePayload, type, oldProps, newProps, finishedWork);
                                     } catch (error) {
                                         captureCommitPhaseError(finishedWork, finishedWork.return, error);
@@ -27019,6 +27104,8 @@
 
     /**
      * DONE
+     * root.pendingLanes |= updateLane;给root的eventTimes在对应跑道上设置eventTime:eventTimes[index] = eventTime;
+     * ensureRootIsScheduled(root, eventTime);
      * @param {*} root 
      * @param {*} fiber 
      * @param {*} lane 
@@ -27041,6 +27128,7 @@
             }
         }
         // Mark that the root has a pending update.
+        // root.pendingLanes |= updateLane;给root的eventTimes在对应跑道上设置eventTime:eventTimes[index] = eventTime;
         markRootUpdated(root, lane, eventTime);
 
         if ((executionContext & RenderContext) !== NoLanes && root === workInProgressRoot) {
@@ -27140,6 +27228,13 @@
     }
     /**
      * DONE
+     * 将对应的过期lane附加到root.expiredLanes上；expirationTimes[index] = computeExpirationTime(lane, currentTime);
+     * 1、同步更新
+     *      -1.1 scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
+     *      -1.2 scheduleMicrotask(flushSyncCallbacks())
+     * 2、异步更新
+     *      -2.1 newCallbackNode = scheduleCallback$1(schedulerPriorityLevel, performConcurrentWorkOnRoot.bind(null, root));
+     * 
      * @param {*} root 
      * @param {*} currentTime 
      * @returns 
@@ -27148,6 +27243,7 @@
         var existingCallbackNode = root.callbackNode;
 
         // Check if any lanes are being starved by other work. If so, mark them as expired so we know to work on those next.
+        // 将对应的过期lane附加到root.expiredLanes上；expirationTimes[index] = computeExpirationTime(lane, currentTime);
         markStarvedLanesAsExpired(root, currentTime);
 
         // Determine the next lanes to work on, and their priority.
@@ -27206,16 +27302,19 @@
 
                 scheduleLegacySyncCallback(performSyncWorkOnRoot.bind(null, root));
             } else {//DONE
+                //callback放入同步队列syncQueue
                 scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
             }
 
             {
-                // Flush the queue in a microtask.
+                // Flush the queue in a microtask.[开启个微任务]
                 if (ReactCurrentActQueue$1.current !== null) {
                     // Inside `act`, use our internal `act` queue so that these get flushed
                     // at the end of the current scope even when using the sync version of `act`.
                     ReactCurrentActQueue$1.current.push(flushSyncCallbacks);
                 } else {
+                    //调度一个微任务
+
                     scheduleMicrotask(function () {//DONE
                         // We don't support running callbacks in the middle of render or commit so we need to check against that.
                         if ((executionContext & (RenderContext | CommitContext)) === NoContext) {
@@ -27810,6 +27909,7 @@
     /**
      * DONE
      * 新建rootFiber对应的workInProgress并返回
+     * concurrentQueues中的每个队列的 interleaved 转到pending上
      * @param {*} root 
      * @param {*} lanes 
      * @returns 
@@ -27848,7 +27948,7 @@
         workInProgressRootPingedLanes = NoLanes;
         workInProgressRootConcurrentErrors = null;
         workInProgressRootRecoverableErrors = null;
-        //setState的新值在此处放入 queue.pending中，函数再次渲染时能到读到最新的。
+        //concurrentQueues中的每个队列的 interleaved 转到pending上
         finishQueueingConcurrentUpdates();
 
         {
@@ -28009,7 +28109,8 @@
         var prevExecutionContext = executionContext;
         executionContext |= RenderContext;
         var prevDispatcher = pushDispatcher();
-        // If the root or lanes have changed, throw out the existing stack and prepare a fresh one. Otherwise we'll continue where we left off.
+        // If the root or lanes have changed, throw out the existing stack and prepare a fresh one.
+        // Otherwise we'll continue where we left off.
         if (workInProgressRoot !== root || workInProgressRootRenderLanes !== lanes) {
             {
                 if (isDevToolsPresent) {
@@ -28028,7 +28129,7 @@
             }
 
             workInProgressTransitions = getTransitionsForLanes();
-            //新建rootFiber对应的workInProgress并返回
+            //新建rootFiber对应的workInProgress并返回；concurrentQueues中的每个队列的 interleaved 转到pending上
             prepareFreshStack(root, lanes);
         }
 
@@ -28061,9 +28162,12 @@
         workInProgressRoot = null;//fiberRoot
         workInProgressRootRenderLanes = NoLanes;
         return workInProgressRootExitStatus;
-    } // The work loop is an extremely hot path. Tell Closure not to inline it.
+    }
 
-    //DONE
+    /**
+     * DONE
+     * The work loop is an extremely hot path. Tell Closure not to inline it.
+     */
     function workLoopSync() {
         // Already timed out, so perform work without checking if we need to yield.
         while (workInProgress !== null) {
@@ -28364,6 +28468,7 @@
         // Update the first and last pending times on this root. The new first
         // pending time is whatever is left on the root fiber.
         var remainingLanes = mergeLanes(finishedWork.lanes, finishedWork.childLanes);
+        //重置root.pendingLanes / root.pingedLanes / root.expirationTimes 等
         markRootFinished(root, remainingLanes);
 
         if (root === workInProgressRoot) {
@@ -29376,6 +29481,7 @@
             return family.current;
         }
     }
+    //DONE
     function isCompatibleFamilyForHotReloading(fiber, element) {
         {
             if (resolveFamily === null) {
@@ -29384,7 +29490,8 @@
             }
 
             var prevType = fiber.elementType;
-            var nextType = element.type; // If we got here, we know types aren't === equal.
+            var nextType = element.type;
+            // If we got here, we know types aren't === equal.
 
             var needsCompareFamilies = false;
             var $$typeofNextType = typeof nextType === 'object' && nextType !== null ? nextType.$$typeof : null;
@@ -29441,9 +29548,9 @@
 
                 default:
                     return false;
-            } // Check if both types have a family and it's the same one.
+            }
 
-
+            // Check if both types have a family and it's the same one.
             if (needsCompareFamilies) {
                 // Note: memo() and forwardRef() we'll compare outer rather than inner type.
                 // This means both of them need to be registered to preserve state.
@@ -29853,6 +29960,7 @@
 
     /**
      * This is used to create an alternate fiber to do work on.
+     * 根据给定的fiber(current)，创建它的alternate并返回。【alternate为null则新创建fiber，否则复用，拷贝属性】
      * DONE
      */
     function createWorkInProgress(current, pendingProps) {
