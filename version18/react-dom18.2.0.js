@@ -16061,7 +16061,6 @@
 
         //DONE
         function mapRemainingChildren(returnFiber, currentFirstChild) {
-            debugger
             // Add the remaining children to a temporary map so that we can find them by
             // keys quickly. Implicit (null) keys get added to this set with their index
             // instead.
@@ -16099,7 +16098,7 @@
          * @returns 
          */
         function placeChild(newFiber, lastPlacedIndex, newIndex) {
-            debugger
+
             newFiber.index = newIndex;
 
             if (!shouldTrackSideEffects) {
@@ -16110,6 +16109,18 @@
             }
 
             var current = newFiber.alternate;
+
+
+            //    首先我们要判断newChildren中遍历到的节点，在oldFiber中是否存在，基于此，React将oldFiber中的节点以key - oldfiber
+            //    键值对的形式存在Map中，只需要newChildren的key，就可以判断oldFiber中有没有相应的节点。
+
+            // 1、如果oldFiber中没有相应的节点，则将newChildren生成的fiber打上placement标记
+
+            // 2、如果有相应的节点，将它的索引记为oldIndex，与上一次可复用节点在oldFiber的索引位置lastPlacedIndex比较，
+            //    如果每次可复用的节点在上一次可复用右边就说明位置没有变化，即
+
+            // 2.1、若oldIndex >= lastPlacedIndex, 说明相对位置没有变化，那么令lastPlacedIndex = oldIndex
+            // 2.2、若oldIndex < lastPlacedIndex, 代表本节点需要向右移动。
 
             if (current !== null) {
                 var oldIndex = current.index;
@@ -16141,8 +16152,8 @@
             return newFiber;
         }
 
+        //DONE
         function updateTextNode(returnFiber, current, textContent, lanes) {
-            debugger
             if (current === null || current.tag !== HostText) {
                 // Insert
                 var created = createFiberFromText(textContent, returnFiber.mode, lanes);
@@ -16156,8 +16167,8 @@
             }
         }
 
+        //DONE
         function updateElement(returnFiber, current, element, lanes) {
-            debugger
             var elementType = element.type;
 
             if (elementType === REACT_FRAGMENT_TYPE) {
@@ -16183,9 +16194,9 @@
 
                     return existing;
                 }
-            } // Insert
+            }
 
-
+            // Insert
             var created = createFiberFromElement(element, returnFiber.mode, lanes);
             created.ref = coerceRef(returnFiber, current, element);
             created.return = returnFiber;
@@ -16222,7 +16233,6 @@
 
         //DONE
         function createChild(returnFiber, newChild, lanes) {
-            debugger
             //文本和数字
             if (typeof newChild === 'string' && newChild !== '' || typeof newChild === 'number') {
                 // Text nodes don't have keys. If the previous node is implicitly keyed
@@ -16278,8 +16288,8 @@
             return null;
         }
 
+        //DONE
         function updateSlot(returnFiber, oldFiber, newChild, lanes) {
-            debugger
             // Update the fiber if the keys match, otherwise return null.
             var key = oldFiber !== null ? oldFiber.key : null;
 
@@ -16343,7 +16353,6 @@
 
         //DONE array
         function updateFromMap(existingChildren, returnFiber, newIdx, newChild, lanes) {
-            debugger
             if (typeof newChild === 'string' && newChild !== '' || typeof newChild === 'number') {
                 // Text nodes don't have keys, so we neither have to check the old nor
                 // new node for the key. If both are text nodes, they match.
@@ -16475,7 +16484,7 @@
             var newIdx = 0;
             var nextOldFiber = null;
 
-            //第一次循环【尽量复用】
+            //第一次循环【尽量复用，处理更新的节点】
             for (; oldFiber !== null && newIdx < newChildren.length; newIdx++) {
                 if (oldFiber.index > newIdx) {
                     nextOldFiber = oldFiber;
@@ -16484,8 +16493,10 @@
                     nextOldFiber = oldFiber.sibling;
                 }
 
+                //key不同的话，返回null;直接跳出循环；
                 var newFiber = updateSlot(returnFiber, oldFiber, newChildren[newIdx], lanes);
 
+                //key不同，直接跳出循环；
                 if (newFiber === null) {
                     // TODO: This breaks on empty slots like null children. That's
                     // unfortunate because it triggers the slow path all the time. We need
@@ -16498,6 +16509,7 @@
                 }
 
                 if (shouldTrackSideEffects) {
+                    //说明此旧fiber不能复用，标记删除；然后继续循环；【key相同，type不同，不能复用】
                     if (oldFiber && newFiber.alternate === null) {
                         // We matched the slot, but we didn't reuse the existing fiber, so we need to delete the existing child.
                         deleteChild(returnFiber, oldFiber);
@@ -16533,6 +16545,14 @@
 
                 return resultingFirstChild;
             }
+
+            // 第一层遍历结束后有4种结果
+            // 1、newChildren与oldFiber都遍历完，此时我们只需要在第一遍遍历的基础上进行更新。
+            // 2、newChildren遍历完，oldFiber没有遍历完，说明有节点被删除了，那我们只需要遍历剩下的oldFiber，并打上DELETION标记。
+            // 3、newChildren没有遍历完，oldFiber遍历完，说明增加了一些节点，那我们需要遍历剩下的newChildren为生成的workInProgress Fiber打上Placement标签
+            // 4、newChildren和oldFiber都没有遍历完 ，这主要是由于遍历到的节点key不相同导致的。这说明有节点的位置改变了。
+            // 通过比较newChildren中的节点与其在oldFiber中的位置信息，我们可以知道它的相对顺序。
+
 
             //第二次循环【旧节点已执行完，没法继续复用旧节点，直接新增】
             if (oldFiber === null) {
@@ -16840,7 +16860,6 @@
          * @returns 
          */
         function reconcileSingleElement(returnFiber, currentFirstChild, element, lanes) {
-            debugger
             var key = element.key;
             var child = currentFirstChild;
 
