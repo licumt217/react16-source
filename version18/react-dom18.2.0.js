@@ -14176,6 +14176,7 @@
      * DONE
      * concurrentQueues中的每个队列的 interleaved 转到pending上
      * setState的新值在此处放入 queue.pending中，函数再次渲染时能到读到最新的。
+     * queue.interleaved 对应一个更新，是一个链表，通过next连接。将最新的update挂载到queue.pending上。
      */
     function finishQueueingConcurrentUpdates() {
         // Transfer the interleaved updates onto the main queue. Each queue has a
@@ -27313,6 +27314,7 @@
         // Check if there's an existing task. We may be able to reuse it.
         var existingCallbackPriority = root.callbackPriority;
 
+        //新的回调优先级和存在的回调优先级相同，复用。比如setState两次，则第二次会复用第一次的。
         if (existingCallbackPriority === newCallbackPriority &&
             // Special case related to `act`. If the currently scheduled task is a
             // Scheduler task, rather than an `act` task, cancel it and re-scheduled
@@ -27325,9 +27327,9 @@
                 if (existingCallbackNode == null && existingCallbackPriority !== SyncLane) {
                     error('Expected scheduled callback to exist. This error is likely caused by a bug in React. Please file an issue.');
                 }
-            } // The priority hasn't changed. We can reuse the existing task. Exit.
-
-
+            }
+            // The priority hasn't changed. We can reuse the existing task. Exit.
+            //新的回调优先级和存在的回调优先级相同，复用。
             return;
         }
 
