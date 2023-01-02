@@ -49,24 +49,43 @@ for (let i = 0; i < 100000; i++) {
     // arr3.push(e("div", { style: { color: 'red' }, key: i }, 555 + ":" + i))
 }
 
+let arr1 = [1, 2, 3].map(item => {
+    return e("span", null, item);
+});
 
 class MyClassTest extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            myText: [1, 2, 3],
+            myText: [1, 2].map(item => {
+                return e("span", { key: item }, item);
+            }),
             age: 18
         }
     }
     handleClick() {
-        this.setState({ myText: [null, 3, 5] })
+        this.setState({
+            age: this.state.age + 1,
+            name: 1
+        })
+
+
+        this.setState({
+            age: this.state.age + 1,
+            name: 2
+        })
+
+
+        // this.setState((age) => {
+        //     return age + 1;
+        // })
 
     }
     render() {
         return e(
             'button',
             { onClick: () => this.handleClick() },
-            this.state.myText
+            this.state.age
         );
     }
 }

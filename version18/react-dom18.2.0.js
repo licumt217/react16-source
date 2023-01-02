@@ -16024,7 +16024,7 @@
     // a compiler or we can do it manually. Helpers that don't need this branching
     // live outside of this function.
     function ChildReconciler(shouldTrackSideEffects) {
-        //DONE
+        //DONE 将要删除的fiber，添加到父fiber的deletions数组中去，且给父级fiber打上 ChildDeletion 的 flags
         function deleteChild(returnFiber, childToDelete) {
             if (!shouldTrackSideEffects) {
                 // Noop.
@@ -16059,7 +16059,7 @@
             return null;
         }
 
-        //DONE
+        //DONE 数组协调，根据key或index构建map
         function mapRemainingChildren(returnFiber, currentFirstChild) {
             // Add the remaining children to a temporary map so that we can find them by
             // keys quickly. Implicit (null) keys get added to this set with their index
@@ -16079,7 +16079,7 @@
 
             return existingChildren;
         }
-        //DONE 创建fiber的alternate【新建或复用】
+        //DONE 通过 createWorkInProgress(fiber, pendingProps) 复用fiber；标记初始index=0；
         function useFiber(fiber, pendingProps) {
             // We currently set sibling to null and index to 0 here because it is easy
             // to forget to do before returning it. E.g. for the single child case.
@@ -16090,10 +16090,10 @@
         }
 
         /**
-         * DONE
+         * DONE 数组协调中，计算上一个能复用且不移动的旧节点的index
          * 给newFiber的flags打上Placement等标识
          * @param {*} newFiber 
-         * @param {*} lastPlacedIndex 
+         * @param {*} lastPlacedIndex 上一个能直接被复用且不需要移动的旧的节点的index
          * @param {*} newIndex 
          * @returns 
          */
@@ -16122,7 +16122,8 @@
             // 2.1、若oldIndex >= lastPlacedIndex, 说明相对位置没有变化，那么令lastPlacedIndex = oldIndex
             // 2.2、若oldIndex < lastPlacedIndex, 代表本节点需要向右移动。
 
-            if (current !== null) {
+
+            if (current !== null) {//有旧的
                 var oldIndex = current.index;
 
                 if (oldIndex < lastPlacedIndex) {
@@ -16140,7 +16141,7 @@
         }
 
         /**
-         * DONE
+         * DONE 
          * 打标记 -- newFiber.flags |= Placement;
          */
         function placeSingleChild(newFiber) {
@@ -16167,7 +16168,15 @@
             }
         }
 
-        //DONE
+        /**
+         * DONE
+         * 有旧节点，且类型相同，复用节点；没有旧节点，则直接新建新的节点。
+         * @param {*} returnFiber 
+         * @param {*} current 
+         * @param {*} element 
+         * @param {*} lanes 
+         * @returns 
+         */
         function updateElement(returnFiber, current, element, lanes) {
             var elementType = element.type;
 
@@ -16176,6 +16185,7 @@
             }
 
             if (current !== null) {
+                //有旧节点，且类型相同，复用节点
                 if (current.elementType === elementType || ( // Keep this check inline so it only runs on the false path:
                     isCompatibleFamilyForHotReloading(current, element)) || // Lazy types should reconcile their resolved type.
                     // We need to do this after the Hot Reloading check above,
@@ -16196,7 +16206,7 @@
                 }
             }
 
-            // Insert
+            // 没有旧节点，则直接新建新的节点。Insert
             var created = createFiberFromElement(element, returnFiber.mode, lanes);
             created.ref = coerceRef(returnFiber, current, element);
             created.return = returnFiber;
@@ -16288,7 +16298,16 @@
             return null;
         }
 
-        //DONE
+        /**
+         * DONE
+         * key相同，有旧节点，且类型相同，复用节点；key相同，没有旧节点，则直接新建新的节点。
+         * key不同，直接返回null
+         * @param {*} returnFiber 
+         * @param {*} oldFiber 
+         * @param {*} newChild 
+         * @param {*} lanes 
+         * @returns 
+         */
         function updateSlot(returnFiber, oldFiber, newChild, lanes) {
             // Update the fiber if the keys match, otherwise return null.
             var key = oldFiber !== null ? oldFiber.key : null;
@@ -16308,6 +16327,7 @@
                     case REACT_ELEMENT_TYPE:
                         {
                             if (newChild.key === key) {
+                                //有旧节点，且类型相同，复用节点；没有旧节点，则直接新建新的节点。
                                 return updateElement(returnFiber, oldFiber, newChild, lanes);
                             } else {
                                 return null;
@@ -16351,7 +16371,7 @@
             return null;
         }
 
-        //DONE array
+        //DONE array 数组协调的最后一步，从map中匹配
         function updateFromMap(existingChildren, returnFiber, newIdx, newChild, lanes) {
             if (typeof newChild === 'string' && newChild !== '' || typeof newChild === 'number') {
                 // Text nodes don't have keys, so we neither have to check the old nor
@@ -16449,9 +16469,8 @@
             return knownKeys;
         }
 
-        //DONE
+        //DONE。先更新、再删除和新增、移动
         function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, lanes) {
-            debugger
             // This algorithm can't optimize by searching from both ends since we
             // don't have backpointers on fibers. I'm trying to see how far we can get
             // with that model. If it ends up not being worth the tradeoffs（权衡、交易）, we can
@@ -16486,28 +16505,32 @@
 
             //第一次循环【尽量复用，处理更新的节点】
             for (; oldFiber !== null && newIdx < newChildren.length; newIdx++) {
-                if (oldFiber.index > newIdx) {
+                //第二次循环导致此处条件有可能成立！！！
+                //因为此处为null时会直接跳转下层循环，导致newIdx+1，也就间接导致newFiber的index不连续了。
+                //也就使得第一次循环时的第一个条件oldFiber.index > newIdx，有机会成立了
+                if (oldFiber.index > newIdx) {//index不连续，如果index>newIndex，则将当前oldFiber赋值给nextOld，且设置当前oldFiber=null。
                     nextOldFiber = oldFiber;
                     oldFiber = null;
                 } else {
                     nextOldFiber = oldFiber.sibling;
                 }
 
-                //key不同的话，返回null;直接跳出循环；
+                //key相同，有旧节点，且类型相同，复用节点；key相同，没有旧节点，则直接新建新的节点。 key不同，直接返回null
                 var newFiber = updateSlot(returnFiber, oldFiber, newChildren[newIdx], lanes);
 
-                //key不同，直接跳出循环；
+                //key不同，直接跳出循环【因为这不属于内容更新】
                 if (newFiber === null) {
                     // TODO: This breaks on empty slots like null children. That's
                     // unfortunate because it triggers the slow path all the time. We need
                     // a better way to communicate whether this was a miss or null, boolean, undefined, etc.
                     if (oldFiber === null) {
-                        oldFiber = nextOldFiber;
+                        oldFiber = nextOldFiber;//将oldFiber重置。
                     }
 
                     break;
                 }
 
+                //key相同
                 if (shouldTrackSideEffects) {
                     //说明此旧fiber不能复用，标记删除；然后继续循环；【key相同，type不同，不能复用】
                     if (oldFiber && newFiber.alternate === null) {
@@ -16533,7 +16556,7 @@
                 oldFiber = nextOldFiber;
             }
 
-            //新数组已经结束；删除旧数组剩余的节点
+            //新数组已经结束；删除旧数组剩余的节点；然后返回第一个新子节点
             if (newIdx === newChildren.length) {
                 // We've reached the end of the new children. We can delete the rest.
                 deleteRemainingChildren(returnFiber, oldFiber);
@@ -16554,13 +16577,15 @@
             // 通过比较newChildren中的节点与其在oldFiber中的位置信息，我们可以知道它的相对顺序。
 
 
-            //第二次循环【旧节点已执行完，没法继续复用旧节点，直接新增】
+            //第二次循环【旧节点已执行完，没法继续复用旧节点，直接新增，然后返回第一个新子节点】
             if (oldFiber === null) {
                 // If we don't have any more existing children we can choose a fast path
                 // since the rest will all be insertions.
                 for (; newIdx < newChildren.length; newIdx++) {
                     var _newFiber = createChild(returnFiber, newChildren[newIdx], lanes);
 
+                    //因为此处为null时会直接跳转下层循环，导致newIdx+1，也就间接导致newFiber的index不连续了。
+                    //也就使得第一次循环时的第一个条件oldFiber.index > newIdx，有机会成立了
                     if (_newFiber === null) {
                         continue;
                     }
@@ -16592,8 +16617,11 @@
             for (; newIdx < newChildren.length; newIdx++) {
                 var _newFiber2 = updateFromMap(existingChildren, returnFiber, newIdx, newChildren[newIdx], lanes);
 
+                //因为此处为null时会直接跳转下层循环，导致newIdx+1，也就间接导致newFiber的index不连续了。
+                //也就使得第一次循环时的第一个条件oldFiber.index > newIdx，有机会成立了
                 if (_newFiber2 !== null) {
                     if (shouldTrackSideEffects) {
+                        //匹配到之后，从map中删除
                         if (_newFiber2.alternate !== null) {
                             // The new fiber is a work in progress, but if there exists a
                             // current, that means that we reused the fiber. We need to delete
@@ -16963,7 +16991,6 @@
         // itself. They will be added to the side-effect list as we pass through the children and the parent.
         //协调中心
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, lanes) {
-            debugger
             // This function is not recursive(递归的; 循环的;)
             // If the top level item is an array, we treat it as a set of children,
             // not as a fragment. Nested arrays on the other hand will be treated as

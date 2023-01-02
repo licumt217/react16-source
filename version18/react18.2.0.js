@@ -342,6 +342,7 @@
      * @protected
      */
     Component.prototype.setState = function (partialState, callback) {
+        console.log(partialState)
         if (typeof partialState !== 'object' && typeof partialState !== 'function' && partialState != null) {
             throw new Error('setState(...): takes an object of state variables to update or a '
                 + 'function which returns an object of state variables.');
