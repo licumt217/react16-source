@@ -306,6 +306,7 @@
      */
     function Component(props, context, updater) {
         this.props = props;
+        //设置Context到实例的context属性上
         this.context = context;
         // If a component has string refs, we will assign a different object later.
         this.refs = emptyObject;
@@ -836,9 +837,9 @@
                 }
             }
         }
+
         // Children can be more than one argument, and those are transferred onto
         // the newly allocated props object.
-
         var childrenLength = arguments.length - 2;
 
         if (childrenLength === 1) {
@@ -857,8 +858,9 @@
             }
 
             props.children = childArray;
-        } // Resolve default props
+        }
 
+        // Resolve default props
         if (type && type.defaultProps) {
             var defaultProps = type.defaultProps;
 
@@ -1256,12 +1258,17 @@
         return children;
     }
 
+    /**
+     * DONE
+     * @param {*} defaultValue 
+     * @returns 
+     */
     function createContext(defaultValue) {
         // TODO: Second argument used to be an optional `calculateChangedBits`
         // function. Warn to reserve for future use?
         var context = {
             $$typeof: REACT_CONTEXT_TYPE,
-            // As a workaround to support multiple concurrent renderers, we categorize
+            // As a workaround(应变方法; 变通方法) to support multiple concurrent renderers, we categorize(分类; 将…分类; 把…加以归类;)
             // some renderers as primary and others as secondary. We only expect
             // there to be two concurrent renderers at most: React Native (primary) and
             // Fabric (secondary); React DOM (primary) and React ART (secondary).
@@ -1271,7 +1278,7 @@
             // Used to track how many concurrent renderers this context currently
             // supports within in a single renderer. Such as parallel server rendering.
             _threadCount: 0,
-            // These are circular
+            // These are circular(环形的)
             Provider: null,
             Consumer: null,
             // Add these to use same hidden class in VM as ServerContext
@@ -1287,13 +1294,13 @@
         var hasWarnedAboutDisplayNameOnConsumer = false;
 
         {
-            // A separate object, but proxies back to the original context object for
+            // A separate object, but proxies（代理权; 代表权; 代理人; 受托人; 代表） back to the original context object for
             // backwards compatibility. It has a different $$typeof, so we can properly
             // warn for the incorrect usage of Context as a Consumer.
             var Consumer = {
                 $$typeof: REACT_CONTEXT_TYPE,
                 _context: context
-            }; // $FlowFixMe: Flow complains about not setting a value, which is intentional here
+            }; // $FlowFixMe: Flow complains about not setting a value, which is intentional（故意的，有意的） here
 
             Object.defineProperties(Consumer, {
                 Provider: {
@@ -1568,23 +1575,34 @@
     function isValidElementType(type) {
         if (typeof type === 'string' || typeof type === 'function') {
             return true;
-        } // Note: typeof might be other than 'symbol' or 'number' (e.g. if it's a polyfill).
+        }
 
-
-        if (type === REACT_FRAGMENT_TYPE || type === REACT_PROFILER_TYPE || enableDebugTracing ||
-            type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE ||
-            enableLegacyHidden || type === REACT_OFFSCREEN_TYPE || enableScopeAPI || enableCacheElement || enableTransitionTracing) {
+        if (type === REACT_FRAGMENT_TYPE
+            || type === REACT_PROFILER_TYPE
+            || enableDebugTracing
+            || type === REACT_STRICT_MODE_TYPE
+            || type === REACT_SUSPENSE_TYPE
+            || type === REACT_SUSPENSE_LIST_TYPE
+            || enableLegacyHidden
+            || type === REACT_OFFSCREEN_TYPE
+            || enableScopeAPI
+            || enableCacheElement
+            || enableTransitionTracing) {
             return true;
         }
 
         if (typeof type === 'object' && type !== null) {
-            if (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE
-                || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE ||
+            if (type.$$typeof === REACT_LAZY_TYPE
+                || type.$$typeof === REACT_MEMO_TYPE
+                || type.$$typeof === REACT_PROVIDER_TYPE//
+                || type.$$typeof === REACT_CONTEXT_TYPE//
+                || type.$$typeof === REACT_FORWARD_REF_TYPE
                 // This needs to include all possible module reference object
                 // types supported by any Flight configuration anywhere since
                 // we don't know which Flight build this will end up being used
                 // with.
-                type.$$typeof === REACT_MODULE_REFERENCE || type.getModuleId !== undefined) {
+                || type.$$typeof === REACT_MODULE_REFERENCE
+                || type.getModuleId !== undefined) {
                 return true;
             }
         }
@@ -2406,6 +2424,7 @@
      * @returns 
      */
     function createElementWithValidation(type, props, children) {
+
         var validType = isValidElementType(type);
         // We warn in this case but don't throw. We expect the element creation to
         // succeed and there will likely be errors in render.
@@ -2452,13 +2471,13 @@
 
         if (element == null) {
             return element;
-        } // Skip key warning if the type isn't valid since our key validation logic
+        }
+
+        // Skip key warning if the type isn't valid since our key validation logic
         // doesn't expect a non-string/function type and can throw confusing errors.
         // We don't want exception behavior to differ between dev and prod.
         // (Rendering will throw with a helpful message and as soon as the type is
         // fixed, the key warnings will appear.)
-
-
         if (validType) {
             for (var i = 2; i < arguments.length; i++) {
                 validateChildKeys(arguments[i], type);
@@ -3495,7 +3514,7 @@
     exports.Suspense = REACT_SUSPENSE_TYPE;
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals$1;
     exports.cloneElement = cloneElement$1;
-    exports.createContext = createContext;
+    exports.createContext = createContext;//-
     exports.createElement = createElement$1;//-
     exports.createFactory = createFactory;
     exports.createRef = createRef;

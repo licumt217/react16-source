@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(document.getElementById("app"))
 const arr = []
 const arr2 = []
 
-
+const MyContext = React.createContext();
 
 
 function ABC() {
@@ -49,44 +49,95 @@ for (let i = 0; i < 100000; i++) {
     // arr3.push(e("div", { style: { color: 'red' }, key: i }, 555 + ":" + i))
 }
 
-let arr1 = [1, 2, 3].map(item => {
-    return e("span", null, item);
-});
+
+
+
+class GrandChildClass extends React.Component {
+    constructor (props) {
+        super(props)
+    }
+    render() {
+        return e("span", null, "childClass:" + this.props.age + ":" + this.props.c);
+    }
+}
+
+class ChildClass extends React.Component {
+    constructor (props) {
+        super(props)
+    }
+    render() {
+        throw new Error("error!!!")
+        // return e(MyContext.Consumer, null, function (contextValue) {
+        //     return e('span', { style: { color: 'red' } }, contextValue)
+        // });
+        return e("span", null, "ChildClass");
+    }
+}
+
+// ChildClass.contextType = MyContext;
+
+class MyErrorBoundary extends React.Component {
+    constructor (props) {
+        super(props)
+        this.state = {
+            hasError: false
+        }
+    }
+    componentDidCatch(error, errorInfo) {
+        console.log("componentDidCatch", error, errorInfo)
+    }
+
+    static getDerivedStateFromError(error) {
+        console.log("getDerivedStateFromError", error)
+        return {
+            hasError: true
+        }
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return e("h1", null, "something is wrong!");
+
+        }
+        return this.props.children;
+    }
+
+
+}
 
 class MyClassTest extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            myText: [1, 2].map(item => {
-                return e("span", { key: item }, item);
-            }),
-            age: 18
+            age: 12,
+            contextValue: 10
         }
     }
-    handleClick() {
+    componentDidMount() {
+        console.log("componentDidMount")
+    }
+    componentDidUpdate() {
+        console.log("componentDidUpdate")
+    }
+    componentWillUnmount() {
+        console.log("componentWillUnmount")
+    }
+    handleClick = () => {
+        // let obj = this.state;
+        // obj.age = 20;
         this.setState({
-            age: this.state.age + 1,
-            name: 1
+            contextValue: 12
         })
-
-
-        this.setState({
-            age: this.state.age + 1,
-            name: 2
-        })
-
-
-        // this.setState((age) => {
-        //     return age + 1;
-        // })
-
     }
     render() {
-        return e(
-            'button',
-            { onClick: () => this.handleClick() },
-            this.state.age
-        );
+        return e(MyErrorBoundary, null, e(ChildClass));
+        // return e(ChildClass, { age: this.state.age }, 111);
+        // return React.createElement("span", null, true && true);
+        // return e(
+        //     'button',
+        //     { onClick: this.handleClick },
+        //     this.state.age
+        // );
     }
 }
 

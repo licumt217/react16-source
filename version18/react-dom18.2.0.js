@@ -93,7 +93,7 @@
         }
     }
 
-    {
+    {//fiber tags [fiber的类型标记]
         var FunctionComponent = 0;
         var ClassComponent = 1;
         var IndeterminateComponent = 2; // Before we know whether it is function or class
@@ -4580,111 +4580,96 @@
         key._reactInternals = value;
     }
 
-    {
+    {//flags中心
         // Don't change these two values. They're used by React Dev Tools.
         var NoFlags =
-            /*                      */
             0;
         var PerformedWork =
-            /*                */
-            1; // You can change the rest (and add more).
+            1;
+        // You can change the rest (and add more).
 
         var Placement =
-            /*                    */
             2;
         var Update =
-            /*                       */
             4;
         var ChildDeletion =
-            /*                */
             16;
         var ContentReset =
-            /*                 */
             32;
         var Callback =
-            /*                     */
             64;
         var DidCapture =
-            /*                   */
             128;
         var ForceClientRender =
-            /*            */
             256;
         var Ref =
-            /*                          */
             512;
         var Snapshot =
-            /*                     */
             1024;
         var Passive =
-            /*                      */
             2048;
         var Hydrating =
-            /*                    */
             4096;
         var Visibility =
-            /*                   */
             8192;
         var StoreConsistency =
-            /*             */
             16384;
+
         var LifecycleEffectMask = Passive | Update | Callback | Ref | Snapshot | StoreConsistency;
         // Union of all commit flags (flags with the lifetime of a particular commit)
 
         var HostEffectMask =
-            /*               */
-            32767; // These are not really side effects, but we still reuse this field.
+            32767;
+
+        // These are not really side effects, but we still reuse this field.
 
         var Incomplete =
-            /*                   */
             32768;
         var ShouldCapture =
-            /*                */
-            65536;
+            65536;//Error Boundary
         var ForceUpdateForLegacySuspense =
-            /* */
             131072;
         var Forked =
-            /*                       */
-            1048576; // Static tags describe aspects of a fiber that are not specific to a render,
+            1048576;
+
+        // Static tags describe aspects of a fiber that are not specific to a render,
         // e.g. a fiber uses a passive effect (even if there are no updates on this particular render).
         // This enables us to defer more work in the unmount case,
         // since we can defer traversing the tree during layout to look for Passive effects,
         // and instead rely on the static flag as a signal that there may be cleanup work.
 
         var RefStatic =
-            /*                    */
             2097152;
         var LayoutStatic =
-            /*                 */
             4194304;
         var PassiveStatic =
-            /*                */
-            8388608; // These flags allow us to traverse to fibers that have effects on mount
+            8388608;
+
+        // These flags allow us to traverse to fibers that have effects on mount
         // without traversing the entire tree after every commit for
         // double invoking
 
         var MountLayoutDev =
-            /*               */
             16777216;
         var MountPassiveDev =
-            /*              */
-            33554432; // Groups of flags that are used in the commit phase to skip over trees that
+            33554432;
+        // Groups of flags that are used in the commit phase to skip over trees that
         // don't contain effects, by checking subtreeFlags.
+
+
+        var BeforeMutationMask = // TODO: Remove Update flag from before mutation phase by re-landing Visibility flag logic (see #20043)
+            Update | Snapshot | (0);
+        var MutationMask = Placement | Update | ChildDeletion | ContentReset | Ref | Hydrating | Visibility;
+        var LayoutMask = Update | Callback | Ref | Visibility; // TODO: Split into PassiveMountMask and PassiveUnmountMask
+
+        var PassiveMask = Passive | ChildDeletion;
+
+        // Union of tags that don't get reset on clones.
+        // This allows certain concepts to persist without recalculating them,
+        // e.g. whether a subtree contains passive effects or portals.
+        var StaticMask = LayoutStatic | PassiveStatic | RefStatic;
+
     }
-
-    var BeforeMutationMask = // TODO: Remove Update flag from before mutation phase by re-landing Visibility
-        // flag logic (see #20043)
-        Update | Snapshot | (0);
-    var MutationMask = Placement | Update | ChildDeletion | ContentReset | Ref | Hydrating | Visibility;
-    var LayoutMask = Update | Callback | Ref | Visibility; // TODO: Split into PassiveMountMask and PassiveUnmountMask
-
-    var PassiveMask = Passive | ChildDeletion;
-
-    // Union of tags that don't get reset on clones.
-    // This allows certain concepts to persist without recalculating them,
-    // e.g. whether a subtree contains passive effects or portals.
-    var StaticMask = LayoutStatic | PassiveStatic | RefStatic;
 
     var ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner;
     /**
@@ -10334,7 +10319,7 @@
                 if (nextHtml != null) {
                     setInnerHTML(domElement, nextHtml);
                 }
-            } else if (propKey === CHILDREN) {//DONE
+            } else if (propKey === CHILDREN) {//DONE。只处理类型是字符串和数字类型的。别的不处理（比如布尔型true/false）
                 if (typeof nextProp === 'string') {
                     // Avoid setting initial textContent when the text is empty. In IE11 setting
                     // textContent on a <textarea> will cause the placeholder to not
@@ -13745,37 +13730,75 @@
             if (UNSAFE_componentWillMountUniqueNames.size > 0) {
                 var sortedNames = setToSortedString(UNSAFE_componentWillMountUniqueNames);
 
-                error('Using UNSAFE_componentWillMount in strict mode is not recommended and may indicate bugs in your code. ' + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n' + '* Move code with side effects to componentDidMount, and set initial state in the constructor.\n' + '\nPlease update the following components: %s', sortedNames);
+                error('Using UNSAFE_componentWillMount in strict mode is not recommended and may indicate bugs in your code. '
+                    + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n'
+                    + '* Move code with side effects to componentDidMount, and set initial state in the constructor.\n'
+                    + '\nPlease update the following components: %s', sortedNames);
             }
 
             if (UNSAFE_componentWillReceivePropsUniqueNames.size > 0) {
                 var _sortedNames = setToSortedString(UNSAFE_componentWillReceivePropsUniqueNames);
 
-                error('Using UNSAFE_componentWillReceiveProps in strict mode is not recommended ' + 'and may indicate bugs in your code. ' + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n' + '* Move data fetching code or side effects to componentDidUpdate.\n' + "* If you're updating state whenever props change, " + 'refactor your code to use memoization techniques or move it to ' + 'static getDerivedStateFromProps. Learn more at: https://reactjs.org/link/derived-state\n' + '\nPlease update the following components: %s', _sortedNames);
+                error('Using UNSAFE_componentWillReceiveProps in strict mode is not recommended '
+                    + 'and may indicate bugs in your code. '
+                    + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n'
+                    + '* Move data fetching code or side effects to componentDidUpdate.\n'
+                    + "* If you're updating state whenever props change, "
+                    + 'refactor your code to use memoization techniques or move it to '
+                    + 'static getDerivedStateFromProps. Learn more at: https://reactjs.org/link/derived-state\n'
+                    + '\nPlease update the following components: %s', _sortedNames);
             }
 
             if (UNSAFE_componentWillUpdateUniqueNames.size > 0) {
                 var _sortedNames2 = setToSortedString(UNSAFE_componentWillUpdateUniqueNames);
 
-                error('Using UNSAFE_componentWillUpdate in strict mode is not recommended ' + 'and may indicate bugs in your code. ' + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n' + '* Move data fetching code or side effects to componentDidUpdate.\n' + '\nPlease update the following components: %s', _sortedNames2);
+                error('Using UNSAFE_componentWillUpdate in strict mode is not recommended '
+                    + 'and may indicate bugs in your code. '
+                    + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n'
+                    + '* Move data fetching code or side effects to componentDidUpdate.\n'
+                    + '\nPlease update the following components: %s', _sortedNames2);
             }
 
             if (componentWillMountUniqueNames.size > 0) {
                 var _sortedNames3 = setToSortedString(componentWillMountUniqueNames);
 
-                warn('componentWillMount has been renamed, and is not recommended for use. ' + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n' + '* Move code with side effects to componentDidMount, and set initial state in the constructor.\n' + '* Rename componentWillMount to UNSAFE_componentWillMount to suppress ' + 'this warning in non-strict mode. In React 18.x, only the UNSAFE_ name will work. ' + 'To rename all deprecated lifecycles to their new names, you can run ' + '`npx react-codemod rename-unsafe-lifecycles` in your project source folder.\n' + '\nPlease update the following components: %s', _sortedNames3);
+                warn('componentWillMount has been renamed, and is not recommended for use. '
+                    + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n'
+                    + '* Move code with side effects to componentDidMount, and set initial state in the constructor.\n'
+                    + '* Rename componentWillMount to UNSAFE_componentWillMount to suppress '
+                    + 'this warning in non-strict mode. In React 18.x, only the UNSAFE_ name will work. '
+                    + 'To rename all deprecated lifecycles to their new names, you can run '
+                    + '`npx react-codemod rename-unsafe-lifecycles` in your project source folder.\n'
+                    + '\nPlease update the following components: %s', _sortedNames3);
             }
 
             if (componentWillReceivePropsUniqueNames.size > 0) {
                 var _sortedNames4 = setToSortedString(componentWillReceivePropsUniqueNames);
 
-                warn('componentWillReceiveProps has been renamed, and is not recommended for use. ' + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n' + '* Move data fetching code or side effects to componentDidUpdate.\n' + "* If you're updating state whenever props change, refactor your " + 'code to use memoization techniques or move it to ' + 'static getDerivedStateFromProps. Learn more at: https://reactjs.org/link/derived-state\n' + '* Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps to suppress ' + 'this warning in non-strict mode. In React 18.x, only the UNSAFE_ name will work. ' + 'To rename all deprecated lifecycles to their new names, you can run ' + '`npx react-codemod rename-unsafe-lifecycles` in your project source folder.\n' + '\nPlease update the following components: %s', _sortedNames4);
+                warn('componentWillReceiveProps has been renamed, and is not recommended for use. '
+                    + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n'
+                    + '* Move data fetching code or side effects to componentDidUpdate.\n'
+                    + "* If you're updating state whenever props change, refactor your "
+                    + 'code to use memoization techniques or move it to '
+                    + 'static getDerivedStateFromProps. Learn more at: https://reactjs.org/link/derived-state\n'
+                    + '* Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps to suppress '
+                    + 'this warning in non-strict mode. In React 18.x, only the UNSAFE_ name will work. '
+                    + 'To rename all deprecated lifecycles to their new names, you can run '
+                    + '`npx react-codemod rename-unsafe-lifecycles` in your project source folder.\n'
+                    + '\nPlease update the following components: %s', _sortedNames4);
             }
 
             if (componentWillUpdateUniqueNames.size > 0) {
                 var _sortedNames5 = setToSortedString(componentWillUpdateUniqueNames);
 
-                warn('componentWillUpdate has been renamed, and is not recommended for use. ' + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n' + '* Move data fetching code or side effects to componentDidUpdate.\n' + '* Rename componentWillUpdate to UNSAFE_componentWillUpdate to suppress ' + 'this warning in non-strict mode. In React 18.x, only the UNSAFE_ name will work. ' + 'To rename all deprecated lifecycles to their new names, you can run ' + '`npx react-codemod rename-unsafe-lifecycles` in your project source folder.\n' + '\nPlease update the following components: %s', _sortedNames5);
+                warn('componentWillUpdate has been renamed, and is not recommended for use. '
+                    + 'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n'
+                    + '* Move data fetching code or side effects to componentDidUpdate.\n'
+                    + '* Rename componentWillUpdate to UNSAFE_componentWillUpdate to suppress '
+                    + 'this warning in non-strict mode. In React 18.x, only the UNSAFE_ name will work. '
+                    + 'To rename all deprecated lifecycles to their new names, you can run '
+                    + '`npx react-codemod rename-unsafe-lifecycles` in your project source folder.\n'
+                    + '\nPlease update the following components: %s', _sortedNames5);
             }
         };
 
@@ -13787,7 +13810,8 @@
             var strictRoot = findStrictRoot(fiber);
 
             if (strictRoot === null) {
-                error('Expected to find a StrictMode component in a strict mode tree. ' + 'This error is likely caused by a bug in React. Please file an issue.');
+                error('Expected to find a StrictMode component in a strict mode tree. '
+                    + 'This error is likely caused by a bug in React. Please file an issue.');
 
                 return;
             } // Dedup strategy: Warn once per component.
@@ -13826,7 +13850,11 @@
                 try {
                     setCurrentFiber(firstFiber);
 
-                    error('Legacy context API has been detected within a strict-mode tree.' + '\n\nThe old API will be supported in all 16.x releases, but applications ' + 'using it should migrate to the new version.' + '\n\nPlease update the following components: %s' + '\n\nLearn more about this warning here: https://reactjs.org/link/legacy-context', sortedNames);
+                    error('Legacy context API has been detected within a strict-mode tree.'
+                        + '\n\nThe old API will be supported in all 16.x releases, but applications '
+                        + 'using it should migrate to the new version.'
+                        + '\n\nPlease update the following components: %s'
+                        + '\n\nLearn more about this warning here: https://reactjs.org/link/legacy-context', sortedNames);
                 } finally {
                     resetCurrentFiber();
                 }
@@ -13888,19 +13916,23 @@
             isDisallowedContextReadInDEV = false;
         }
     }
+    //DONE
     function enterDisallowedContextReadInDEV() {
         {
             isDisallowedContextReadInDEV = true;
         }
     }
+    //DONE
     function exitDisallowedContextReadInDEV() {
         {
             isDisallowedContextReadInDEV = false;
         }
     }
+    //DONE
     function pushProvider(providerFiber, context, nextValue) {
         {
             push(valueCursor, context._currentValue, providerFiber);
+            //每次渲染Provider时，更新context的value为最新的值
             context._currentValue = nextValue;
 
             {
@@ -13923,6 +13955,7 @@
             }
         }
     }
+    //DONE
     function scheduleContextWorkOnParentPath(parent, renderLanes, propagationRoot) {
         // Update the child lanes of all the ancestors, including the alternates.
         var node = parent;
@@ -13949,16 +13982,23 @@
 
         {
             if (node !== propagationRoot) {
-                error('Expected to find the propagation root when scheduling context work. ' + 'This error is likely caused by a bug in React. Please file an issue.');
+                error('Expected to find the propagation root when scheduling context work. '
+                    + 'This error is likely caused by a bug in React. Please file an issue.');
             }
         }
     }
+    //DONE
     function propagateContextChange(workInProgress, context, renderLanes) {
         {
             propagateContextChange_eager(workInProgress, context, renderLanes);
         }
     }
 
+    /**
+     * DONE
+     * Provider的value改变时，更新对应的consumers
+     * @param workInProgress Provider
+     */
     function propagateContextChange_eager(workInProgress, context, renderLanes) {
 
         var fiber = workInProgress.child;
@@ -13971,7 +14011,7 @@
         while (fiber !== null) {
             var nextFiber = void 0; // Visit this fiber.
 
-            var list = fiber.dependencies;
+            var list = fiber.dependencies;//consumer依赖的Provider列表
 
             if (list !== null) {
                 nextFiber = fiber.child;
@@ -14016,20 +14056,19 @@
                             alternate.lanes = mergeLanes(alternate.lanes, renderLanes);
                         }
 
-                        scheduleContextWorkOnParentPath(fiber.return, renderLanes, workInProgress); // Mark the updated lanes on the list, too.
-
-                        list.lanes = mergeLanes(list.lanes, renderLanes); // Since we already found a match, we can stop traversing the
-                        // dependency list.
-
+                        scheduleContextWorkOnParentPath(fiber.return, renderLanes, workInProgress);
+                        // Mark the updated lanes on the list, too.【更新Consumer的属性dependencies对应的lanes】
+                        list.lanes = mergeLanes(list.lanes, renderLanes);
+                        // Since we already found a match, we can stop traversing the dependency list.
                         break;
                     }
 
                     dependency = dependency.next;
                 }
-            } else if (fiber.tag === ContextProvider) {
+            } else if (fiber.tag === ContextProvider) {//10
                 // Don't scan deeper if this is a matching provider
                 nextFiber = fiber.type === workInProgress.type ? null : fiber.child;
-            } else if (fiber.tag === DehydratedFragment) {
+            } else if (fiber.tag === DehydratedFragment) {//18
                 // If a dehydrated suspense boundary is in this subtree, we don't know
                 // if it will have any context consumers in it. The best we can do is
                 // mark it as having updates.
@@ -14044,12 +14083,12 @@
 
                 if (_alternate !== null) {
                     _alternate.lanes = mergeLanes(_alternate.lanes, renderLanes);
-                } // This is intentionally passing this fiber as the parent
+                }
+
+                // This is intentionally passing this fiber as the parent
                 // because we want to schedule this fiber as having work
                 // on its children. We'll use the childLanes on
                 // this fiber to indicate that a context has changed.
-
-
                 scheduleContextWorkOnParentPath(parentSuspense, renderLanes, workInProgress);
                 nextFiber = fiber.sibling;
             } else {
@@ -14088,7 +14127,9 @@
             fiber = nextFiber;
         }
     }
-    //DONE
+    /**
+     * 执行beginWork对应的Consumer时，如果consumer对应的context不为空，则设置didReceiveUpdate = true，且重置dependencies对应的firstContext
+     */
     function prepareToReadContext(workInProgress, renderLanes) {
         currentlyRenderingFiber = workInProgress;
         lastContextDependency = null;
@@ -14103,19 +14144,21 @@
                     if (includesSomeLane(dependencies.lanes, renderLanes)) {
                         // Context list has a pending update. Mark that this fiber performed work.
                         markWorkInProgressReceivedUpdate();
-                    } // Reset the work-in-progress list
-
-
+                    }
+                    // Reset the work-in-progress list
                     dependencies.firstContext = null;
                 }
             }
         }
     }
-    //DONE
+    /**
+     * DONE
+     * 读取context中的值，且将context对象放到consumer的dependencies中去
+     */
     function readContext(context) {
         {
             // This warning would fire if you read context inside a Hook like useMemo.
-            // Unlike the class check below, it's not enforced in production for perf.
+            // Unlike the class check below, it's not enforced in production for perf（穿孔的、穿破的）.
             if (isDisallowedContextReadInDEV) {
                 error('Context can only be read while React is rendering. '
                     + 'In classes, you can read it in the render method or getDerivedStateFromProps. '
@@ -14140,9 +14183,8 @@
                         + 'In function components, you can read it directly in the function body, but not '
                         + 'inside Hooks like useReducer() or useMemo().');
                 }
+
                 // This is the first dependency for this component. Create a new list.
-
-
                 lastContextDependency = contextItem;
                 currentlyRenderingFiber.dependencies = {
                     lanes: NoLanes,
@@ -14502,7 +14544,8 @@
         // Captured updates are updates that are thrown by a child during the render
         // phase. They should be discarded if the render is aborted. Therefore,
         // we should only put them on the work-in-progress queue, not the current one.
-        var queue = workInProgress.updateQueue; // Check if the work-in-progress queue is a clone.
+        var queue = workInProgress.updateQueue;
+        // Check if the work-in-progress queue is a clone.
 
         var current = workInProgress.alternate;
 
@@ -14566,9 +14609,9 @@
                 workInProgress.updateQueue = queue;
                 return;
             }
-        } // Append the update to the end of the list.
+        }
 
-
+        // Append the update to the end of the list.
         var lastBaseUpdate = queue.lastBaseUpdate;
 
         if (lastBaseUpdate === null) {
@@ -14630,6 +14673,7 @@
                     var _payload = update.payload;
                     var partialState;
 
+                    //setState的参数是函数
                     if (typeof _payload === 'function') {
                         // Updater function
                         {
@@ -14651,7 +14695,7 @@
 
                             exitDisallowedContextReadInDEV();
                         }
-                    } else {
+                    } else {//setState的参数是普通的对象
                         // Partial state object
                         partialState = _payload;
                     }
@@ -14798,8 +14842,7 @@
                     newState = getStateFromUpdate(workInProgress, queue, update, newState, props, instance);
                     var callback = update.callback;
 
-                    if (callback !== null && // If the update was already committed, we should not queue its
-                        // callback again.
+                    if (callback !== null && // If the update was already committed, we should not queue its callback again.
                         update.lane !== NoLane) {
                         workInProgress.flags |= Callback;
                         var effects = queue.effects;
@@ -14876,6 +14919,7 @@
         }
     }
 
+    //DONE
     function callCallback(callback, context) {
         if (typeof callback !== 'function') {
             throw new Error('Invalid argument passed as callback. Expected a function. Instead ' + ("received: " + callback));
@@ -14892,6 +14936,14 @@
     function checkHasForceUpdateAfterProcessing() {
         return hasForceUpdate;
     }
+    /**
+     * DONE
+     * setState的callback在此处执行
+     * Commit the effects
+     * @param {*} finishedWork 
+     * @param {*} finishedQueue 
+     * @param {*} instance 
+     */
     function commitUpdateQueue(finishedWork, finishedQueue, instance) {
         // Commit the effects
         var effects = finishedQueue.effects;
@@ -15042,7 +15094,8 @@
                 update.callback = callback;
             }
 
-            //将shared放入并发队列concurrentQueues;sharedQueue.interleaved = update;更新当前fiber的lanes；向上回溯更新所有父级的childLanes；最后返回root
+            //将shared放入并发队列concurrentQueues;sharedQueue.interleaved = update;
+            //更新当前fiber的lanes；向上回溯更新所有父级的childLanes；最后返回root
             var root = enqueueUpdate(fiber, update, lane);
 
             if (root !== null) {
@@ -15261,6 +15314,7 @@
                     + 'and will be ignored. Instead, declare it as a static method.', name);
             }
 
+            //getDerivedStateFromError 必须是类的静态方法
             if (typeof instance.getDerivedStateFromError === 'function') {
                 error('%s: getDerivedStateFromError() is defined as an instance method '
                     + 'and will be ignored. Instead, declare it as a static method.', name);
@@ -15306,12 +15360,13 @@
         var contextType = ctor.contextType;
 
         {
-            //contextType
+            //contextType Context 需要消费context的类组件
             if ('contextType' in ctor) {
                 var isValid = // Allow null for conditional declaration
                     contextType === null || contextType !== undefined && contextType.$$typeof === REACT_CONTEXT_TYPE
                     && contextType._context === undefined; // Not a <Context.Consumer>
 
+                //contextType值设置不正确的几种情况
                 if (!isValid && !didWarnAboutInvalidateContextType.has(ctor)) {
                     didWarnAboutInvalidateContextType.add(ctor);
                     var addendum = '';
@@ -15340,7 +15395,7 @@
         }
 
         if (typeof contextType === 'object' && contextType !== null) {
-            context = readContext(contextType);
+            context = readContext(contextType);//value
         } else {
             unmaskedContext = getUnmaskedContext(workInProgress, ctor, true);
             var contextTypes = ctor.contextTypes;
@@ -15559,6 +15614,7 @@
             instance.state = workInProgress.memoizedState;
         }
 
+        //类组件有生命周期函数：componentDidMount。标记flags |=Update和 |= LayoutStatic
         if (typeof instance.componentDidMount === 'function') {
             var fiberFlags = Update;
 
@@ -15574,6 +15630,7 @@
         }
     }
 
+    //DONE
     function resumeMountClassInstance(workInProgress, ctor, newProps, renderLanes) {
         var instance = workInProgress.stateNode;
         var oldProps = workInProgress.memoizedProps;
@@ -15797,6 +15854,7 @@
                 }
             }
 
+            //生命周期函数：componentDidUpdate。标记flags|Update
             if (typeof instance.componentDidUpdate === 'function') {
                 workInProgress.flags |= Update;
             }
@@ -16992,6 +17050,7 @@
         // itself. They will be added to the side-effect list as we pass through the children and the parent.
         //协调中心
         function reconcileChildFibers(returnFiber, currentFirstChild, newChild, lanes) {
+
             // This function is not recursive(递归的; 循环的;)
             // If the top level item is an array, we treat it as a set of children,
             // not as a fragment. Nested arrays on the other hand will be treated as
@@ -20070,7 +20129,12 @@
         return update;
     }
 
-    //DONE
+    /**
+     * DONE
+     * 给ErrorBoundary类新建更新对象并返回
+     * update.payload=getDerivedStateFromError(error$1);
+     * update.callback=componentDidCatch(error,errorInfo)
+     */
     function createClassErrorUpdate(fiber, errorInfo, lane) {
         var update = createUpdate(NoTimestamp, lane);
         update.tag = CaptureUpdate;
@@ -20124,7 +20188,8 @@
                         // If no state update is scheduled then the boundary will swallow the error.
                         if (!includesSomeLane(fiber.lanes, SyncLane)) {
                             error('%s: Error boundaries should implement getDerivedStateFromError(). '
-                                + 'In that method, return a state update to display an error message or fallback UI.', getComponentNameFromFiber(fiber) || 'Unknown');
+                                + 'In that method, return a state update to display an error message or fallback UI.',
+                                getComponentNameFromFiber(fiber) || 'Unknown');
                         }
                     }
                 }
@@ -20362,6 +20427,7 @@
             }
         }
 
+        //错误对象是thenable对象
         if (value !== null && typeof value === 'object' && typeof value.then === 'function') {
             // This is a wakeable. The component suspended.
             var wakeable = value;
@@ -20446,7 +20512,9 @@
         }
 
         value = createCapturedValueAtFiber(value, sourceFiber);
-        renderDidError(value); // We didn't find a boundary that could handle this type of exception. Start
+        //workInProgressRootExitStatus = RootErrored;
+        renderDidError(value);
+        // We didn't find a boundary that could handle this type of exception. Start
         // over and traverse parent path again, this time treating the exception
         // as an error.
 
@@ -20471,13 +20539,16 @@
                     var ctor = workInProgress.type;
                     var instance = workInProgress.stateNode;
 
-                    if ((workInProgress.flags & DidCapture) === NoFlags && (typeof ctor.getDerivedStateFromError === 'function' || instance !== null && typeof instance.componentDidCatch === 'function' && !isAlreadyFailedLegacyErrorBoundary(instance))) {
+                    if ((workInProgress.flags & DidCapture) === NoFlags
+                        && (typeof ctor.getDerivedStateFromError === 'function'
+                            || instance !== null && typeof instance.componentDidCatch === 'function' && !isAlreadyFailedLegacyErrorBoundary(instance))) {
                         workInProgress.flags |= ShouldCapture;
 
                         var _lane = pickArbitraryLane(rootRenderLanes);
 
-                        workInProgress.lanes = mergeLanes(workInProgress.lanes, _lane); // Schedule the error boundary to re-render using updated state
+                        workInProgress.lanes = mergeLanes(workInProgress.lanes, _lane);
 
+                        // Schedule the error boundary to re-render using updated state
                         var _update = createClassErrorUpdate(workInProgress, errorInfo, _lane);
 
                         enqueueCapturedUpdate(workInProgress, _update);
@@ -21060,7 +21131,7 @@
             constructClassInstance(workInProgress, Component, nextProps);
             mountClassInstance(workInProgress, Component, nextProps, renderLanes);
             shouldUpdate = true;
-        } else if (current === null) {
+        } else if (current === null) {//初始化时的第二次（错误导致错误边界触发）
             // In a resume, we'll already have an instance we can reuse.
             shouldUpdate = resumeMountClassInstance(workInProgress, Component, nextProps, renderLanes);
         } else {//DONE setState
@@ -22556,6 +22627,7 @@
 
     var hasWarnedAboutUsingNoValuePropOnContextProvider = false;
 
+    //DONE beginWork
     function updateContextProvider(current, workInProgress, renderLanes) {
         var providerType = workInProgress.type;
         var context = providerType._context;
@@ -22581,6 +22653,7 @@
 
         pushProvider(workInProgress, context, newValue);
 
+        // hehe
         {
             if (oldProps !== null) {
                 var oldValue = oldProps.value;
@@ -22591,13 +22664,14 @@
                         return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
                     }
                 } else {
-                    // The context value changed. Search for matching consumers and schedule
-                    // them to update.
+                    // The context value changed. Search for matching consumers and schedule them to update.
+                    //provider的value改变，调度相关consumers更新
                     propagateContextChange(workInProgress, context, renderLanes);
                 }
             }
         }
 
+        // haha
         var newChildren = newProps.children;
         reconcileChildren(current, workInProgress, newChildren, renderLanes);
         return workInProgress.child;
@@ -22605,8 +22679,10 @@
 
     var hasWarnedAboutUsingContextAsConsumer = false;
 
+    //DONE Consumer beginWork
     function updateContextConsumer(current, workInProgress, renderLanes) {
-        var context = workInProgress.type; // The logic below for Context differs depending on PROD or DEV mode. In
+        var context = workInProgress.type;//Consumer
+        // The logic below for Context differs depending on PROD or DEV mode. In
         // DEV mode, we create a separate object for Context.Consumer that acts
         // like a proxy to Context. This proxy object adds unnecessary code in PROD
         // so we use the old behaviour (Context.Consumer references Context) to
@@ -22628,14 +22704,14 @@
                     }
                 }
             } else {
-                context = context._context;
+                context = context._context;//Context
             }
         }
 
         var newProps = workInProgress.pendingProps;
         var render = newProps.children;
 
-        {
+        {//Consumer只能有一个单一的子节点，且必须是函数
             if (typeof render !== 'function') {
                 error('A context consumer was rendered with multiple children, or a child '
                     + "that isn't a function. A context consumer expects a single child "
@@ -22644,7 +22720,9 @@
             }
         }
 
+        //执行beginWork对应的Consumer时，如果consumer对应的context不为空，则设置didReceiveUpdate = true，且重置dependencies对应的firstContext
         prepareToReadContext(workInProgress, renderLanes);
+        //读取context中的值，且将context对象放到consumer的dependencies中去
         var newValue = readContext(context);
 
         {
@@ -22662,9 +22740,9 @@
 
         {
             markComponentRenderStopped();
-        } // React DevTools reads this flag.
+        }
 
-
+        // React DevTools reads this flag.
         workInProgress.flags |= PerformedWork;
         reconcileChildren(current, workInProgress, newChildren, renderLanes);
         return workInProgress.child;
@@ -22986,7 +23064,7 @@
         return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
     }
 
-    //DONE
+    //DONE beginWork中心
     function beginWork(current, workInProgress, renderLanes) {
         {
             if (workInProgress._debugNeedsRemount && current !== null) {
@@ -23115,10 +23193,10 @@
             case Profiler:
                 return updateProfiler(current, workInProgress, renderLanes);
 
-            case ContextProvider:
+            case ContextProvider://DONE 10
                 return updateContextProvider(current, workInProgress, renderLanes);
 
-            case ContextConsumer:
+            case ContextConsumer://DONE 9
                 return updateContextConsumer(current, workInProgress, renderLanes);
 
             case MemoComponent:
@@ -23549,7 +23627,7 @@
     }
 
     /**
-     * DONE
+     * DONE completeWork中心
      */
     function completeWork(current, workInProgress, renderLanes) {
         var newProps = workInProgress.pendingProps;
@@ -23560,15 +23638,15 @@
         popTreeContext(workInProgress);
 
         switch (workInProgress.tag) {
-            case IndeterminateComponent:
+            case IndeterminateComponent://
             case LazyComponent:
             case SimpleMemoComponent:
-            case FunctionComponent:
+            case FunctionComponent://
             case ForwardRef:
             case Fragment:
             case Mode:
             case Profiler:
-            case ContextConsumer:
+            case ContextConsumer://
             case MemoComponent:
                 bubbleProperties(workInProgress);
                 return null;
@@ -23857,7 +23935,7 @@
                 bubbleProperties(workInProgress);
                 return null;
 
-            case ContextProvider:
+            case ContextProvider://DONE
                 // Pop provider fiber
                 var context = workInProgress.type._context;
                 popProvider(context, workInProgress);
@@ -24132,6 +24210,7 @@
             + 'React. Please file an issue.');
     }
 
+    //DONE unwind 解开、松开
     function unwindWork(current, workInProgress, renderLanes) {
         // Note: This intentionally doesn't check if we're hydrating because comparing
         // to the current tree provider fiber is just as fast and less error-prone.
@@ -24829,13 +24908,14 @@
                         break;
                     }
 
-                case ClassComponent:
+                case ClassComponent://DONE
                     {
                         var instance = finishedWork.stateNode;
 
+
                         if (finishedWork.flags & Update) {
                             if (!offscreenSubtreeWasHidden) {
-                                if (current === null) {
+                                if (current === null) {//类组件初始化
                                     // We could update instance props and state here,
                                     // but instead we rely on them being set during last render.
                                     // TODO: revisit this when we implement resuming.
@@ -24866,10 +24946,10 @@
                                         } finally {
                                             recordLayoutEffectDuration(finishedWork);
                                         }
-                                    } else {
+                                    } else {//调用生命周期函数
                                         instance.componentDidMount();
                                     }
-                                } else {
+                                } else {//类组件更新
                                     var prevProps = finishedWork.elementType === finishedWork.type ? current.memoizedProps : resolveDefaultProps(finishedWork.type, current.memoizedProps);
                                     var prevState = current.memoizedState;
                                     // We could update instance props and state here,
@@ -24937,8 +25017,6 @@
                             // We could update instance props and state here,
                             // but instead we rely on them being set during last render.
                             // TODO: revisit this when we implement resuming.
-
-
                             commitUpdateQueue(finishedWork, updateQueue, instance);
                         }
 
@@ -24972,7 +25050,7 @@
                         break;
                     }
 
-                case HostComponent:
+                case HostComponent://DONE
                     {
                         var _instance2 = finishedWork.stateNode;
                         // Renderers may schedule work to be done after host components are mounted
@@ -26342,7 +26420,7 @@
         while (nextEffect !== null) {
             var fiber = nextEffect;
 
-            if ((fiber.flags & LayoutMask) !== NoFlags) {
+            if ((fiber.flags & LayoutMask) !== NoFlags) {//var LayoutMask = Update | Callback | Ref | Visibility; 
                 var current = fiber.alternate;
                 setCurrentFiber(fiber);
 
@@ -27456,6 +27534,7 @@
         var shouldTimeSlice = !includesBlockingLane(root, lanes) && !includesExpiredLane(root, lanes) && (!didTimeout);
         var exitStatus = shouldTimeSlice ? renderRootConcurrent(root, lanes) : renderRootSync(root, lanes);
         if (exitStatus !== RootInProgress) {
+            debugger
             if (exitStatus === RootErrored) {
                 // If something threw an error, try rendering one more time. We'll
                 // render synchronously to block concurrent data mutations, and we'll
@@ -27465,10 +27544,12 @@
 
                 if (errorRetryLanes !== NoLanes) {
                     lanes = errorRetryLanes;
+                    //遇到错误后，重新执行一遍 renderRootSync
                     exitStatus = recoverFromConcurrentError(root, errorRetryLanes);
                 }
             }
 
+            debugger
             if (exitStatus === RootFatalErrored) {
                 var fatalError = workInProgressRootFatalError;
                 prepareFreshStack(root, NoLanes);
@@ -27612,7 +27693,7 @@
             // statement, but eslint doesn't know about invariant, so it complains
             // if I do. eslint-disable-next-line no-fallthrough
 
-            case RootErrored:
+            case RootErrored://错误触发了错误边界
                 {
                     // We should have already attempted to retry this tree. If we reached
                     // this point, it errored again. Commit it.
@@ -28002,11 +28083,13 @@
         {
             ReactStrictModeWarnings.discardPendingWarnings();
         }
-
         return rootWorkInProgress;
     }
 
-    //DONE
+    /**
+     * DONE
+     * 捕获组件内部的错误
+     */
     function handleError(root, thrownValue) {
         do {
             var erroredWork = workInProgress;
@@ -28068,9 +28151,9 @@
                 }
 
                 continue;
-            } // Return to the normal work loop.
+            }
 
-
+            // Return to the normal work loop.
             return;
         } while (true);
     }
@@ -28137,7 +28220,9 @@
         } else {
             workInProgressRootConcurrentErrors.push(error);
         }
-    } // Called during render to determine if anything has suspended.
+    }
+
+    // Called during render to determine if anything has suspended.
     // Returns false if we're not sure.
 
     function renderHasNotSuspendedYet() {
@@ -28189,8 +28274,8 @@
             try {
                 workLoopSync();
                 break;
-            } catch (thrownValue) {
-                handleError(root, thrownValue);
+            } catch (thrownValue) {//此处catch捕获内部错误，有错误边界的话，用错误边界来捕获
+                handleError(root, thrownValue);//catch结束后继续正常的 workLoopSync()
             }
         } while (true);
 
@@ -28351,8 +28436,8 @@
             // need an additional field on the work in progress.
             var current = completedWork.alternate;
             var returnFiber = completedWork.return;
-            // Check if the work completed or if something threw.
 
+            // Check if the work completed or if something threw.
             if ((completedWork.flags & Incomplete) === NoFlags) {
                 setCurrentFiber(completedWork);
                 var next = void 0;
@@ -28374,13 +28459,13 @@
                     workInProgress = next;
                     return;
                 }
-            } else {
+            } else {//错误边界
                 // This fiber did not complete because something threw. Pop values off
                 // the stack without entering the complete phase. If this is a boundary,
                 // capture values if possible.
                 var _next = unwindWork(current, completedWork);
                 // Because this fiber did not complete, don't reset its lanes.
-                if (_next !== null) {
+                if (_next !== null) {//completedWork是错误边界
                     // If completing this work spawned new work, do that next. We'll come back here again.
                     // Since we're restarting, remove anything that is not a host effect from the effect tag.
                     _next.flags &= HostEffectMask;
@@ -28878,6 +28963,7 @@
         return true;
     }
 
+    //DONE
     function isAlreadyFailedLegacyErrorBoundary(instance) {
         return legacyErrorBoundariesThatAlreadyFailed !== null && legacyErrorBoundariesThatAlreadyFailed.has(instance);
     }
@@ -29907,7 +29993,7 @@
         this.memoizedProps = null;
         this.updateQueue = null;
         this.memoizedState = null;
-        this.dependencies = null;
+        this.dependencies = null;//consumer对应的依赖provider列表
         this.mode = mode; // Effects
 
         this.flags = NoFlags;
@@ -30207,8 +30293,8 @@
      */
     function createFiberFromTypeAndProps(type, key, pendingProps, owner, mode, lanes) {
         var fiberTag = IndeterminateComponent;
-        // The resolved type is set if we know what the final type will be. I.e. it's not lazy.
 
+        // The resolved type is set if we know what the final type will be. I.e. it's not lazy.
         var resolvedType = type;
 
         if (typeof type === 'function') {
@@ -30277,7 +30363,7 @@
                     {
                         if (typeof type === 'object' && type !== null) {
                             switch (type.$$typeof) {
-                                case REACT_PROVIDER_TYPE:
+                                case REACT_PROVIDER_TYPE://Provider
                                     fiberTag = ContextProvider;
                                     break getTag;
 
