@@ -352,6 +352,8 @@
         this.updater.enqueueSetState(this, partialState, callback, 'setState');
     };
     /**
+     * DONE
+     * 比如直接通过this.state.age=10操作，不会触发更新，则需要手动触发。
      * Forces an update. This should only be invoked when it is known with
      * certainty that we are **not** in a DOM transaction.
      *
@@ -365,8 +367,6 @@
      * @final
      * @protected
      */
-
-
     Component.prototype.forceUpdate = function (callback) {
         this.updater.enqueueForceUpdate(this, callback, 'forceUpdate');
     };
@@ -421,7 +421,7 @@
     assign(pureComponentPrototype, Component.prototype);
     pureComponentPrototype.isPureReactComponent = true;
 
-    // an immutable object with a single mutable value
+    //DONE an immutable object with a single mutable value
     function createRef() {
         var refObject = {
             current: null
@@ -440,7 +440,7 @@
         return isArrayImpl(a);
     }
 
-    /*
+    /* DONE
      * The `'' + value` pattern (used in in perf-sensitive code) throws for Symbol
      * and Temporal.* types. See https://github.com/facebook/react/pull/22064.
      *
@@ -615,6 +615,7 @@
 
     var hasOwnProperty = Object.prototype.hasOwnProperty;
 
+    //DONE
     var RESERVED_PROPS = {
         key: true,
         ref: true,
@@ -679,7 +680,7 @@
         });
     }
 
-    //DONE
+    //DONE 给props定义ref，设置get，如果通过props获取ref，则进行提示：ref不在props中放置。
     function defineRefPropWarningGetter(props, displayName) {
         var warnAboutAccessingRef = function () {
             {
@@ -811,7 +812,7 @@
         var source = null;
 
         if (config != null) {
-            if (hasValidRef(config)) {
+            if (hasValidRef(config)) {//ref
                 ref = config.ref;
 
                 {
@@ -819,7 +820,7 @@
                 }
             }
 
-            if (hasValidKey(config)) {
+            if (hasValidKey(config)) {//key
                 {
                     checkKeyStringCoercion(config.key);
                 }
@@ -832,6 +833,7 @@
             // Remaining properties are added to a new props object
 
             for (propName in config) {
+                //key和ref不放到props中去
                 if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
                     props[propName] = config[propName];
                 }
@@ -871,7 +873,7 @@
             }
         }
 
-        {
+        {//校验相关
             if (key || ref) {
                 var displayName = typeof type === 'function' ? type.displayName || type.name || 'Unknown' : type;
 
@@ -880,6 +882,7 @@
                 }
 
                 if (ref) {
+                    //给props定义ref，设置get，如果通过props获取ref，则进行提示：ref不在props中放置。
                     defineRefPropWarningGetter(props, displayName);
                 }
             }
@@ -969,14 +972,15 @@
 
         return ReactElement(element.type, key, ref, self, source, owner, props);
     }
+
     /**
+     * DONE
      * Verifies the object is a ReactElement.
      * See https://reactjs.org/docs/react-api.html#isvalidelement
      * @param {?object} object
      * @return {boolean} True if `object` is a ReactElement.
      * @final
      */
-
     function isValidElement(object) {
         return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
     }
@@ -1507,6 +1511,7 @@
         return lazyType;
     }
 
+    //DONE
     function forwardRef(render) {
         {
             if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
@@ -1543,7 +1548,8 @@
                     return ownName;
                 },
                 set: function (name) {
-                    ownName = name; // The inner component shouldn't inherit this display name in most cases,
+                    ownName = name;
+                    // The inner component shouldn't inherit this display name in most cases,
                     // because the component may be used elsewhere.
                     // But it's nice for anonymous functions to inherit the name,
                     // so that our component-stack generation logic will display their frames.
@@ -3517,9 +3523,9 @@
     exports.createContext = createContext;//-
     exports.createElement = createElement$1;//-
     exports.createFactory = createFactory;
-    exports.createRef = createRef;
-    exports.forwardRef = forwardRef;
-    exports.isValidElement = isValidElement;
+    exports.createRef = createRef;//-
+    exports.forwardRef = forwardRef;//-
+    exports.isValidElement = isValidElement;//-
     exports.lazy = lazy;
     exports.memo = memo;
     exports.startTransition = startTransition;

@@ -4603,7 +4603,7 @@
         var ForceClientRender =
             256;
         var Ref =
-            512;
+            512;//
         var Snapshot =
             1024;
         var Passive =
@@ -4639,7 +4639,7 @@
         // and instead rely on the static flag as a signal that there may be cleanup work.
 
         var RefStatic =
-            2097152;
+            2097152;//
         var LayoutStatic =
             4194304;
         var PassiveStatic =
@@ -4941,12 +4941,15 @@
 
         return alternate;
     }
+    //DONE
     function findCurrentHostFiber(parent) {
         var currentParent = findCurrentFiberUsingSlowPath(parent);
         return currentParent !== null ? findCurrentHostFiberImpl(currentParent) : null;
     }
 
+    //DONE
     function findCurrentHostFiberImpl(node) {
+
         // Next we'll drill down this component to find the first HostComponent/Text.
         if (node.tag === HostComponent || node.tag === HostText) {
             return node;
@@ -5157,7 +5160,7 @@
         }
     }
     /**
-     * 
+     * DONE 卸载组件
      * @param {*} fiber 
      */
     function onCommitUnmount(fiber) {
@@ -5415,6 +5418,7 @@
             }
         }
     }
+    //DONE
     function markForceUpdateScheduled(fiber, lane) {
         {
             if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markForceUpdateScheduled === 'function') {
@@ -11578,6 +11582,7 @@
             };
         }
     }
+    //DONE
     function getPublicInstance(instance) {
         return instance;
     }
@@ -12246,6 +12251,7 @@
     function markContainerAsRoot(hostRoot, node) {
         node[internalContainerInstanceKey] = hostRoot;
     }
+    //DONE
     function unmarkContainerAsRoot(node) {
         node[internalContainerInstanceKey] = null;
     }
@@ -12349,7 +12355,6 @@
      * Given a DOM node, return the ReactDOMComponent or ReactDOMTextComponent
      * instance, or null if the node was not rendered by this React.
      */
-
     function getInstanceFromNode(node) {
         var inst = node[internalInstanceKey] || node[internalContainerInstanceKey];
 
@@ -14709,7 +14714,7 @@
                     return assign({}, prevState, partialState);
                 }
 
-            case ForceUpdate:
+            case ForceUpdate://DONE。没有payload，直接返回之前的state
                 {
                     hasForceUpdate = true;
                     return prevState;
@@ -15134,7 +15139,7 @@
                 markStateUpdateScheduled(fiber, lane);
             }
         },
-        enqueueForceUpdate: function (inst, callback) {
+        enqueueForceUpdate: function (inst, callback) {//DONE
             var fiber = get(inst);
             var eventTime = requestEventTime();
             var lane = requestUpdateLane(fiber);
@@ -15264,6 +15269,7 @@
                     + 'Please extend React.Component if shouldComponentUpdate is used.', getComponentNameFromType(ctor) || 'A pure component');
             }
 
+            //
             if (typeof instance.componentDidUnmount === 'function') {
                 error('%s has a method called '
                     + 'componentDidUnmount(). But there is no such lifecycle method. '
@@ -15692,7 +15698,7 @@
             newState = workInProgress.memoizedState;
         }
 
-        var shouldUpdate = checkHasForceUpdateAfterProcessing()
+        var shouldUpdate = checkHasForceUpdateAfterProcessing()//forceUpdate
             || checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext);
 
         if (shouldUpdate) {
@@ -15832,7 +15838,7 @@
             newState = workInProgress.memoizedState;
         }
 
-        var shouldUpdate = checkHasForceUpdateAfterProcessing()
+        var shouldUpdate = checkHasForceUpdateAfterProcessing()//forceUpdate
             || checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext) ||
             // TODO: In some cases, we'll end up checking if context has changed twice,
             // both before and after `shouldComponentUpdate` has been called. Not ideal,
@@ -20627,6 +20633,7 @@
         workInProgress.child = reconcileChildFibers(workInProgress, null, nextChildren, renderLanes);
     }
 
+    //DONE beginWork
     function updateForwardRef(current, workInProgress, Component, nextProps, renderLanes) {
         // TODO: current can be non-null here even if the component
         // hasn't yet mounted. This happens after the first render suspends.
@@ -20645,8 +20652,9 @@
         }
 
         var render = Component.render;
-        var ref = workInProgress.ref; // The rest is a fork of updateFunctionComponent
+        var ref = workInProgress.ref;
 
+        // The rest is a fork of updateFunctionComponent
         var nextChildren;
         var hasId;
         prepareToReadContext(workInProgress, renderLanes);
@@ -20658,6 +20666,7 @@
         {
             ReactCurrentOwner$1.current = workInProgress;
             setIsRendering(true);
+            //执行render函数，获取nextChildren
             nextChildren = renderWithHooks(current, workInProgress, render, nextProps, ref, renderLanes);
             hasId = checkDidRenderIdHook();
 
@@ -20686,9 +20695,9 @@
 
         if (getIsHydrating() && hasId) {
             pushMaterializedTreeId(workInProgress);
-        } // React DevTools reads this flag.
+        }
 
-
+        // React DevTools reads this flag.
         workInProgress.flags |= PerformedWork;
         reconcileChildren(current, workInProgress, nextChildren, renderLanes);
         return workInProgress.child;
@@ -20977,7 +20986,12 @@
         return workInProgress.child;
     }
 
-    //DONE
+    /**
+     * DONE
+     * 给workInProgress 的flags标记Ref|RefStatic
+     * @param {*} current 
+     * @param {*} workInProgress 
+     */
     function markRef(current, workInProgress) {
         var ref = workInProgress.ref;
 
@@ -21383,6 +21397,7 @@
             workInProgress.flags |= ContentReset;
         }
 
+        //给workInProgress 的flags标记Ref|RefStatic
         markRef(current, workInProgress);
         reconcileChildren(current, workInProgress, nextChildren, renderLanes);
         return workInProgress.child;
@@ -23174,7 +23189,7 @@
             case HostPortal:
                 return updatePortalComponent(current, workInProgress, renderLanes);
 
-            case ForwardRef:
+            case ForwardRef://11 DONE
                 {
                     var type = workInProgress.type;
                     var _unresolvedProps2 = workInProgress.pendingProps;
@@ -24434,19 +24449,19 @@
         } else {
             instance.componentWillUnmount();
         }
-    }; // Capture errors so they don't interrupt mounting.
+    };
 
-
+    // Capture errors so they don't interrupt mounting.
     function safelyCallCommitHookLayoutEffectListMount(current, nearestMountedAncestor) {
         try {
             commitHookEffectListMount(Layout, current);
         } catch (error) {
             captureCommitPhaseError(current, nearestMountedAncestor, error);
         }
-    } // Capture errors so they don't interrupt unmounting.
+    }
 
-
-    //DONE
+    // Capture errors so they don't interrupt unmounting.
+    //DONE commit阶段
     function safelyCallComponentWillUnmount(current, nearestMountedAncestor, instance) {
         try {
             callComponentWillUnmountWithTimer(current, instance);
@@ -24473,7 +24488,10 @@
         }
     }
 
-    //DONE
+    /**
+     * DONE
+     * 卸载fiber，将对应的ref的current置空
+     */
     function safelyDetachRef(current, nearestMountedAncestor) {
         var ref = current.ref;
 
@@ -25158,6 +25176,7 @@
 
         if (!offscreenSubtreeWasHidden) {
             {
+                //将有ref属性的组件的ref属性，绑定实际的dom
                 if (finishedWork.flags & Ref) {
                     commitAttachRef(finishedWork);
                 }
@@ -25279,6 +25298,10 @@
         }
     }
 
+    /**
+     * DONE
+     * 将有ref属性的组件的ref属性，绑定实际的dom
+     */
     function commitAttachRef(finishedWork) {
         var ref = finishedWork.ref;
 
@@ -25293,8 +25316,9 @@
 
                 default:
                     instanceToUse = instance;
-            } // Moved outside to ensure DCE works with this flag
+            }
 
+            // Moved outside to ensure DCE works with this flag
             if (typeof ref === 'function') {
                 var retVal;
 
@@ -25315,7 +25339,7 @@
                             + 'A callback ref should not return a function.', getComponentNameFromFiber(finishedWork));
                     }
                 }
-            } else {
+            } else {//实例绑定到ref的current属性
                 {
                     if (!ref.hasOwnProperty('current')) {
                         error('Unexpected ref object provided for %s. '
@@ -25659,6 +25683,7 @@
         detachFiberMutation(deletedFiber);
     }
 
+    //DONE
     function recursivelyTraverseDeletionEffects(finishedRoot, nearestMountedAncestor, parent) {
         // TODO: Use a static flag to skip trees that don't have unmount effects
         var child = parent.child;
@@ -25670,7 +25695,8 @@
     }
 
     /**
-     * 
+     * DONE 
+     * commit阶段，真正的卸载标记为delete的组件
      * @param {*} finishedRoot 
      * @param {*} nearestMountedAncestor 
      * @param {*} deletedFiber 
@@ -25683,16 +25709,14 @@
         // that don't modify the stack.
 
         switch (deletedFiber.tag) {
-            case HostComponent:
+            case HostComponent://DONE
                 {
                     if (!offscreenSubtreeWasHidden) {
                         safelyDetachRef(deletedFiber, nearestMountedAncestor);
-                    } // Intentional fallthrough to next branch
+                    } // Intentional fallthrough to next branch。没有break，触发fallthrough，继续执行HostText的逻辑
 
                 }
-            // eslint-disable-next-line-no-fallthrough
-
-            case HostText:
+            case HostText://DONE
                 {
                     // We only need to remove the nearest host child. Set the host parent
                     // to `null` on the stack to indicate that nested children don't
@@ -25753,8 +25777,8 @@
                     return;
                 }
 
-            case FunctionComponent:
-            case ForwardRef:
+            case FunctionComponent://
+            case ForwardRef://
             case MemoComponent:
             case SimpleMemoComponent:
                 {
@@ -25805,12 +25829,14 @@
                     return;
                 }
 
-            case ClassComponent:
+            case ClassComponent://DONE
                 {
                     if (!offscreenSubtreeWasHidden) {
+                        //卸载fiber，将对应的ref的current置空
                         safelyDetachRef(deletedFiber, nearestMountedAncestor);
                         var instance = deletedFiber.stateNode;
 
+                        //调用生命周期 componentWillUnmount
                         if (typeof instance.componentWillUnmount === 'function') {
                             safelyCallComponentWillUnmount(deletedFiber, nearestMountedAncestor, instance);
                         }
@@ -26051,6 +26077,7 @@
             case HostComponent://DONE
                 {
 
+                    //给当前fiber处理删除effects commitDeletionEffects。循环子节点，执行 commitMutationEffectsOnFiber
                     recursivelyTraverseMutationEffects(root, finishedWork);
                     //新增的操作【commitPlacement】
                     commitReconciliationEffects(finishedWork);
@@ -27534,7 +27561,6 @@
         var shouldTimeSlice = !includesBlockingLane(root, lanes) && !includesExpiredLane(root, lanes) && (!didTimeout);
         var exitStatus = shouldTimeSlice ? renderRootConcurrent(root, lanes) : renderRootSync(root, lanes);
         if (exitStatus !== RootInProgress) {
-            debugger
             if (exitStatus === RootErrored) {
                 // If something threw an error, try rendering one more time. We'll
                 // render synchronously to block concurrent data mutations, and we'll
@@ -27549,7 +27575,6 @@
                 }
             }
 
-            debugger
             if (exitStatus === RootFatalErrored) {
                 var fatalError = workInProgressRootFatalError;
                 prepareFreshStack(root, NoLanes);
@@ -27982,14 +28007,14 @@
                 resetRenderTimer();
             }
         }
-    } // Overload the definition to the two valid signatures.
-    // Warning, this opts-out of checking the function body.
+    }
 
-    // eslint-disable-next-line no-redeclare
+    //DONE
     function flushSync(fn) {
         // In legacy mode, we flush pending passive effects at the beginning of the
         // next event, not at the end of the previous one.
-        if (rootWithPendingPassiveEffects !== null && rootWithPendingPassiveEffects.tag === LegacyRoot && (executionContext & (RenderContext | CommitContext)) === NoContext) {
+        if (rootWithPendingPassiveEffects !== null && rootWithPendingPassiveEffects.tag === LegacyRoot
+            && (executionContext & (RenderContext | CommitContext)) === NoContext) {
             flushPassiveEffects();
         }
 
@@ -28010,7 +28035,8 @@
         } finally {
             setCurrentUpdatePriority(previousPriority);
             ReactCurrentBatchConfig$3.transition = prevTransition;
-            executionContext = prevExecutionContext; // Flush the immediate callbacks that were scheduled during this batch.
+            executionContext = prevExecutionContext;
+            // Flush the immediate callbacks that were scheduled during this batch.
             // Note that this will happen even if batchedUpdates is higher up
             // the stack.
 
@@ -28019,6 +28045,7 @@
             }
         }
     }
+    //DONE
     function isAlreadyRendering() {
         // Used by the renderer to print a warning if certain APIs are called from
         // the wrong context.
@@ -30739,6 +30766,7 @@
         return parentContext;
     }
 
+    //DONE
     function findHostInstanceWithWarning(component, methodName) {
         {
             var fiber = get(component);
@@ -31376,6 +31404,7 @@
         updateContainer(children, root, null, null);
     };
 
+    //DONE 卸载根节点
     ReactDOMHydrationRoot.prototype.unmount = ReactDOMRoot.prototype.unmount = function () {
         {
             if (typeof arguments[0] === 'function') {
@@ -31533,7 +31562,7 @@
 
     // TODO: Remove this function which also includes comment nodes.
     // We only use it in places that are currently more relaxed.
-
+    //DONE
     function isValidContainerLegacy(node) {
         return !!(node && (node.nodeType === ELEMENT_NODE || node.nodeType === DOCUMENT_NODE || node.nodeType === DOCUMENT_FRAGMENT_NODE || node.nodeType === COMMENT_NODE && node.nodeValue === ' react-mount-point-unstable '));
     }
@@ -31566,6 +31595,7 @@
     var topLevelUpdateWarnings;
 
     {
+        //DONE
         topLevelUpdateWarnings = function (container) {
             if (container._reactRootContainer && container.nodeType !== COMMENT_NODE) {
                 var hostInstance = findHostInstanceWithNoPortals(container._reactRootContainer.current);
@@ -31600,6 +31630,7 @@
         };
     }
 
+    //DONE
     function getReactRootElementInContainer(container) {
         if (!container) {
             return null;
@@ -31686,6 +31717,7 @@
         }
     }
 
+    //DONE legacy
     function legacyRenderSubtreeIntoContainer(parentComponent, children, container, forceHydrate, callback) {
         {
             topLevelUpdateWarnings(container);
@@ -31717,6 +31749,7 @@
         return getPublicRootInstance(root);
     }
 
+    //DONE
     function findDOMNode(componentOrElement) {
         {
             var owner = ReactCurrentOwner$3.current;
@@ -31772,6 +31805,7 @@
 
         return legacyRenderSubtreeIntoContainer(null, element, container, true, callback);
     }
+    //DONE react18已不支持
     function render(element, container, callback) {
         {
             error('ReactDOM.render is no longer supported in React 18. Use createRoot '
@@ -31813,6 +31847,7 @@
 
         return legacyRenderSubtreeIntoContainer(parentComponent, element, containerNode, false, callback);
     }
+    //DONE
     function unmountComponentAtNode(container) {
         if (!isValidContainerLegacy(container)) {
             throw new Error('unmountComponentAtNode(...): Target container is not a DOM element.');
@@ -31835,16 +31870,16 @@
                 if (renderedByDifferentReact) {
                     error("unmountComponentAtNode(): The node you're attempting to unmount " + 'was rendered by another copy of React.');
                 }
-            } // Unmount should not be batched.
-
-
+            }
+            // Unmount should not be batched.
             flushSync(function () {
                 legacyRenderSubtreeIntoContainer(null, null, container, false, function () {
                     // $FlowFixMe This should probably use `delete container._reactRootContainer`
                     container._reactRootContainer = null;
                     unmarkContainerAsRoot(container);
                 });
-            }); // If you call unmountComponentAtNode twice in quick succession, you'll
+            });
+            // If you call unmountComponentAtNode twice in quick succession, you'll
             // get `true` twice. That's probably fine?
 
             return true;
@@ -31859,7 +31894,9 @@
 
                 if (hasNonRootReactChild) {
                     error("unmountComponentAtNode(): The node you're attempting to unmount "
-                        + 'was rendered by React and is not a top-level container. %s', isContainerReactRoot ? 'You may have accidentally passed in a React root node instead ' + 'of its container.' : 'Instead, have the parent component update its state and ' + 'rerender in order to remove this component.');
+                        + 'was rendered by React and is not a top-level container. %s', isContainerReactRoot ?
+                        'You may have accidentally passed in a React root node instead ' + 'of its container.'
+                        : 'Instead, have the parent component update its state and ' + 'rerender in order to remove this component.');
                 }
             }
 
@@ -31974,12 +32011,12 @@
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = Internals;
     exports.createPortal = createPortal$1;
     exports.createRoot = createRoot$1;//-
-    exports.findDOMNode = findDOMNode;
+    exports.findDOMNode = findDOMNode;//-
     exports.flushSync = flushSync$1;
     exports.hydrate = hydrate;
     exports.hydrateRoot = hydrateRoot$1;
-    exports.render = render;
-    exports.unmountComponentAtNode = unmountComponentAtNode;
+    exports.render = render;//- 18版本已不再支持
+    exports.unmountComponentAtNode = unmountComponentAtNode;//- 卸载通过ReactDOM.render()渲染的节点
     exports.unstable_batchedUpdates = batchedUpdates$1;
     exports.unstable_renderSubtreeIntoContainer = renderSubtreeIntoContainer;
     exports.version = ReactVersion;//-

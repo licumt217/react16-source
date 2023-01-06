@@ -5,9 +5,10 @@ const useState = React.useState;
 const useTransition = React.useTransition;
 const Fragment = React.Fragment;
 
+const dom = document.getElementById("app")
+const dom2 = document.getElementById("app2")
 
-
-const root = ReactDOM.createRoot(document.getElementById("app"))
+const root = ReactDOM.createRoot(dom)
 
 const arr = []
 const arr2 = []
@@ -65,8 +66,11 @@ class ChildClass extends React.Component {
     constructor (props) {
         super(props)
     }
+    componentWillUnmount() {
+        debugger
+    }
     render() {
-        throw new Error("error!!!")
+        // throw new Error("error!!!")
         // return e(MyContext.Consumer, null, function (contextValue) {
         //     return e('span', { style: { color: 'red' } }, contextValue)
         // });
@@ -105,16 +109,25 @@ class MyErrorBoundary extends React.Component {
 
 }
 
+const ForwardButton = React.forwardRef((props, ref) => {
+    return e('input', { ref: ref, placeholder: '我是input，会自动聚焦！' })
+})
+
+
 class MyClassTest extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            age: 12,
+            age: 10,
             contextValue: 10
         }
+        this.ref = React.createRef();
     }
     componentDidMount() {
+        // this.forceUpdate();
         console.log("componentDidMount")
+        var dom = ReactDOM.findDOMNode(this)
+        // this.ref.current.focus();
     }
     componentDidUpdate() {
         console.log("componentDidUpdate")
@@ -125,19 +138,22 @@ class MyClassTest extends React.Component {
     handleClick = () => {
         // let obj = this.state;
         // obj.age = 20;
-        this.setState({
-            contextValue: 12
-        })
+        this.state.age = 12;
+        this.forceUpdate();
+        // this.setState({
+        //     age: 12
+        // })
     }
     render() {
-        return e(MyErrorBoundary, null, e(ChildClass));
+        // return e(ForwardButton, { ref: this.ref });
+        // return e(MyErrorBoundary, null, e(ChildClass));
         // return e(ChildClass, { age: this.state.age }, 111);
         // return React.createElement("span", null, true && true);
-        // return e(
-        //     'button',
-        //     { onClick: this.handleClick },
-        //     this.state.age
-        // );
+        return e(
+            'div',
+            { onClick: this.handleClick },
+            this.state.age
+        );
     }
 }
 
@@ -150,6 +166,11 @@ class MyClassTest extends React.Component {
 // root.render(e(Test));
 // root.render([1, 2, 3]);
 root.render(e(MyClassTest));
+
+// ReactDOM.render(e('span', null, 'span'), dom2)
+// setTimeout(() => {
+//     ReactDOM.unmountComponentAtNode(dom2);
+// }, 5000)
 
 
 
