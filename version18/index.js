@@ -113,8 +113,11 @@ const ForwardButton = React.forwardRef((props, ref) => {
     return e('input', { ref: ref, placeholder: '我是input，会自动聚焦！' })
 })
 
-function MyButton() {
-    return e("button", null, "button")
+function MyButton(props) {
+    return e("button", null, props.age)
+}
+MyButton.defaultProps = {
+    age: 18
 }
 
 class Modal extends React.Component {
@@ -177,7 +180,7 @@ class MyClassTest extends React.PureComponent {
         //     { onClick: this.handleClick },
         //     this.state.age
         // );
-        return e("div", { onClick: this.handleClick }, 111, e(Modal))
+        return e(MyButton, { age: 20 })
     }
 }
 

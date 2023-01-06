@@ -864,7 +864,7 @@
             props.children = childArray;
         }
 
-        // Resolve default props
+        // Resolve default props 默认props，defalutProps属性直接设置到类或函数上
         if (type && type.defaultProps) {
             var defaultProps = type.defaultProps;
 
@@ -901,7 +901,6 @@
      * Clone and return a new ReactElement using element as the starting point.
      * See https://reactjs.org/docs/react-api.html#cloneelement
      */
-
     function cloneElement(element, config, children) {
         if (element === null || element === undefined) {
             throw new Error("React.cloneElement(...): The argument must be a React element, but you passed " + element + ".");
