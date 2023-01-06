@@ -403,14 +403,16 @@
     function ComponentDummy() {}
 
     ComponentDummy.prototype = Component.prototype;
-    /**
-     * Convenience component with default shallow equality check for sCU.
-     */
 
+    /**
+    * DONE
+    * Convenience component with default shallow equality check for sCU.
+    */
     function PureComponent(props, context, updater) {
         this.props = props;
-        this.context = context; // If a component has string refs, we will assign a different object later.
+        this.context = context;
 
+        // If a component has string refs, we will assign a different object later.
         this.refs = emptyObject;
         this.updater = updater || ReactNoopUpdateQueue;
     }
@@ -3515,7 +3517,7 @@
     exports.Component = Component;//-
     exports.Fragment = REACT_FRAGMENT_TYPE;//-
     exports.Profiler = REACT_PROFILER_TYPE;
-    exports.PureComponent = PureComponent;
+    exports.PureComponent = PureComponent;//
     exports.StrictMode = REACT_STRICT_MODE_TYPE;
     exports.Suspense = REACT_SUSPENSE_TYPE;
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals$1;

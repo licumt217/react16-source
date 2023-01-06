@@ -113,8 +113,27 @@ const ForwardButton = React.forwardRef((props, ref) => {
     return e('input', { ref: ref, placeholder: '我是input，会自动聚焦！' })
 })
 
+function MyButton() {
+    return e("button", null, "button")
+}
 
-class MyClassTest extends React.Component {
+class Modal extends React.Component {
+    constructor (props) {
+        super(props);
+        this.el = document.createElement("div")
+    }
+
+    componentDidMount() {
+        dom2.appendChild(this.el)
+    }
+
+    render() {
+        return ReactDOM.createPortal(e(MyButton), this.el)
+    }
+}
+
+
+class MyClassTest extends React.PureComponent {
     constructor (props) {
         super(props)
         this.state = {
@@ -135,25 +154,30 @@ class MyClassTest extends React.Component {
     componentWillUnmount() {
         console.log("componentWillUnmount")
     }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return false;
+    // }
     handleClick = () => {
         // let obj = this.state;
         // obj.age = 20;
-        this.state.age = 12;
-        this.forceUpdate();
+        // this.state.age = 12;
+        // this.forceUpdate();
         // this.setState({
-        //     age: 12
+        //     age: 10
         // })
+        console.log(1)
     }
     render() {
         // return e(ForwardButton, { ref: this.ref });
         // return e(MyErrorBoundary, null, e(ChildClass));
         // return e(ChildClass, { age: this.state.age }, 111);
         // return React.createElement("span", null, true && true);
-        return e(
-            'div',
-            { onClick: this.handleClick },
-            this.state.age
-        );
+        // return e(
+        //     'div',
+        //     { onClick: this.handleClick },
+        //     this.state.age
+        // );
+        return e("div", { onClick: this.handleClick }, 111, e(Modal))
     }
 }
 

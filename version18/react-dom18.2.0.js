@@ -213,6 +213,7 @@
     var hasOwnProperty = Object.prototype.hasOwnProperty;
 
     /*
+     * DONE
      * The `'' + value` pattern (used in in perf-sensitive code) throws for Symbol
      * and Temporal.* types. See https://github.com/facebook/react/pull/22064.
      *
@@ -283,6 +284,7 @@
             }
         }
     }
+    //DONE
     function checkKeyStringCoercion(value) {
         {
             if (willCoercionThrow(value)) {
@@ -893,14 +895,14 @@
     // When adding new symbols to this file,
     // Please consider also adding to 'react-devtools-shared/src/backend/ReactSymbols'
     // The Symbol used to tag the ReactElement-like types.
-    var REACT_ELEMENT_TYPE = Symbol.for('react.element');
-    var REACT_PORTAL_TYPE = Symbol.for('react.portal');
-    var REACT_FRAGMENT_TYPE = Symbol.for('react.fragment');
+    var REACT_ELEMENT_TYPE = Symbol.for('react.element');//-
+    var REACT_PORTAL_TYPE = Symbol.for('react.portal');//-
+    var REACT_FRAGMENT_TYPE = Symbol.for('react.fragment');//-
     var REACT_STRICT_MODE_TYPE = Symbol.for('react.strict_mode');
     var REACT_PROFILER_TYPE = Symbol.for('react.profiler');
-    var REACT_PROVIDER_TYPE = Symbol.for('react.provider');
-    var REACT_CONTEXT_TYPE = Symbol.for('react.context');
-    var REACT_FORWARD_REF_TYPE = Symbol.for('react.forward_ref');
+    var REACT_PROVIDER_TYPE = Symbol.for('react.provider');//-
+    var REACT_CONTEXT_TYPE = Symbol.for('react.context');//-
+    var REACT_FORWARD_REF_TYPE = Symbol.for('react.forward_ref');//-
     var REACT_SUSPENSE_TYPE = Symbol.for('react.suspense');
     var REACT_SUSPENSE_LIST_TYPE = Symbol.for('react.suspense_list');
     var REACT_MEMO_TYPE = Symbol.for('react.memo');
@@ -4266,10 +4268,9 @@
         }
     }
 
-    //DONE
+    //DONE 事件互调在此处执行
     function invokeGuardedCallbackProd(name, func, context, a, b, c, d, e, f) {
         var funcArgs = Array.prototype.slice.call(arguments, 3);
-
         try {
             func.apply(context, funcArgs);
         } catch (error) {
@@ -4303,7 +4304,9 @@
         if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function' && typeof document !== 'undefined' && typeof document.createEvent === 'function') {
             var fakeNode = document.createElement('react');
 
+            //DONE 事件回调在此处执行
             invokeGuardedCallbackImpl = function invokeGuardedCallbackDev(name, func, context, a, b, c, d, e, f) {
+                debugger
                 // If document doesn't exist we know for sure we will crash in this method
                 // when we call document.createEvent(). However this can cause confusing
                 // errors: https://github.com/facebook/create-react-app/issues/3482
@@ -4319,22 +4322,26 @@
                 }
 
                 var evt = document.createEvent('Event');
-                var didCall = false; // Keeps track of whether the user-provided callback threw an error. We
+                var didCall = false;
+                // Keeps track of whether the user-provided callback threw an error. We
                 // set this to true at the beginning, then set it to false right after
                 // calling the function. If the function errors, `didError` will never be
                 // set to false. This strategy works even if the browser is flaky and
                 // fails to call our global error handler, because it doesn't rely on
                 // the error event at all.
 
-                var didError = true; // Keeps track of the value of window.event so that we can reset it
+                var didError = true;
+                // Keeps track of the value of window.event so that we can reset it
                 // during the callback to let user code access window.event in the
                 // browsers that support it.
 
-                var windowEvent = window.event; // Keeps track of the descriptor of window.event to restore it after event
+                var windowEvent = window.event;
+                // Keeps track of the descriptor of window.event to restore it after event
                 // dispatching: https://github.com/facebook/react/issues/13688
 
                 var windowEventDescriptor = Object.getOwnPropertyDescriptor(window, 'event');
 
+                //DONE
                 function restoreAfterDispatch() {
                     // We immediately remove the callback from event listeners so that
                     // nested `invokeGuardedCallback` calls do not clash. Otherwise, a
@@ -4349,19 +4356,21 @@
                     if (typeof window.event !== 'undefined' && window.hasOwnProperty('event')) {
                         window.event = windowEvent;
                     }
-                } // Create an event handler for our fake event. We will synchronously
+                }
+                // Create an event handler for our fake event. We will synchronously
                 // dispatch our fake event using `dispatchEvent`. Inside the handler, we
                 // call the user-provided callback.
 
 
                 var funcArgs = Array.prototype.slice.call(arguments, 3);
-
+                //事件回调此处执行
                 function callCallback() {
                     didCall = true;
                     restoreAfterDispatch();
                     func.apply(context, funcArgs);
                     didError = false;
-                } // Create a global error event handler. We use this to capture the value
+                }
+                // Create a global error event handler. We use this to capture the value
                 // that was thrown. It's possible that this error handler will fire more
                 // than once; for example, if non-React code also calls `dispatchEvent`
                 // and a handler for that event throws. We should be resilient to most of
@@ -6923,6 +6932,7 @@
     function dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
         if (domEventName === 'click') {
         }
+
         var blockedOn = findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent);
 
         if (blockedOn === null) {//DONE
@@ -8637,9 +8647,8 @@
 
         if (keysA.length !== keysB.length) {
             return false;
-        } // Test for A's keys different from B.
-
-
+        }
+        // Test for A's keys different from B.
         for (var i = 0; i < keysA.length; i++) {
             var currentKey = keysA[i];
 
@@ -9580,7 +9589,7 @@
         event.currentTarget = null;
     }
 
-    //DONE
+    //DONE 处理事件回调
     function processDispatchQueueItemsInOrder(event, dispatchListeners, inCapturePhase) {
         var previousInstance;
 
@@ -9615,10 +9624,14 @@
         }
     }
 
-    //DONE
+    /**
+     * DONE
+     * 处理事件回调
+     * @param {*} dispatchQueue 
+     * @param {*} eventSystemFlags 
+     */
     function processDispatchQueue(dispatchQueue, eventSystemFlags) {
         var inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
-
 
         for (var i = 0; i < dispatchQueue.length; i++) {
             var _dispatchQueue$i = dispatchQueue[i],
@@ -9779,6 +9792,8 @@
      */
     function dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, targetInst, targetContainer) {
         var ancestorInst = targetInst;
+        if (domEventName === 'click') {
+        }
 
 
         if ((eventSystemFlags & IS_EVENT_HANDLE_NON_MANAGED_NODE) === 0 && (eventSystemFlags & IS_NON_DELEGATED) === 0) {
@@ -9805,6 +9820,7 @@
 
                     var nodeTag = node.tag;
 
+                    //Portal事件触发了
                     if (nodeTag === HostRoot || nodeTag === HostPortal) {
                         var container = node.stateNode.containerInfo;
 
@@ -9887,6 +9903,7 @@
 
     /**
      * DONE
+     * 根据事件名称，从下到上查找所有的父级fiber，收集所有的事件监听回调
      * @param {*} targetFiber 
      * @param {*} reactName 
      * @param {*} nativeEventType 
@@ -9907,12 +9924,13 @@
         while (instance !== null) {
             var _instance2 = instance,
                 stateNode = _instance2.stateNode,
-                tag = _instance2.tag; // Handle listeners that are on HostComponents (i.e. <div>)
+                tag = _instance2.tag;
 
+            // Handle listeners that are on HostComponents (i.e. <div>)。只处理HostComponent
             if (tag === HostComponent && stateNode !== null) {
-                lastHostComponent = stateNode; // createEventHandle listeners
+                lastHostComponent = stateNode;
 
-
+                // createEventHandle listeners
                 if (reactEventName !== null) {
                     var listener = getListener(instance, reactEventName);
 
@@ -9921,11 +9939,10 @@
                     }
                 }
             }
+
             // If we are only accumulating events for the target, then we don't
             // continue to propagate through the React fiber tree to find other
             // listeners.
-
-
             if (accumulateTargetOnly) {
                 break;
             } // If we are processing the onBeforeBlur event, then we need to take
@@ -12215,9 +12232,11 @@
         {
             // TODO: This gets logged by onRecoverableError, too, so we should be
             // able to remove it.
-            error('An error occurred during hydration. The server HTML was replaced with client content in <%s>.', parentContainer.nodeName.toLowerCase());
+            error('An error occurred during hydration. The server HTML was replaced with client content in <%s>.',
+                parentContainer.nodeName.toLowerCase());
         }
     }
+    //DONE Port挂载的dom元素，监听事件
     function preparePortalMount(portalInstance) {
         listenToAllSupportedEvents(portalInstance);
     }
@@ -15195,6 +15214,7 @@
             return shouldUpdate;
         }
 
+        //类组件继承PureComponent时，自带浅比较
         if (ctor.prototype && ctor.prototype.isPureReactComponent) {
             return !shallowEqual(oldProps, newProps) || !shallowEqual(oldState, newState);
         }
@@ -15256,17 +15276,18 @@
                 }
             }
 
+            //
             if (typeof instance.componentShouldUpdate === 'function') {
                 error('%s has a method called '
-                    + 'componentShouldUpdate(). Did you mean shouldComponentUpdate()? '
+                    + 'componentShouldUpdate(). Did you mean shouldCom2ponentUpdate()? '
                     + 'The name is phrased as a question because the function is '
                     + 'expected to return a value.', name);
             }
-
+            //
             if (ctor.prototype && ctor.prototype.isPureReactComponent && typeof instance.shouldComponentUpdate !== 'undefined') {
-                error('%s has a method called shouldComponentUpdate(). '
-                    + 'shouldComponentUpdate should not be used when extending React.PureComponent. '
-                    + 'Please extend React.Component if shouldComponentUpdate is used.', getComponentNameFromType(ctor) || 'A pure component');
+                error('%s has a method called shouldComp2onentUpdate(). '
+                    + 'shouldCompone2ntUpdate should not be used when extending React.PureComponent. '
+                    + 'Please extend React.Component if shouldCo2mponentUpdate is used.', getComponentNameFromType(ctor) || 'A pure component');
             }
 
             //
@@ -15743,13 +15764,13 @@
                 }
 
                 workInProgress.flags |= _fiberFlags2;
-            } // If shouldComponentUpdate returned false, we should still update the
+            }
+            // If shouldComponentUpdate returned false, we should still update the
             // memoized state to indicate that this work can be reused.
-
-
             workInProgress.memoizedProps = newProps;
             workInProgress.memoizedState = newState;
-        } // Update the existing instance's state, props, and context pointers even
+        }
+        // Update the existing instance's state, props, and context pointers even
         // if shouldComponentUpdate returns false.
 
 
@@ -17023,6 +17044,7 @@
             }
         }
 
+        //DONE 
         function reconcileSinglePortal(returnFiber, currentFirstChild, portal, lanes) {
             var key = portal.key;
             var child = currentFirstChild;
@@ -17031,7 +17053,8 @@
                 // TODO: If key === null and child.key === null, then this only applies to
                 // the first item in the list.
                 if (child.key === key) {
-                    if (child.tag === HostPortal && child.stateNode.containerInfo === portal.containerInfo && child.stateNode.implementation === portal.implementation) {
+                    if (child.tag === HostPortal && child.stateNode.containerInfo === portal.containerInfo
+                        && child.stateNode.implementation === portal.implementation) {
                         deleteRemainingChildren(returnFiber, child.sibling);
                         var existing = useFiber(child, portal.children || []);
                         existing.return = returnFiber;
@@ -17077,7 +17100,7 @@
                     case REACT_ELEMENT_TYPE://DONE
                         return placeSingleChild(reconcileSingleElement(returnFiber, currentFirstChild, newChild, lanes));
 
-                    case REACT_PORTAL_TYPE:
+                    case REACT_PORTAL_TYPE://DONE
                         return placeSingleChild(reconcileSinglePortal(returnFiber, currentFirstChild, newChild, lanes));
 
                     case REACT_LAZY_TYPE:
@@ -21220,6 +21243,7 @@
 
             {
                 setIsRendering(true);
+
                 nextChildren = instance.render();
 
                 if (workInProgress.mode & StrictLegacyMode) {
@@ -22622,6 +22646,7 @@
         return workInProgress.child;
     }
 
+    //DONE beginWork
     function updatePortalComponent(current, workInProgress, renderLanes) {
         pushHostContainer(workInProgress, workInProgress.stateNode.containerInfo);
         var nextChildren = workInProgress.pendingProps;
@@ -23156,7 +23181,7 @@
                     return mountLazyComponent(current, workInProgress, elementType, renderLanes);
                 }
 
-            case FunctionComponent://0 
+            case FunctionComponent://0 DONE
                 {
                     var Component = workInProgress.type;
                     var unresolvedProps = workInProgress.pendingProps;
@@ -23186,7 +23211,7 @@
             case SuspenseComponent:
                 return updateSuspenseComponent(current, workInProgress, renderLanes);
 
-            case HostPortal:
+            case HostPortal://4 DONE
                 return updatePortalComponent(current, workInProgress, renderLanes);
 
             case ForwardRef://11 DONE
@@ -23939,11 +23964,12 @@
                     return null;
                 }
 
-            case HostPortal:
+            case HostPortal://DONE
                 popHostContainer(workInProgress);
                 updateHostContainer(current, workInProgress);
 
                 if (current === null) {
+                    //Port挂载的dom元素，监听事件
                     preparePortalMount(workInProgress.stateNode.containerInfo);
                 }
 
@@ -25540,7 +25566,7 @@
                 }
 
             case HostRoot://DONE
-            case HostPortal:
+            case HostPortal://DONE 
                 {
                     var _parent = parentFiber.stateNode.containerInfo;
 
@@ -26192,7 +26218,7 @@
                     return;
                 }
 
-            case HostPortal:
+            case HostPortal://DONE
                 {
                     recursivelyTraverseMutationEffects(root, finishedWork);
                     commitReconciliationEffects(finishedWork);
@@ -30544,6 +30570,7 @@
         fiber.stateNode = dehydratedNode;
         return fiber;
     }
+    //DONE
     function createFiberFromPortal(portal, mode, lanes) {
         var pendingProps = portal.children !== null ? portal.children : [];
         var fiber = createFiber(HostPortal, pendingProps, portal.key, mode);
@@ -30716,6 +30743,7 @@
 
     var ReactVersion = '18.2.0';
 
+    //DONE
     function createPortal(children, containerInfo, // TODO: figure out the API for cross-renderer implementation.
         implementation) {
         var key = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
@@ -31556,6 +31584,7 @@
 
         return new ReactDOMHydrationRoot(root);
     }
+    //DONE
     function isValidContainer(node) {
         return !!(node && (node.nodeType === ELEMENT_NODE || node.nodeType === DOCUMENT_NODE || node.nodeType === DOCUMENT_FRAGMENT_NODE || !disableCommentsAsDOMContainers));
     }
@@ -31923,14 +31952,15 @@
     setRestoreImplementation(restoreControlledState$3);
     setBatchingImplementation(batchedUpdates$1, discreteUpdates, flushSync);
 
+    //DONE
     function createPortal$1(children, container) {
         var key = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
         if (!isValidContainer(container)) {
             throw new Error('Target container is not a DOM element.');
-        } // TODO: pass ReactDOM portal implementation as third argument
+        }
+        // TODO: pass ReactDOM portal implementation as third argument
         // $FlowFixMe The Flow type is opaque but there's no way to actually create it.
-
 
         return createPortal(children, container, null, key);
     }
@@ -32009,7 +32039,7 @@
     }
 
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = Internals;
-    exports.createPortal = createPortal$1;
+    exports.createPortal = createPortal$1;//-
     exports.createRoot = createRoot$1;//-
     exports.findDOMNode = findDOMNode;//-
     exports.flushSync = flushSync$1;
