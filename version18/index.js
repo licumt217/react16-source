@@ -65,16 +65,26 @@ class GrandChildClass extends React.Component {
 class ChildClass extends React.Component {
     constructor (props) {
         super(props)
+        this.state = {
+            age: 20
+        }
     }
     componentWillUnmount() {
-        debugger
+    }
+    componentWillMount() {
+        console.log(1111)
+    }
+    handleClick = () => {
+        this.setState({
+            age: 10
+        })
     }
     render() {
         // throw new Error("error!!!")
         // return e(MyContext.Consumer, null, function (contextValue) {
         //     return e('span', { style: { color: 'red' } }, contextValue)
         // });
-        return e("span", null, "ChildClass");
+        return e("span", { onClick: this.handleClick }, this.state.age);
     }
 }
 
@@ -160,6 +170,7 @@ class MyClassTest extends React.PureComponent {
     // shouldComponentUpdate(nextProps, nextState) {
     //     return false;
     // }
+
     handleClick = () => {
         // let obj = this.state;
         // obj.age = 20;
@@ -170,6 +181,7 @@ class MyClassTest extends React.PureComponent {
         // })
         console.log(1)
     }
+
     render() {
         // return e(ForwardButton, { ref: this.ref });
         // return e(MyErrorBoundary, null, e(ChildClass));
@@ -180,10 +192,17 @@ class MyClassTest extends React.PureComponent {
         //     { onClick: this.handleClick },
         //     this.state.age
         // );
-        return e(MyButton, { age: 20 })
+        return e("input", { value: '111' })
     }
 }
-
+// let input = document.createElement("input");
+// input.oninput = function (e) {
+//     console.log(e.target.value)
+//     e.target.value = 555;
+//     return 555;
+// }
+// input.value = 555;
+// document.body.appendChild(input)
 // root.render(666);
 // root.render(e('span', { style: { color: 'red' } }, 'xxx'));
 // root.render(e('span', null, "xx"));
@@ -192,7 +211,8 @@ class MyClassTest extends React.PureComponent {
 // root.render(e(ABC));
 // root.render(e(Test));
 // root.render([1, 2, 3]);
-root.render(e(MyClassTest));
+// root.render(e(MyClassTest));
+root.render(e("input", { value: '111' }));
 
 // ReactDOM.render(e('span', null, 'span'), dom2)
 // setTimeout(() => {

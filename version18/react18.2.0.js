@@ -564,7 +564,7 @@
             case REACT_PROFILER_TYPE:
                 return 'Profiler';
 
-            case REACT_STRICT_MODE_TYPE:
+            case REACT_STRICT_MODE_TYPE://
                 return 'StrictMode';
 
             case REACT_SUSPENSE_TYPE:
@@ -1585,7 +1585,7 @@
         }
 
         if (type === REACT_FRAGMENT_TYPE
-            || type === REACT_PROFILER_TYPE
+            || type === REACT_PROFILER_TYPE//-
             || enableDebugTracing
             || type === REACT_STRICT_MODE_TYPE
             || type === REACT_SUSPENSE_TYPE
@@ -3515,9 +3515,9 @@
     exports.Children = Children;
     exports.Component = Component;//-
     exports.Fragment = REACT_FRAGMENT_TYPE;//-
-    exports.Profiler = REACT_PROFILER_TYPE;
+    exports.Profiler = REACT_PROFILER_TYPE;//-
     exports.PureComponent = PureComponent;//
-    exports.StrictMode = REACT_STRICT_MODE_TYPE;
+    exports.StrictMode = REACT_STRICT_MODE_TYPE;//- StrictMode
     exports.Suspense = REACT_SUSPENSE_TYPE;
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals$1;
     exports.cloneElement = cloneElement$1;

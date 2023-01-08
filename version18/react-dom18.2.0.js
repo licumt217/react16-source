@@ -109,7 +109,7 @@
         var ContextConsumer = 9;
         var ContextProvider = 10;
         var ForwardRef = 11;
-        var Profiler = 12;
+        var Profiler = 12;//
         var SuspenseComponent = 13;
         var MemoComponent = 14;
         var SimpleMemoComponent = 15;
@@ -1236,6 +1236,7 @@
         return !!(prototype && prototype.isReactComponent);
     }
 
+    //DONE
     function describeUnknownElementTypeFrameInDEV(type, source, ownerFn) {
 
         if (type == null) {
@@ -1388,7 +1389,7 @@
             case REACT_PROFILER_TYPE:
                 return 'Profiler';
 
-            case REACT_STRICT_MODE_TYPE:
+            case REACT_STRICT_MODE_TYPE://
                 return 'StrictMode';
 
             case REACT_SUSPENSE_TYPE:
@@ -1497,7 +1498,7 @@
                 return getComponentNameFromType(type);
 
             case Mode:
-                if (type === REACT_STRICT_MODE_TYPE) {
+                if (type === REACT_STRICT_MODE_TYPE) {//
                     // Don't be less specific than shared/getComponentNameFromType
                     return 'StrictMode';
                 }
@@ -1644,6 +1645,7 @@
         reset: true,
         submit: true
     };
+    //DONE
     function checkControlledValueProps(tagName, props) {
         {
             if (!(hasReadOnlyValue[props.type] || props.onChange || props.onInput || props.readOnly || props.disabled || props.value == null)) {
@@ -1674,6 +1676,7 @@
         return node._valueTracker;
     }
 
+    //DONE
     function detachTracker(node) {
         node._valueTracker = null;
     }
@@ -1695,6 +1698,7 @@
         return value;
     }
 
+    //DONE
     function trackValueOnNode(node) {
         var valueField = isCheckable(node) ? 'checked' : 'value';
         var descriptor = Object.getOwnPropertyDescriptor(node.constructor.prototype, valueField);
@@ -1709,7 +1713,8 @@
         // but it's better then a hard failure
         // (needed for certain tests that spyOn input values and Safari)
 
-        if (node.hasOwnProperty(valueField) || typeof descriptor === 'undefined' || typeof descriptor.get !== 'function' || typeof descriptor.set !== 'function') {
+        if (node.hasOwnProperty(valueField) || typeof descriptor === 'undefined' || typeof descriptor.get !== 'function'
+            || typeof descriptor.set !== 'function') {
             return;
         }
 
@@ -1728,7 +1733,8 @@
                 currentValue = '' + value;
                 set.call(this, value);
             }
-        }); // We could've passed this the first time
+        });
+        // We could've passed this the first time
         // but it triggers a bug in IE11 and Edge 14/15.
         // Calling defineProperty() again should be equivalent.
         // https://github.com/facebook/react/issues/11768
@@ -1755,6 +1761,7 @@
         return tracker;
     }
 
+    //DONE
     function track(node) {
         if (getTracker(node)) {
             return;
@@ -1808,6 +1815,7 @@
     var didWarnControlledToUncontrolled = false;
     var didWarnUncontrolledToControlled = false;
 
+    //DONE
     function isControlled(props) {
         var usesChecked = props.type === 'checkbox' || props.type === 'radio';
         return usesChecked ? props.checked != null : props.value != null;
@@ -1841,6 +1849,7 @@
         });
         return hostProps;
     }
+    //DONE
     function initWrapperState(element, props) {
         {
             checkControlledValueProps('input', props);
@@ -1956,8 +1965,10 @@
             }
         }
     }
+    //DONE
     function postMountWrapper(element, props, isHydrating) {
-        var node = element; // Do not assign value if it is already set. This prevents user text input
+        var node = element;
+        // Do not assign value if it is already set. This prevents user text input
         // from being lost during SSR hydration.
 
         if (props.hasOwnProperty('value') || props.hasOwnProperty('defaultValue')) {
@@ -1982,6 +1993,7 @@
                     //   1. The value React property when present
                     //   2. The defaultValue React property when present
                     //   3. An empty string
+
                     if (initialValue !== node.value) {
                         node.value = initialValue;
                     }
@@ -1994,7 +2006,8 @@
                 // assignment step above.
                 node.defaultValue = initialValue;
             }
-        } // Normally, we'd just do `node.checked = node.checked` upon initial mount, less this bug
+        }
+        // Normally, we'd just do `node.checked = node.checked` upon initial mount, less this bug
         // this is needed to work around a chrome bug where setting defaultChecked
         // will sometimes influence the value of checked (even after detachment).
         // Reference: https://bugs.chromium.org/p/chromium/issues/detail?id=608416
@@ -2022,12 +2035,14 @@
             node.name = name;
         }
     }
+    //DONE
     function restoreControlledState(element, props) {
         var node = element;
         updateWrapper(node, props);
         updateNamedCousins(node, props);
     }
 
+    //DONE
     function updateNamedCousins(rootNode, props) {
         var name = props.name;
 
@@ -2056,7 +2071,8 @@
 
                 if (otherNode === rootNode || otherNode.form !== rootNode.form) {
                     continue;
-                } // This will throw if radio buttons rendered by different copies of React
+                }
+                // This will throw if radio buttons rendered by different copies of React
                 // and the same name are rendered into the same form (same as #1939).
                 // That's probably okay; we don't support it just as we don't support
                 // mixing React radio buttons with non-React ones.
@@ -2066,11 +2082,13 @@
 
                 if (!otherProps) {
                     throw new Error('ReactDOMInput: Mixing React and non-React radio inputs with the ' + 'same `name` is not supported.');
-                } // We need update the tracked value on the named cousin since the value
+                }
+                // We need update the tracked value on the named cousin since the value
                 // was changed but the input saw no event or value set
 
 
-                updateValueIfChanged(otherNode); // If this is a controlled radio button group, forcing the input that
+                updateValueIfChanged(otherNode);
+                // If this is a controlled radio button group, forcing the input that
                 // was previously checked to update will cause it to be come re-checked
                 // as appropriate.
 
@@ -2175,10 +2193,10 @@
     }
 
     var valuePropNames = ['value', 'defaultValue'];
+
     /**
      * Validation function for `value` and `defaultValue`.
      */
-
     function checkSelectPropTypes(props) {
         {
             checkControlledValueProps('select', props);
@@ -4089,6 +4107,7 @@
         }
     }
 
+    //DONE
     function setRestoreImplementation(impl) {
         restoreImpl = impl;
     }
@@ -4306,7 +4325,6 @@
 
             //DONE 事件回调在此处执行
             invokeGuardedCallbackImpl = function invokeGuardedCallbackDev(name, func, context, a, b, c, d, e, f) {
-                debugger
                 // If document doesn't exist we know for sure we will crash in this method
                 // when we call document.createEvent(). However this can cause confusing
                 // errors: https://github.com/facebook/create-react-app/issues/3482
@@ -4596,7 +4614,6 @@
         var PerformedWork =
             1;
         // You can change the rest (and add more).
-
         var Placement =
             2;
         var Update =
@@ -6912,6 +6929,7 @@
      * @returns 
      */
     function dispatchEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
+
         if (!_enabled) {
             return;
         }
@@ -10552,7 +10570,7 @@
                 props = rawProps;
                 break;
 
-            case 'input':
+            case 'input'://DONE
                 initWrapperState(domElement, rawProps);
                 props = getHostProps(domElement, rawProps);
                 // We listen to this event in case to ensure emulated bubble
@@ -11207,6 +11225,7 @@
             error('Expected server HTML to contain a matching text node for "%s" in <%s>.', text, parentNode.nodeName.toLowerCase());
         }
     }
+    //DONE
     function restoreControlledState$3(domElement, tag, props) {
         switch (tag) {
             case 'input':
@@ -12430,6 +12449,7 @@
     var loggedTypeFailures = {};
     var ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
 
+    //DONE
     function setCurrentlyValidatingElement(element) {
         {
             if (element) {
@@ -13614,15 +13634,17 @@
         return ReactCurrentBatchConfig$1.transition;
     }
 
+    //DONE StrictMode 
     var ReactStrictModeWarnings = {
-        recordUnsafeLifecycleWarnings: function (fiber, instance) {},
-        flushPendingUnsafeLifecycleWarnings: function () {},
-        recordLegacyContextWarning: function (fiber, instance) {},
-        flushLegacyContextWarning: function () {},
-        discardPendingWarnings: function () {}
+        recordUnsafeLifecycleWarnings: function (fiber, instance) {},//mountClass阶段收集不安全的生命周期方法
+        flushPendingUnsafeLifecycleWarnings: function () {},//commit阶段刚开始就执行
+        recordLegacyContextWarning: function (fiber, instance) {},// mountIndeterminateComponent 和 mountClassInstance阶段收集
+        flushLegacyContextWarning: function () {},//commit阶段刚开始就执行
+        discardPendingWarnings: function () {} // prepareFreshStack（） 函数的最后执行
     };
 
     {
+        //DONE
         var findStrictRoot = function (fiber) {
             var maybeStrictRoot = null;
             var node = fiber;
@@ -13638,6 +13660,7 @@
             return maybeStrictRoot;
         };
 
+        //DONE
         var setToSortedString = function (set) {
             var array = [];
             set.forEach(function (value) {
@@ -13655,6 +13678,7 @@
 
         var didWarnAboutUnsafeLifecycles = new Set();
 
+        //DONE 手机不安全的生命周期方法
         ReactStrictModeWarnings.recordUnsafeLifecycleWarnings = function (fiber, instance) {
             // Dedupe strategy: Warn once per component.
             if (didWarnAboutUnsafeLifecycles.has(fiber.type)) {
@@ -13670,7 +13694,8 @@
                 pendingUNSAFE_ComponentWillMountWarnings.push(fiber);
             }
 
-            if (typeof instance.componentWillReceiveProps === 'function' && instance.componentWillReceiveProps.__suppressDeprecationWarning !== true) {
+            if (typeof instance.componentWillReceiveProps === 'function'
+                && instance.componentWillReceiveProps.__suppressDeprecationWarning !== true) {
                 pendingComponentWillReceivePropsWarnings.push(fiber);
             }
 
@@ -13687,6 +13712,7 @@
             }
         };
 
+        //DONE  commit阶段刚开始就执行
         ReactStrictModeWarnings.flushPendingUnsafeLifecycleWarnings = function () {
             // We do an initial pass to gather component names
             var componentWillMountUniqueNames = new Set();
@@ -13747,10 +13773,10 @@
                     didWarnAboutUnsafeLifecycles.add(fiber.type);
                 });
                 pendingUNSAFE_ComponentWillUpdateWarnings = [];
-            } // Finally, we flush all the warnings
+            }
+
+            // Finally, we flush all the warnings
             // UNSAFE_ ones before the deprecated ones, since they'll be 'louder'
-
-
             if (UNSAFE_componentWillMountUniqueNames.size > 0) {
                 var sortedNames = setToSortedString(UNSAFE_componentWillMountUniqueNames);
 
@@ -13830,6 +13856,7 @@
 
         var didWarnAboutLegacyContext = new Set();
 
+        //DONE
         ReactStrictModeWarnings.recordLegacyContextWarning = function (fiber, instance) {
             var strictRoot = findStrictRoot(fiber);
 
@@ -13838,16 +13865,17 @@
                     + 'This error is likely caused by a bug in React. Please file an issue.');
 
                 return;
-            } // Dedup strategy: Warn once per component.
+            }
 
-
+            // Dedup strategy: Warn once per component.
             if (didWarnAboutLegacyContext.has(fiber.type)) {
                 return;
             }
 
             var warningsForRoot = pendingLegacyContextWarning.get(strictRoot);
 
-            if (fiber.type.contextTypes != null || fiber.type.childContextTypes != null || instance !== null && typeof instance.getChildContext === 'function') {
+            if (fiber.type.contextTypes != null || fiber.type.childContextTypes != null
+                || instance !== null && typeof instance.getChildContext === 'function') {
                 if (warningsForRoot === undefined) {
                     warningsForRoot = [];
                     pendingLegacyContextWarning.set(strictRoot, warningsForRoot);
@@ -13857,6 +13885,7 @@
             }
         };
 
+        //DONE
         ReactStrictModeWarnings.flushLegacyContextWarning = function () {
             pendingLegacyContextWarning.forEach(function (fiberArray, strictRoot) {
                 if (fiberArray.length === 0) {
@@ -13885,6 +13914,7 @@
             });
         };
 
+        //DONE
         ReactStrictModeWarnings.discardPendingWarnings = function () {
             pendingComponentWillMountWarnings = [];
             pendingUNSAFE_ComponentWillMountWarnings = [];
@@ -15252,6 +15282,7 @@
                     + 'Use a static property to define defaultProps instead.', name);
             }
 
+            //
             if (instance.propTypes) {
                 error('propTypes was defined as an instance property on %s. Use a static '
                     + 'property to define propTypes instead.', name);
@@ -15617,6 +15648,7 @@
             }
 
             {
+                //收集不安全的生命周期方法
                 ReactStrictModeWarnings.recordUnsafeLifecycleWarnings(workInProgress, instance);
             }
         }
@@ -19913,6 +19945,7 @@
         commitTime = now$1();
     }
 
+    //DONE
     function startProfilerTimer(fiber) {
 
         profilerStartTime = now$1();
@@ -19935,6 +19968,7 @@
             var elapsedTime = now$1() - profilerStartTime;
             fiber.actualDuration += elapsedTime;
 
+            //只有begin阶段结束，此标记是true，也就是说 selfBaseDuration 只统计了begin阶段的时间。理论上此时间必定小于actualDuration
             if (overrideBaseTime) {
                 fiber.selfBaseDuration = elapsedTime;
             }
@@ -19948,19 +19982,19 @@
 
         if (layoutEffectStartTime >= 0) {
             var elapsedTime = now$1() - layoutEffectStartTime;
-            layoutEffectStartTime = -1; // Store duration on the next nearest Profiler ancestor
-            // Or the root (for the DevTools Profiler to read)
+            layoutEffectStartTime = -1;
 
+            // Store duration on the next nearest Profiler ancestor Or the root (for the DevTools Profiler to read)
             var parentFiber = fiber.return;
 
             while (parentFiber !== null) {
-                switch (parentFiber.tag) {
+                switch (parentFiber.tag) {//
                     case HostRoot:
                         var root = parentFiber.stateNode;
                         root.effectDuration += elapsedTime;
                         return;
 
-                    case Profiler:
+                    case Profiler://
                         var parentStateNode = parentFiber.stateNode;
                         parentStateNode.effectDuration += elapsedTime;
                         return;
@@ -19975,7 +20009,8 @@
 
         if (passiveEffectStartTime >= 0) {
             var elapsedTime = now$1() - passiveEffectStartTime;
-            passiveEffectStartTime = -1; // Store duration on the next nearest Profiler ancestor
+            passiveEffectStartTime = -1;
+            // Store duration on the next nearest Profiler ancestor
             // Or the root (for the DevTools Profiler to read)
 
             var parentFiber = fiber.return;
@@ -20984,12 +21019,14 @@
         return workInProgress.child;
     }
 
+    //DONE beginWork
     function updateMode(current, workInProgress, renderLanes) {
         var nextChildren = workInProgress.pendingProps.children;
         reconcileChildren(current, workInProgress, nextChildren, renderLanes);
         return workInProgress.child;
     }
 
+    //DONE beginWork
     function updateProfiler(current, workInProgress, renderLanes) {
         {
             workInProgress.flags |= Update;
@@ -21028,6 +21065,7 @@
         }
     }
 
+    //DONE beginWork
     function updateFunctionComponent(current, workInProgress, Component, nextProps, renderLanes) {
         {
             if (workInProgress.type !== workInProgress.elementType) {
@@ -21088,9 +21126,9 @@
 
         if (getIsHydrating() && hasId) {
             pushMaterializedTreeId(workInProgress);
-        } // React DevTools reads this flag.
+        }
 
-
+        // React DevTools reads this flag.
         workInProgress.flags |= PerformedWork;
         reconcileChildren(current, workInProgress, nextChildren, renderLanes);
         return workInProgress.child;
@@ -21208,6 +21246,7 @@
      */
     function finishClassComponent(current, workInProgress, Component, shouldUpdate, hasContext, renderLanes) {
         // Refs should update even if shouldComponentUpdate returns false
+        // 给workInProgress 的flags标记Ref | RefStatic
         markRef(current, workInProgress);
         var didCaptureError = (workInProgress.flags & DidCapture) !== NoFlags;
 
@@ -23227,10 +23266,10 @@
             case Fragment:
                 return updateFragment(current, workInProgress, renderLanes);
 
-            case Mode:
+            case Mode:// 8 DONE (StrictMode)
                 return updateMode(current, workInProgress, renderLanes);
 
-            case Profiler:
+            case Profiler://DONE 12
                 return updateProfiler(current, workInProgress, renderLanes);
 
             case ContextProvider://DONE 10
@@ -23306,7 +23345,7 @@
         workInProgress.flags |= Update;
     }
 
-    //DONE
+    //DONE // 给workInProgress 的flags标记Ref | RefStatic
     function markRef$1(workInProgress) {
         workInProgress.flags |= Ref;
 
@@ -23491,7 +23530,7 @@
 
         if (!didBailout) {
             // Bubble up the earliest expiration time.
-            if ((completedWork.mode & ProfileMode) !== NoMode) {
+            if ((completedWork.mode & ProfileMode) !== NoMode) {//Profiler 累加 actualDuration和 treeBaseDuration
                 // In profiling mode, resetChildExpirationTime is also used to reset profiler durations.
                 var actualDuration = completedWork.actualDuration;
                 var treeBaseDuration = completedWork.selfBaseDuration;
@@ -23501,6 +23540,7 @@
                     newChildLanes = mergeLanes(newChildLanes, mergeLanes(child.lanes, child.childLanes));
                     subtreeFlags |= child.subtreeFlags;
                     subtreeFlags |= child.flags;
+
                     // When a fiber is cloned, its actualDuration is reset to 0. This value will
                     // only be updated if work is done on the fiber (i.e. it doesn't bailout).
                     // When work is done, it should bubble to the parent's actualDuration. If
@@ -23508,7 +23548,6 @@
                     // this value will reflect the amount of time spent working on a previous
                     // render. In that case it should not bubble. We determine whether it was
                     // cloned by comparing the child pointer.
-
                     actualDuration += child.actualDuration;
                     treeBaseDuration += child.treeBaseDuration;
                     child = child.sibling;
@@ -23685,7 +23724,7 @@
             case ForwardRef:
             case Fragment:
             case Mode:
-            case Profiler:
+            case Profiler://
             case ContextConsumer://
             case MemoComponent:
                 bubbleProperties(workInProgress);
@@ -23762,6 +23801,7 @@
                     if (current !== null && workInProgress.stateNode != null) {//update流程
                         updateHostComponent$1(current, workInProgress, type, newProps, rootContainerInstance);
 
+                        // 给workInProgress 的flags标记Ref | RefStatic
                         if (current.ref !== workInProgress.ref) {
                             markRef$1(workInProgress);
                         }
@@ -23805,6 +23845,7 @@
 
                         if (workInProgress.ref !== null) {
                             // If there is a ref on a host node we need to schedule a callback
+                            // 给workInProgress 的flags标记Ref | RefStatic
                             markRef$1(workInProgress);
                         }
                     }
@@ -24494,18 +24535,18 @@
         } catch (error) {
             captureCommitPhaseError(current, nearestMountedAncestor, error);
         }
-    } // Capture errors so they don't interrupt mounting.
+    }
 
-
+    // Capture errors so they don't interrupt mounting.
     function safelyCallComponentDidMount(current, nearestMountedAncestor, instance) {
         try {
             instance.componentDidMount();
         } catch (error) {
             captureCommitPhaseError(current, nearestMountedAncestor, error);
         }
-    } // Capture errors so they don't interrupt mounting.
+    }
 
-
+    // Capture errors so they don't interrupt mounting.
     function safelyAttachRef(current, nearestMountedAncestor) {
         try {
             commitAttachRef(current);
@@ -24522,7 +24563,7 @@
         var ref = current.ref;
 
         if (ref !== null) {
-            if (typeof ref === 'function') {
+            if (typeof ref === 'function') {//callback ref
                 var retVal;
 
                 try {
@@ -24889,7 +24930,8 @@
 
                             if (typeof onPostCommit === 'function') {
                                 onPostCommit(id, phase, passiveEffectDuration, commitTime);
-                            } // Bubble times to the next nearest ancestor Profiler.
+                            }
+                            // Bubble times to the next nearest ancestor Profiler.
                             // After we process that Profiler, we'll bubble further up.
 
 
@@ -25123,7 +25165,7 @@
                         break;
                     }
 
-                case Profiler:
+                case Profiler://DONE
                     {
                         {
                             var _finishedWork$memoize2 = finishedWork.memoizedProps,
@@ -25139,14 +25181,15 @@
                                 }
                             }
 
-                            if (typeof onRender === 'function') {
+                            if (typeof onRender === 'function') {//Profiler
                                 onRender(finishedWork.memoizedProps.id, phase, finishedWork.actualDuration, finishedWork.treeBaseDuration, finishedWork.actualStartTime, commitTime);
                             }
 
                             {
                                 if (typeof onCommit === 'function') {
                                     onCommit(finishedWork.memoizedProps.id, phase, effectDuration, commitTime);
-                                } // Schedule a passive effect for this Profiler to call onPostCommit hooks.
+                                }
+                                // Schedule a passive effect for this Profiler to call onPostCommit hooks.
                                 // This effect should be scheduled even if there is no onPostCommit callback for this Profiler,
                                 // because the effect is also where times bubble to parent Profilers.
 
@@ -25210,6 +25253,7 @@
         }
     }
 
+    // reappear(再次出现)
     function reappearLayoutEffectsOnFiber(node) {
         // Turn on layout effects in a tree that previously disappeared.
         // TODO (Offscreen) Check: flags & LayoutStatic
@@ -25345,7 +25389,7 @@
             }
 
             // Moved outside to ensure DCE works with this flag
-            if (typeof ref === 'function') {
+            if (typeof ref === 'function') {//callback ref
                 var retVal;
 
                 if (finishedWork.mode & ProfileMode) {
@@ -28453,7 +28497,7 @@
         var next;
 
         if ((unitOfWork.mode & ProfileMode) !== NoMode) {
-            startProfilerTimer(unitOfWork);
+            startProfilerTimer(unitOfWork);//Profiler
             next = beginWork$1(current, unitOfWork, subtreeRenderLanes);
             stopProfilerTimerIfRunningAndRecordDelta(unitOfWork, true);
         } else {
@@ -28501,7 +28545,6 @@
                     startProfilerTimer(completedWork);
                     next = completeWork(current, completedWork, subtreeRenderLanes);
                     // Update render duration assuming we didn't error.
-
                     stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
                 }
 
@@ -28611,6 +28654,7 @@
             flushPassiveEffects();
         } while (rootWithPendingPassiveEffects !== null);
 
+        //commit 之前 ，将严格模式的相关提示log出来
         flushRenderPhaseStrictModeWarningsInDEV();
 
         if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
@@ -28915,6 +28959,7 @@
 
         return false;
     }
+    //DONE
     function enqueuePendingPassiveProfilerEffect(fiber) {
         {
             pendingPassiveProfilerEffects.push(fiber);
@@ -29399,9 +29444,8 @@
                 if (unitOfWork.mode & ProfileMode) {
                     // Reset the profiler timer.
                     startProfilerTimer(unitOfWork);
-                } // Run beginWork again.
-
-
+                }
+                // Run beginWork again.
                 invokeGuardedCallback(null, beginWork, null, current, unitOfWork, lanes);
 
                 if (hasCaughtError()) {
@@ -30380,7 +30424,7 @@
 
                     break;
 
-                case REACT_PROFILER_TYPE:
+                case REACT_PROFILER_TYPE://
                     return createFiberFromProfiler(pendingProps, mode, lanes, key);
 
                 case REACT_SUSPENSE_TYPE:
@@ -30814,7 +30858,7 @@
                 return null;
             }
 
-            if (hostFiber.mode & StrictLegacyMode) {
+            if (hostFiber.mode & StrictLegacyMode) {//
                 var componentName = getComponentNameFromFiber(fiber) || 'Component';
 
                 if (!didWarnAboutFindNodeInStrictMode[componentName]) {
