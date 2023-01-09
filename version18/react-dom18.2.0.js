@@ -17525,7 +17525,7 @@
     var ignorePreviousDependencies = false;
 
     /**
-     * 
+     * DONE
      */
     function mountHookTypesDev() {
         {
@@ -17693,7 +17693,7 @@
                 // but with the extra DEV validation to ensure hooks ordering hasn't changed.
                 // This dispatcher does that.
                 ReactCurrentDispatcher$1.current = HooksDispatcherOnMountWithHookTypesInDEV;
-            } else {
+            } else {//-
                 ReactCurrentDispatcher$1.current = HooksDispatcherOnMountInDEV;
             }
         }
@@ -17850,7 +17850,7 @@
     }
 
     /**
-     * 
+     * DONE
      * @returns 
      */
     function mountWorkInProgressHook() {
@@ -18397,7 +18397,7 @@
     }
 
     /**
-     * 
+     * DONE 
      */
     function mountState(initialState) {
         var hook = mountWorkInProgressHook();
@@ -18900,6 +18900,7 @@
                     + 'rendering, declare it in the component body with useEffect().');
             }
         }
+        debugger
         var lane = requestUpdateLane(fiber);
         var update = {
             lane: lane,
@@ -18971,7 +18972,7 @@
     }
 
     /**
-     * 
+     * DONE
      * @param {*} fiber 
      * @returns 
      */
@@ -19075,7 +19076,7 @@
                 + 'For more information, see '
                 + 'https://reactjs.org/link/rules-of-hooks');
         };
-
+        //DONE hooks中心
         HooksDispatcherOnMountInDEV = {
             readContext: function (context) {
                 return readContext(context);
@@ -32101,12 +32102,12 @@
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = Internals;
     exports.createPortal = createPortal$1;//-
     exports.createRoot = createRoot$1;//-
-    exports.findDOMNode = findDOMNode;//-
+    exports.findDOMNode = findDOMNode;//- legacy
     exports.flushSync = flushSync$1;//-
-    exports.hydrate = hydrate;
+    exports.hydrate = hydrate;// legacy
     exports.hydrateRoot = hydrateRoot$1;
-    exports.render = render;//- 18版本已不再支持
-    exports.unmountComponentAtNode = unmountComponentAtNode;//- 卸载通过ReactDOM.render()渲染的节点
+    exports.render = render;//- 18版本已不再支持 legacy
+    exports.unmountComponentAtNode = unmountComponentAtNode;//- 卸载通过ReactDOM.render()渲染的节点  legacy
     exports.unstable_batchedUpdates = batchedUpdates$1;
     exports.unstable_renderSubtreeIntoContainer = renderSubtreeIntoContainer;
     exports.version = ReactVersion;//-

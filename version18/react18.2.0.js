@@ -1663,7 +1663,7 @@
     }
 
     /**
-     * 
+     * DONE
      * @returns 
      */
     function resolveDispatcher() {
@@ -1707,7 +1707,7 @@
         return dispatcher.useContext(Context);
     }
     /**
-     * 
+     * DONE
      * @param {*} initialState 
      * @returns 
      */
@@ -3527,7 +3527,7 @@
     exports.Component = Component;//-
     exports.Fragment = REACT_FRAGMENT_TYPE;//-
     exports.Profiler = REACT_PROFILER_TYPE;//-
-    exports.PureComponent = PureComponent;//
+    exports.PureComponent = PureComponent;//-
     exports.StrictMode = REACT_STRICT_MODE_TYPE;//- StrictMode
     exports.Suspense = REACT_SUSPENSE_TYPE;
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals$1;
@@ -3554,7 +3554,7 @@
     exports.useMemo = useMemo;
     exports.useReducer = useReducer;
     exports.useRef = useRef;
-    exports.useState = useState;
+    exports.useState = useState;//-
     exports.useSyncExternalStore = useSyncExternalStore;
     exports.useTransition = useTransition;
     exports.version = ReactVersion;//-

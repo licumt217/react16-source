@@ -83,6 +83,7 @@ class ChildClass extends React.Component {
     componentWillUnmount() {
     }
     handleClick = () => {
+        console.log(this.state.age)
         ReactDOM.flushSync(
             () => {
                 this.setState({
@@ -93,6 +94,8 @@ class ChildClass extends React.Component {
             }
         );
 
+        console.log(this.state.age)
+
         ReactDOM.flushSync(
             () => {
                 this.setState({
@@ -101,7 +104,7 @@ class ChildClass extends React.Component {
             }
         );
 
-
+        console.log(this.state.age)
         // this.setState({
         //     age: this.state.age + 1
         // })
@@ -112,7 +115,9 @@ class ChildClass extends React.Component {
         // return e(MyContext.Consumer, null, function (contextValue) {
         //     return e('span', { style: { color: 'red' } }, contextValue)
         // });
-        return e("span", { onClick: this.handleClick }, this.state.age);
+        // return e("span", { onClick: this.handleClick }, this.state.age);
+        return e("div", {
+        }, '<b style="color:red;">222</b>First <script>console.log(1)</script> Second');
     }
 }
 
@@ -233,37 +238,20 @@ class MyClassTest extends React.PureComponent {
     }
 }
 
+function HookFunction() {
+    const [count, setCount] = useState(0);
+    const [age, setAge] = useState(0);
+
+    return e('div', {
+        onClick: () => {
+            setCount(count + 1)
+            setAge(2)
+        }
+    }, e('span', {}, `you clicked ${count} counts`))
+}
 
 
-// let input = document.createElement("input");
-// input.oninput = function (e) {
-//     console.log(e.target.value)
-//     e.target.value = 555;
-//     return 555;
-// }
-// input.value = 555;
-// document.body.appendChild(input)
-// root.render(666);
-// root.render(e('span', { style: { color: 'red' } }, 'xxx'));
-// root.render(e('span', null, "xx"));
-// root.render(e(React.Fragment, null, ""));
-// root.render(e("div", { style: { color: 'red' } }, e("div", { style: { color: 'red' }, key: 1 }, 555)));
-// root.render(e(ABC));
-// root.render(e(Test));
-// root.render([1, 2, 3]);
-root.render(e(MyClassTest));
-
-
-
-
-
-
-// root.render(e("input", { value: '111' }));
-
-// ReactDOM.render(e('span', null, 'span'), dom2)
-// setTimeout(() => {
-//     ReactDOM.unmountComponentAtNode(dom2);
-// }, 5000)
+root.render(e(HookFunction));
 
 
 
