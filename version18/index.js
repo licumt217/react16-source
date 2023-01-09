@@ -152,6 +152,7 @@ function MyFunctionComponent(props) {
 }
 
 const MemoFunction = React.memo(MyFunctionComponent)
+debugger
 
 class MyClassTest extends React.PureComponent {
     constructor (props) {

@@ -898,6 +898,7 @@
         return newElement;
     }
     /**
+     * DONE
      * Clone and return a new ReactElement using element as the starting point.
      * See https://reactjs.org/docs/react-api.html#cloneelement
      */
@@ -953,10 +954,10 @@
                     }
                 }
             }
-        } // Children can be more than one argument, and those are transferred onto
+        }
+
+        // Children can be more than one argument, and those are transferred onto
         // the newly allocated props object.
-
-
         var childrenLength = arguments.length - 2;
 
         if (childrenLength === 1) {
@@ -2347,6 +2348,7 @@
     }
 
     /**
+     * DONE
      * Given an element, validate that its props follow the propTypes definition,
      * provided by the type.
      *
@@ -2530,6 +2532,9 @@
 
         return validatedFactory;
     }
+
+
+    //DONE
     function cloneElementWithValidation(element, props, children) {
         var newElement = cloneElement.apply(this, arguments);
 
@@ -3521,7 +3526,7 @@
     exports.StrictMode = REACT_STRICT_MODE_TYPE;//- StrictMode
     exports.Suspense = REACT_SUSPENSE_TYPE;
     exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals$1;
-    exports.cloneElement = cloneElement$1;
+    exports.cloneElement = cloneElement$1;//-
     exports.createContext = createContext;//-
     exports.createElement = createElement$1;//-
     exports.createFactory = createFactory;
