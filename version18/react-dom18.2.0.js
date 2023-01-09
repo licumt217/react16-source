@@ -14435,6 +14435,8 @@
         }
     }
 
+
+
     {
         var UpdateState = 0;
         var ReplaceState = 1;
@@ -15240,7 +15242,7 @@
                     }
                 }
 
-                if (shouldUpdate === undefined) {
+                if (shouldUpdate === undefined) {//-
                     error('%s.shouldComponentUpdate(): Returned undefined instead of a '
                         + 'boolean value. Make sure to return true or false.', getComponentNameFromType(ctor) || 'Component');
                 }
@@ -15319,14 +15321,14 @@
                     + 'The name is phrased as a question because the function is '
                     + 'expected to return a value.', name);
             }
-            //
+            //-
             if (ctor.prototype && ctor.prototype.isPureReactComponent && typeof instance.shouldComponentUpdate !== 'undefined') {
                 error('%s has a method called shouldComp2onentUpdate(). '
                     + 'shouldCompone2ntUpdate should not be used when extending React.PureComponent. '
                     + 'Please extend React.Component if shouldCo2mponentUpdate is used.', getComponentNameFromType(ctor) || 'A pure component');
             }
 
-            //
+            //-
             if (typeof instance.componentDidUnmount === 'function') {
                 error('%s has a method called '
                     + 'componentDidUnmount(). But there is no such lifecycle method. '
@@ -15813,10 +15815,9 @@
             workInProgress.memoizedProps = newProps;
             workInProgress.memoizedState = newState;
         }
+
         // Update the existing instance's state, props, and context pointers even
         // if shouldComponentUpdate returns false.
-
-
         instance.props = newProps;
         instance.state = newState;
         instance.context = nextContext;
@@ -15946,10 +15947,9 @@
                     workInProgress.flags |= Snapshot;
                 }
             }
+
             // If shouldComponentUpdate returned false, we should still update the
             // memoized props/state to indicate that this work can be reused.
-
-
             workInProgress.memoizedProps = newProps;
             workInProgress.memoizedState = newState;
         }
@@ -23294,7 +23294,6 @@
                 return updateContextConsumer(current, workInProgress, renderLanes);
 
             case MemoComponent://DONE 14
-                debugger
                 {
                     var _type2 = workInProgress.type;
                     var _unresolvedProps3 = workInProgress.pendingProps;
@@ -28043,6 +28042,7 @@
         root.finishedWork = finishedWork;
         root.finishedLanes = lanes;
         commitRoot(root, workInProgressRootRecoverableErrors, workInProgressTransitions);
+
         // Before exiting, make sure there's a callback scheduled for the next pending level.
 
         ensureRootIsScheduled(root, now());
@@ -32064,11 +32064,9 @@
         }
 
         return hydrateRoot(container, initialChildren, options);
-    } // Overload the definition to the two valid signatures.
-    // Warning, this opts-out of checking the function body.
+    }
 
-
-    // eslint-disable-next-line no-redeclare
+    //DONE
     function flushSync$1(fn) {
         {
             if (isAlreadyRendering()) {
@@ -32104,7 +32102,7 @@
     exports.createPortal = createPortal$1;//-
     exports.createRoot = createRoot$1;//-
     exports.findDOMNode = findDOMNode;//-
-    exports.flushSync = flushSync$1;
+    exports.flushSync = flushSync$1;//-
     exports.hydrate = hydrate;
     exports.hydrateRoot = hydrateRoot$1;
     exports.render = render;//- 18版本已不再支持

@@ -69,18 +69,43 @@ class ChildClass extends React.Component {
             age: 20
         }
     }
-    static getDerivedStateFromProps(nextProps, prevState) {
-        debugger
-        let mmm = { ...prevState, ...nextProps };
-        return mmm;
-    }
+    // static getDerivedStateFromProps(nextProps, prevState) {
+    //     // debugger
+    //     let mmm = { ...prevState, ...nextProps };
+    //     return prevState;
+    // }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     debugger
+    //     let nP = this.props;
+    //     let nS = this.state;
+    //     return false;
+    // }
     componentWillUnmount() {
     }
     handleClick = () => {
-        debugger
-        this.setState({
-            age: 10
-        })
+        ReactDOM.flushSync(
+            () => {
+                this.setState({
+                    age: this.state.age + 1
+                })
+
+
+            }
+        );
+
+        ReactDOM.flushSync(
+            () => {
+                this.setState({
+                    age: this.state.age + 1
+                })
+            }
+        );
+
+
+        // this.setState({
+        //     age: this.state.age + 1
+        // })
+
     }
     render() {
         // throw new Error("error!!!")
@@ -182,7 +207,7 @@ class MyClassTest extends React.PureComponent {
     // }
 
     handleClick = () => {
-        return;
+        // return;
         // let obj = this.state;
         // obj.age = 20;
         // this.state.age = 12;
