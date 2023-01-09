@@ -69,10 +69,11 @@ class ChildClass extends React.Component {
             age: 20
         }
     }
-    componentWillUnmount() {
+    static getDerivedStateFromProps(nextProps, prevState) {
+        let mmm = { ...prevState, ...nextProps };
+        return mmm;
     }
-    componentWillMount() {
-        console.log(1111)
+    componentWillUnmount() {
     }
     handleClick = () => {
         this.setState({
@@ -84,7 +85,7 @@ class ChildClass extends React.Component {
         // return e(MyContext.Consumer, null, function (contextValue) {
         //     return e('span', { style: { color: 'red' } }, contextValue)
         // });
-        return e("span", { onClick: this.handleClick }, this.state.age);
+        return e("span", {}, this.state.age);
     }
 }
 
@@ -147,12 +148,10 @@ class Modal extends React.Component {
 
 
 function MyFunctionComponent(props) {
-    debugger
     return props.age;
 }
 
 const MemoFunction = React.memo(MyFunctionComponent)
-debugger
 
 class MyClassTest extends React.PureComponent {
     constructor (props) {
@@ -186,7 +185,7 @@ class MyClassTest extends React.PureComponent {
         // this.state.age = 12;
         // this.forceUpdate();
         this.setState({
-            age: 5,
+            age: 15,
             text: '点击我2'
         })
         // console.log(1)
@@ -202,7 +201,7 @@ class MyClassTest extends React.PureComponent {
         //     { onClick: this.handleClick },
         //     this.state.age
         // );
-        return e("div", {}, e('button', { onClick: this.handleClick }, this.state.text), e(MemoFunction, { age: this.state.age }))
+        return e("div", {}, e('button', { onClick: this.handleClick }, this.state.text), e(ChildClass, { age: this.state.age }))
     }
 }
 

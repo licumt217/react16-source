@@ -13787,6 +13787,7 @@
                     + '\nPlease update the following components: %s', sortedNames);
             }
 
+            //-
             if (UNSAFE_componentWillReceivePropsUniqueNames.size > 0) {
                 var _sortedNames = setToSortedString(UNSAFE_componentWillReceivePropsUniqueNames);
 
@@ -13823,6 +13824,7 @@
                     + '\nPlease update the following components: %s', _sortedNames3);
             }
 
+            //-
             if (componentWillReceivePropsUniqueNames.size > 0) {
                 var _sortedNames4 = setToSortedString(componentWillReceivePropsUniqueNames);
 
@@ -15060,6 +15062,7 @@
             }
         };
 
+        //DONE
         warnOnUndefinedDerivedState = function (type, partialState) {
             if (partialState === undefined) {
                 var componentName = getComponentNameFromType(type) || 'Component';
@@ -15067,16 +15070,17 @@
                 if (!didWarnAboutUndefinedDerivedState.has(componentName)) {
                     didWarnAboutUndefinedDerivedState.add(componentName);
 
-                    error('%s.getDerivedStateFromProps(): A valid state object (or null) must be returned. ' + 'You have returned undefined.', componentName);
+                    error('%s.getDerivedStateFromProps(): A valid state object (or null) must be returned. '
+                        + 'You have returned undefined.', componentName);
                 }
             }
-        }; // This is so gross but it's at least non-critical and can be removed if
+        };
+
+        // This is so gross but it's at least non-critical and can be removed if
         // it causes problems. This is meant to give a nicer error message for
         // ReactDOM15.unstable_renderSubtreeIntoContainer(reactDOM16Component,
         // ...)) which otherwise throws a "_processChildContext is not a function"
         // exception.
-
-
         Object.defineProperty(fakeInternalInstance, '_processChildContext', {
             enumerable: false,
             value: function () {
@@ -15114,8 +15118,8 @@
         // Merge the partial state and the previous state.
         var memoizedState = partialState === null || partialState === undefined ? prevState : assign({}, prevState, partialState);
         workInProgress.memoizedState = memoizedState;
-        // Once the update queue is empty, persist the derived state onto the base state.
 
+        // Once the update queue is empty, persist the derived state onto the base state.
         if (workInProgress.lanes === NoLanes) {
             // Queue is always non-null for classes
             var updateQueue = workInProgress.updateQueue;
@@ -15368,6 +15372,7 @@
                     + 'This component defines getSnapshotBeforeUpdate() only.', getComponentNameFromType(ctor));
             }
 
+            //-
             if (typeof instance.getDerivedStateFromProps === 'function') {
                 error('%s: getDerivedStateFromProps() is defined as an instance method '
                     + 'and will be ignored. Instead, declare it as a static method.', name);
@@ -15480,7 +15485,8 @@
         var state = workInProgress.memoizedState = instance.state !== null && instance.state !== undefined ? instance.state : null;
         adoptClassInstance(workInProgress, instance);
 
-        {
+        {//配置了 ctor.getDerivedStateFromProps 生命周期函数，但是初始state===null的话，报错提示！
+
             if (typeof ctor.getDerivedStateFromProps === 'function' && state === null) {
                 var componentName = getComponentNameFromType(ctor) || 'Component';
 
@@ -15498,6 +15504,7 @@
             // If new component APIs are defined, "unsafe" lifecycles won't be called.
             // Warn about these lifecycles if they are present.
             // Don't warn about react-lifecycles-compat polyfilled methods though.
+            //警告相关
             if (typeof ctor.getDerivedStateFromProps === 'function' || typeof instance.getSnapshotBeforeUpdate === 'function') {
                 var foundWillMountName = null;
                 var foundWillReceivePropsName = null;
@@ -15657,14 +15664,14 @@
         instance.state = workInProgress.memoizedState;
         var getDerivedStateFromProps = ctor.getDerivedStateFromProps;
 
+        //有生命周期方法 getDerivedStateFromProps 时，通过props获取新的state
         if (typeof getDerivedStateFromProps === 'function') {
             applyDerivedStateFromProps(workInProgress, ctor, getDerivedStateFromProps, newProps);
             instance.state = workInProgress.memoizedState;
         }
+
         // In order to support react-lifecycles-compat polyfilled components,
         // Unsafe lifecycles should not be invoked for components using the new APIs.
-
-
         if (typeof ctor.getDerivedStateFromProps !== 'function' && typeof instance.getSnapshotBeforeUpdate !== 'function'
             && (typeof instance.UNSAFE_componentWillMount === 'function' || typeof instance.componentWillMount === 'function')) {
             callComponentWillMount(workInProgress, instance);
@@ -15747,6 +15754,7 @@
             return false;
         }
 
+        //-
         if (typeof getDerivedStateFromProps === 'function') {
             applyDerivedStateFromProps(workInProgress, ctor, getDerivedStateFromProps, newProps);
             newState = workInProgress.memoizedState;
@@ -21757,6 +21765,7 @@
                 }
             }
 
+            //- 函数组件不支持 getDerivedStateFromProps
             if (typeof Component.getDerivedStateFromProps === 'function') {
                 var _componentName3 = getComponentNameFromType(Component) || 'Unknown';
 

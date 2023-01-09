@@ -3540,7 +3540,7 @@
     exports.isValidElement = isValidElement;//-
     exports.lazy = lazy;
     exports.memo = memo;//-
-    exports.startTransition = startTransition;
+    exports.startTransition = startTransition;//-
     exports.unstable_act = act;
     exports.useCallback = useCallback;
     exports.useContext = useContext;
