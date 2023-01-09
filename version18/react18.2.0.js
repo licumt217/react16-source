@@ -30,7 +30,7 @@
     var REACT_FORWARD_REF_TYPE = Symbol.for('react.forward_ref');
     var REACT_SUSPENSE_TYPE = Symbol.for('react.suspense');
     var REACT_SUSPENSE_LIST_TYPE = Symbol.for('react.suspense_list');
-    var REACT_MEMO_TYPE = Symbol.for('react.memo');
+    var REACT_MEMO_TYPE = Symbol.for('react.memo');//
     var REACT_LAZY_TYPE = Symbol.for('react.lazy');
     var REACT_OFFSCREEN_TYPE = Symbol.for('react.offscreen');
     var MAYBE_ITERATOR_SYMBOL = Symbol.iterator;
@@ -588,7 +588,7 @@
                 case REACT_FORWARD_REF_TYPE:
                     return getWrappedName(type, type.render, 'ForwardRef');
 
-                case REACT_MEMO_TYPE:
+                case REACT_MEMO_TYPE://DONE
                     var outerName = type.displayName || null;
 
                     if (outerName !== null) {
@@ -1515,7 +1515,7 @@
     //DONE
     function forwardRef(render) {
         {
-            if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
+            if (render != null && render.$$typeof === REACT_MEMO_TYPE) {//DONE
                 error('forwardRef requires a render function but received a `memo` '
                     + 'component. Instead of forwardRef(memo(...)), use ' + 'memo(forwardRef(...)).');
             } else if (typeof render !== 'function') {
@@ -1600,7 +1600,7 @@
 
         if (typeof type === 'object' && type !== null) {
             if (type.$$typeof === REACT_LAZY_TYPE
-                || type.$$typeof === REACT_MEMO_TYPE
+                || type.$$typeof === REACT_MEMO_TYPE//
                 || type.$$typeof === REACT_PROVIDER_TYPE//
                 || type.$$typeof === REACT_CONTEXT_TYPE//
                 || type.$$typeof === REACT_FORWARD_REF_TYPE
@@ -1617,6 +1617,7 @@
         return false;
     }
 
+    //DONE React.memo() 函数组件优化，类似类组件的PureComponent,第二个参数为对比函数
     function memo(type, compare) {
         {
             if (!isValidElementType(type)) {
@@ -3528,7 +3529,7 @@
     exports.forwardRef = forwardRef;//-
     exports.isValidElement = isValidElement;//-
     exports.lazy = lazy;
-    exports.memo = memo;
+    exports.memo = memo;//-
     exports.startTransition = startTransition;
     exports.unstable_act = act;
     exports.useCallback = useCallback;

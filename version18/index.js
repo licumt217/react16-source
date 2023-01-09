@@ -146,12 +146,20 @@ class Modal extends React.Component {
 }
 
 
+function MyFunctionComponent(props) {
+    debugger
+    return props.age;
+}
+
+const MemoFunction = React.memo(MyFunctionComponent)
+
 class MyClassTest extends React.PureComponent {
     constructor (props) {
         super(props)
         this.state = {
-            age: 10,
-            contextValue: 10
+            age: 5,
+            contextValue: 5,
+            text: '点击我'
         }
         this.ref = React.createRef();
     }
@@ -176,10 +184,11 @@ class MyClassTest extends React.PureComponent {
         // obj.age = 20;
         // this.state.age = 12;
         // this.forceUpdate();
-        // this.setState({
-        //     age: 10
-        // })
-        console.log(1)
+        this.setState({
+            age: 5,
+            text: '点击我2'
+        })
+        // console.log(1)
     }
 
     render() {
@@ -192,9 +201,12 @@ class MyClassTest extends React.PureComponent {
         //     { onClick: this.handleClick },
         //     this.state.age
         // );
-        return e("input", { value: '111' })
+        return e("div", {}, e('button', { onClick: this.handleClick }, this.state.text), e(MemoFunction, { age: this.state.age }))
     }
 }
+
+
+
 // let input = document.createElement("input");
 // input.oninput = function (e) {
 //     console.log(e.target.value)
@@ -211,8 +223,14 @@ class MyClassTest extends React.PureComponent {
 // root.render(e(ABC));
 // root.render(e(Test));
 // root.render([1, 2, 3]);
-// root.render(e(MyClassTest));
-root.render(e("input", { value: '111' }));
+root.render(e(MyClassTest));
+
+
+
+
+
+
+// root.render(e("input", { value: '111' }));
 
 // ReactDOM.render(e('span', null, 'span'), dom2)
 // setTimeout(() => {

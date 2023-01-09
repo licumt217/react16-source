@@ -111,8 +111,8 @@
         var ForwardRef = 11;
         var Profiler = 12;//
         var SuspenseComponent = 13;
-        var MemoComponent = 14;
-        var SimpleMemoComponent = 15;
+        var MemoComponent = 14;//-
+        var SimpleMemoComponent = 15;//-
         var LazyComponent = 16;
         var IncompleteClassComponent = 17;
         var DehydratedFragment = 18;
@@ -905,7 +905,7 @@
     var REACT_FORWARD_REF_TYPE = Symbol.for('react.forward_ref');//-
     var REACT_SUSPENSE_TYPE = Symbol.for('react.suspense');
     var REACT_SUSPENSE_LIST_TYPE = Symbol.for('react.suspense_list');
-    var REACT_MEMO_TYPE = Symbol.for('react.memo');
+    var REACT_MEMO_TYPE = Symbol.for('react.memo');//-
     var REACT_LAZY_TYPE = Symbol.for('react.lazy');
     var REACT_SCOPE_TYPE = Symbol.for('react.scope');
     var REACT_DEBUG_TRACING_MODE_TYPE = Symbol.for('react.debug_trace_mode');
@@ -1413,7 +1413,7 @@
                 case REACT_FORWARD_REF_TYPE:
                     return getWrappedName(type, type.render, 'ForwardRef');
 
-                case REACT_MEMO_TYPE:
+                case REACT_MEMO_TYPE://
                     var outerName = type.displayName || null;
 
                     if (outerName !== null) {
@@ -1528,7 +1528,7 @@
             case FunctionComponent:
             case IncompleteClassComponent:
             case IndeterminateComponent:
-            case MemoComponent:
+            case MemoComponent://
             case SimpleMemoComponent:
                 if (typeof type === 'function') {
                     return type.displayName || type.name || null;
@@ -8652,6 +8652,7 @@
      * Returns true when the values of all keys are strictly equal.
      */
     function shallowEqual(objA, objB) {
+
         if (objectIs(objA, objB)) {
             return true;
         }
@@ -20761,10 +20762,12 @@
         return workInProgress.child;
     }
 
+    //DONE beginWork
     function updateMemoComponent(current, workInProgress, Component, nextProps, renderLanes) {
         if (current === null) {
             var type = Component.type;
 
+            //
             if (isSimpleFunctionComponent(type) && Component.compare === null &&
                 // SimpleMemoComponent codepath doesn't resolve outer props either.
                 Component.defaultProps === undefined) {
@@ -20772,11 +20775,10 @@
 
                 {
                     resolvedType = resolveFunctionForHotReloading(type);
-                } // If this is a plain function component without default props,
+                }
+                // If this is a plain function component without default props,
                 // and with only the default shallow comparison, we upgrade it
                 // to a SimpleMemoComponent to allow fast path updates.
-
-
                 workInProgress.tag = SimpleMemoComponent;
                 workInProgress.type = resolvedType;
 
@@ -20824,6 +20826,7 @@
         if (!hasScheduledUpdateOrContext) {
             // This will be the props with resolved defaultProps,
             // unlike current.memoizedProps which will be the unresolved ones.
+            //props浅比较，如果相同，则函数不用重新执行，直接复用之前的。
             var prevProps = currentChild.memoizedProps; // Default to shallow comparison
 
             var compare = Component.compare;
@@ -20832,9 +20835,8 @@
             if (compare(prevProps, nextProps) && current.ref === workInProgress.ref) {
                 return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
             }
-        } // React DevTools reads this flag.
-
-
+        }
+        // React DevTools reads this flag.
         workInProgress.flags |= PerformedWork;
         var newChild = createWorkInProgress(currentChild, nextProps);
         newChild.ref = workInProgress.ref;
@@ -20843,6 +20845,7 @@
         return newChild;
     }
 
+    //DONE beginWork
     function updateSimpleMemoComponent(current, workInProgress, Component, nextProps, renderLanes) {
         // TODO: current can be non-null here even if the component
         // hasn't yet mounted. This happens when the inner render suspends.
@@ -23145,6 +23148,7 @@
 
     //DONE beginWork中心
     function beginWork(current, workInProgress, renderLanes) {
+
         {
             if (workInProgress._debugNeedsRemount && current !== null) {
                 // This will restart the begin phase with a new fiber.
@@ -23278,7 +23282,8 @@
             case ContextConsumer://DONE 9
                 return updateContextConsumer(current, workInProgress, renderLanes);
 
-            case MemoComponent:
+            case MemoComponent://DONE 14
+                debugger
                 {
                     var _type2 = workInProgress.type;
                     var _unresolvedProps3 = workInProgress.pendingProps;
@@ -23726,7 +23731,7 @@
             case Mode:
             case Profiler://
             case ContextConsumer://
-            case MemoComponent:
+            case MemoComponent://
                 bubbleProperties(workInProgress);
                 return null;
 
@@ -25849,7 +25854,7 @@
 
             case FunctionComponent://
             case ForwardRef://
-            case MemoComponent:
+            case MemoComponent://
             case SimpleMemoComponent:
                 {
                     if (!offscreenSubtreeWasHidden) {
@@ -26090,7 +26095,7 @@
         switch (finishedWork.tag) {
             case FunctionComponent://DONE
             case ForwardRef:
-            case MemoComponent:
+            case MemoComponent://
             case SimpleMemoComponent:
                 {
                     recursivelyTraverseMutationEffects(root, finishedWork);
@@ -30168,6 +30173,7 @@
         return !!(prototype && prototype.isReactComponent);
     }
 
+    //DONE
     function isSimpleFunctionComponent(type) {
         return typeof type === 'function' && !shouldConstruct$1(type) && type.defaultProps === undefined;
     }
@@ -30478,7 +30484,7 @@
 
                                     break getTag;
 
-                                case REACT_MEMO_TYPE:
+                                case REACT_MEMO_TYPE://-
                                     fiberTag = MemoComponent;
                                     break getTag;
 
