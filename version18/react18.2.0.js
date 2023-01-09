@@ -35,6 +35,7 @@
     var REACT_OFFSCREEN_TYPE = Symbol.for('react.offscreen');
     var MAYBE_ITERATOR_SYMBOL = Symbol.iterator;
     var FAUX_ITERATOR_SYMBOL = '@@iterator';
+    //DONE
     function getIteratorFn(maybeIterable) {
         if (maybeIterable === null || typeof maybeIterable !== 'object') {
             return null;
@@ -892,6 +893,7 @@
 
         return ReactElement(type, key, ref, self, source, ReactCurrentOwner.current, props);
     }
+    //DONE
     function cloneAndReplaceKey(oldElement, newKey) {
         var newElement = ReactElement(oldElement.type, newKey, oldElement.ref, oldElement._self,
             oldElement._source, oldElement._owner, oldElement.props);
@@ -990,12 +992,12 @@
     var SEPARATOR = '.';
     var SUBSEPARATOR = ':';
     /**
+     * DONE
      * Escape and wrap key so it is safe to use as a reactid
      *
      * @param {string} key to be escaped.
      * @return {string} the escaped key.
      */
-
     function escape(key) {
         var escapeRegex = /[=:]/g;
         var escaperLookup = {
@@ -1020,14 +1022,13 @@
         return text.replace(userProvidedKeyEscapeRegex, '$&/');
     }
     /**
+     * DONE
      * Generate a key string that identifies a element within a set.
      *
      * @param {*} element A element that could contain a manual key.
      * @param {number} index Index that is used if a manual key is not provided.
      * @return {string}
      */
-
-
     function getElementKey(element, index) {
         // Do some typechecking here since we call this blindly. We want to ensure
         // that we don't block potential future ES APIs.
@@ -1044,6 +1045,7 @@
         return index.toString(36);
     }
 
+    //DONE
     function mapIntoArray(children, array, escapedPrefix, nameSoFar, callback) {
         var type = typeof children;
 
@@ -1075,7 +1077,8 @@
 
         if (invokeCallback) {
             var _child = children;
-            var mappedChild = callback(_child); // If it's the only child, treat the name as if it was wrapped in an array
+            var mappedChild = callback(_child);
+            // If it's the only child, treat the name as if it was wrapped in an array
             // so that it's consistent if the number of children grows:
 
             var childKey = nameSoFar === '' ? SEPARATOR + getElementKey(_child, 0) : nameSoFar;
@@ -1167,6 +1170,7 @@
     }
 
     /**
+     * DONE
      * Maps children that are typically specified as `props.children`.
      *
      * See https://reactjs.org/docs/react-api.html#reactchildrenmap
@@ -1192,6 +1196,7 @@
         return result;
     }
     /**
+     * DONE
      * Count the number of children that are typically specified as
      * `props.children`.
      *
@@ -1200,8 +1205,6 @@
      * @param {?*} children Children tree container.
      * @return {number} The number of children.
      */
-
-
     function countChildren(children) {
         var n = 0;
         mapChildren(children, function () {
@@ -1211,6 +1214,7 @@
     }
 
     /**
+     * DONE
      * Iterates through children that are typically specified as `props.children`.
      *
      * See https://reactjs.org/docs/react-api.html#reactchildrenforeach
@@ -1227,20 +1231,21 @@
             forEachFunc.apply(this, arguments); // Don't return anything.
         }, forEachContext);
     }
+
     /**
+     * DONE
      * Flatten a children object (typically specified as `props.children`) and
      * return an array with appropriately re-keyed children.
      *
      * See https://reactjs.org/docs/react-api.html#reactchildrentoarray
      */
-
-
     function toArray(children) {
         return mapChildren(children, function (child) {
             return child;
         }) || [];
     }
     /**
+     * DONE
      * Returns the first child in a collection of children and verifies that there
      * is only one child in the collection.
      *
@@ -1254,8 +1259,6 @@
      * @return {ReactElement} The first and only `ReactElement` contained in the
      * structure.
      */
-
-
     function onlyChild(children) {
         if (!isValidElement(children)) {
             throw new Error('React.Children.only expected to receive a single React element child.');
@@ -2503,6 +2506,7 @@
         return element;
     }
     var didWarnAboutDeprecatedCreateFactory = false;
+    //DONE
     function createFactoryWithValidation(type) {
         var validatedFactory = createElementWithValidation.bind(null, type);
         validatedFactory.type = type;
@@ -3510,6 +3514,7 @@
     var createElement$1 = createElementWithValidation;
     var cloneElement$1 = cloneElementWithValidation;
     var createFactory = createFactoryWithValidation;
+    //DONE
     var Children = {
         map: mapChildren,
         forEach: forEachChildren,
@@ -3518,7 +3523,7 @@
         only: onlyChild
     };
 
-    exports.Children = Children;
+    exports.Children = Children;//-
     exports.Component = Component;//-
     exports.Fragment = REACT_FRAGMENT_TYPE;//-
     exports.Profiler = REACT_PROFILER_TYPE;//-
@@ -3529,7 +3534,7 @@
     exports.cloneElement = cloneElement$1;//-
     exports.createContext = createContext;//-
     exports.createElement = createElement$1;//-
-    exports.createFactory = createFactory;
+    exports.createFactory = createFactory;//-
     exports.createRef = createRef;//-
     exports.forwardRef = forwardRef;//-
     exports.isValidElement = isValidElement;//-
