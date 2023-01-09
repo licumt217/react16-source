@@ -15364,6 +15364,7 @@
                     + ' Instead, define defaultProps as a static property on %s.', name, name);
             }
 
+            // instance.getSnapshotBeforeUpdate 必须和 componentDidUpdate一起出现，因为要在componentDidUpdate中使用返回值；
             if (typeof instance.getSnapshotBeforeUpdate === 'function' && typeof instance.componentDidUpdate !== 'function'
                 && !didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate.has(ctor)) {
                 didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate.add(ctor);
@@ -15384,6 +15385,7 @@
                     + 'and will be ignored. Instead, declare it as a static method.', name);
             }
 
+            //-
             if (typeof ctor.getSnapshotBeforeUpdate === 'function') {
                 error('%s: getSnapshotBeforeUpdate() is defined as a static method '
                     + 'and will be ignored. Instead, declare it as an instance method.', name);
@@ -15886,7 +15888,7 @@
                 }
             }
 
-            if (typeof instance.getSnapshotBeforeUpdate === 'function') {
+            if (typeof instance.getSnapshotBeforeUpdate === 'function') {//-
                 if (unresolvedOldProps !== current.memoizedProps || oldState !== current.memoizedState) {
                     workInProgress.flags |= Snapshot;
                 }
@@ -15927,7 +15929,7 @@
                 workInProgress.flags |= Update;
             }
 
-            if (typeof instance.getSnapshotBeforeUpdate === 'function') {
+            if (typeof instance.getSnapshotBeforeUpdate === 'function') {//-
                 workInProgress.flags |= Snapshot;
             }
         } else {
@@ -15939,7 +15941,7 @@
                 }
             }
 
-            if (typeof instance.getSnapshotBeforeUpdate === 'function') {
+            if (typeof instance.getSnapshotBeforeUpdate === 'function') {//-
                 if (unresolvedOldProps !== current.memoizedProps || oldState !== current.memoizedState) {
                     workInProgress.flags |= Snapshot;
                 }
@@ -24725,12 +24727,13 @@
                                     }
                                 }
                             }
-
+                            //在commit 阶段的第一阶段执行快照生命周期
                             var snapshot = instance.getSnapshotBeforeUpdate(finishedWork.elementType === finishedWork.type ? prevProps : resolveDefaultProps(finishedWork.type, prevProps), prevState);
 
                             {
                                 var didWarnSet = didWarnAboutUndefinedSnapshotBeforeUpdate;
 
+                                // getSnapshotBeforeUpdate 必须有返回值
                                 if (snapshot === undefined && !didWarnSet.has(finishedWork.type)) {
                                     didWarnSet.add(finishedWork.type);
 

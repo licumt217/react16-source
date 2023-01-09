@@ -70,12 +70,14 @@ class ChildClass extends React.Component {
         }
     }
     static getDerivedStateFromProps(nextProps, prevState) {
+        debugger
         let mmm = { ...prevState, ...nextProps };
         return mmm;
     }
     componentWillUnmount() {
     }
     handleClick = () => {
+        debugger
         this.setState({
             age: 10
         })
@@ -85,7 +87,7 @@ class ChildClass extends React.Component {
         // return e(MyContext.Consumer, null, function (contextValue) {
         //     return e('span', { style: { color: 'red' } }, contextValue)
         // });
-        return e("span", {}, this.state.age);
+        return e("span", { onClick: this.handleClick }, this.state.age);
     }
 }
 
@@ -180,6 +182,7 @@ class MyClassTest extends React.PureComponent {
     // }
 
     handleClick = () => {
+        return;
         // let obj = this.state;
         // obj.age = 20;
         // this.state.age = 12;
