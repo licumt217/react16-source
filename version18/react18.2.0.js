@@ -1715,14 +1715,17 @@
         var dispatcher = resolveDispatcher();
         return dispatcher.useState(initialState);
     }
+    //DONE 
     function useReducer(reducer, initialArg, init) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useReducer(reducer, initialArg, init);
     }
+    //DONE
     function useRef(initialValue) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useRef(initialValue);
     }
+    //DONE
     function useEffect(create, deps) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useEffect(create, deps);
@@ -1735,10 +1738,12 @@
         var dispatcher = resolveDispatcher();
         return dispatcher.useLayoutEffect(create, deps);
     }
+    //DONE
     function useCallback(callback, deps) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useCallback(callback, deps);
     }
+    //DONE
     function useMemo(create, deps) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useMemo(create, deps);
@@ -3542,18 +3547,18 @@
     exports.memo = memo;//-
     exports.startTransition = startTransition;//-
     exports.unstable_act = act;
-    exports.useCallback = useCallback;
+    exports.useCallback = useCallback;//-
     exports.useContext = useContext;
     exports.useDebugValue = useDebugValue;
     exports.useDeferredValue = useDeferredValue;
-    exports.useEffect = useEffect;
+    exports.useEffect = useEffect;//-
     exports.useId = useId;
     exports.useImperativeHandle = useImperativeHandle;
     exports.useInsertionEffect = useInsertionEffect;
     exports.useLayoutEffect = useLayoutEffect;
-    exports.useMemo = useMemo;
-    exports.useReducer = useReducer;
-    exports.useRef = useRef;
+    exports.useMemo = useMemo;//-
+    exports.useReducer = useReducer;//-
+    exports.useRef = useRef;//-
     exports.useState = useState;//-
     exports.useSyncExternalStore = useSyncExternalStore;
     exports.useTransition = useTransition;

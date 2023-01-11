@@ -12877,6 +12877,7 @@
      * @returns 
      */
     function flushSyncCallbacks() {
+        debugger
         if (!isFlushingSyncQueue && syncQueue !== null) {
             // Prevent re-entrance.
             isFlushingSyncQueue = true;
@@ -14308,7 +14309,7 @@
     }
 
     /**
-     * 
+     * DONE 
      * @param {*} fiber 
      * @param {*} queue 
      * @param {*} update 
@@ -14316,6 +14317,7 @@
      * @returns 
      */
     function enqueueConcurrentHookUpdate(fiber, queue, update, lane) {
+
         var interleaved = queue.interleaved;
 
         if (interleaved === null) {
@@ -14325,7 +14327,7 @@
             // be transferred to the pending queue.
 
             pushConcurrentUpdateQueue(queue);
-        } else {
+        } else {//同一个hook，多次执行dispatch函数（setState多次）。将多个更新用链表串起来，最后一个update赋值给 queue.interleaved = update;
             update.next = interleaved.next;
             interleaved.next = update;
         }
@@ -17422,21 +17424,18 @@
     }
 
     var NoFlags$1 =
-        /*   */
-        0; // Represents whether effect should fire.
+        0;
 
+    // Represents whether effect should fire.
     var HasEffect =
-        /* */
-        1; // Represents the phase in which the effect (not the clean-up) fires.
+        1;
 
+    // Represents the phase in which the effect (not the clean-up) fires.
     var Insertion =
-        /*  */
         2;
     var Layout =
-        /*    */
         4;
     var Passive$1 =
-        /*   */
         8;
 
     // and should be reset before starting a new render.
@@ -17521,7 +17520,6 @@
     // In DEV, this tracks whether currently rendering component needs to ignore
     // the dependencies for Hooks that need them (e.g. useEffect or useMemo).
     // When true, such Hooks will always be "remounted". Only used during hot reload.
-
     var ignorePreviousDependencies = false;
 
     /**
@@ -17540,7 +17538,8 @@
     }
 
     /**
-     * 
+     * DONE
+     * 更新时校验hook的调用顺序是否和挂载的时候一致，否则报错警告
      */
     function updateHookTypesDev() {
         {
@@ -17556,12 +17555,14 @@
         }
     }
 
+    //DONE useCallback deps
     function checkDepsAreArrayDev(deps) {
         {
             if (deps !== undefined && deps !== null && !isArray(deps)) {
                 // Verify deps, but only on mount to avoid extra checks.
                 // It's unlikely their type would change as usually you define them inline.
-                error('%s received a final argument that is not an array (instead, received `%s`). When ' + 'specified, the final argument must be an array.', currentHookNameInDev, typeof deps);
+                error('%s received a final argument that is not an array (instead, received `%s`). When '
+                    + 'specified, the final argument must be an array.', currentHookNameInDev, typeof deps);
             }
         }
     }
@@ -17606,13 +17607,17 @@
         }
     }
 
+    //DONE
     function throwInvalidHookError() {
         throw new Error('Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for'
-            + ' one of the following reasons:\n' + '1. You might have mismatching versions of React and the renderer (such as React DOM)\n'
-            + '2. You might be breaking the Rules of Hooks\n' + '3. You might have more than one copy of React in the same app\n'
+            + ' one of the following reasons:\n'
+            + '1. You might have mismatching versions of React and the renderer (such as React DOM)\n'
+            + '2. You might be breaking the Rules of Hooks\n'
+            + '3. You might have more than one copy of React in the same app\n'
             + 'See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.');
     }
 
+    //DONE 对比useCallback的依赖数组的值，前后两次是否相等
     function areHookInputsEqual(nextDeps, prevDeps) {
         {
             if (ignorePreviousDependencies) {
@@ -17684,7 +17689,7 @@
         // so memoizedState would be null during updates and mounts.
 
         {
-            if (current !== null && current.memoizedState !== null) {
+            if (current !== null && current.memoizedState !== null) { //
                 ReactCurrentDispatcher$1.current = HooksDispatcherOnUpdateInDEV;
             } else if (hookTypesDev !== null) {
                 // This dispatcher handles an edge case where a component is updating,
@@ -17693,7 +17698,7 @@
                 // but with the extra DEV validation to ensure hooks ordering hasn't changed.
                 // This dispatcher does that.
                 ReactCurrentDispatcher$1.current = HooksDispatcherOnMountWithHookTypesInDEV;
-            } else {//-
+            } else {// mount
                 ReactCurrentDispatcher$1.current = HooksDispatcherOnMountInDEV;
             }
         }
@@ -17874,7 +17879,8 @@
     }
 
     /**
-     * 
+     * DONE
+     * 从 current的 memoizedState 中拷贝一份对应的hook并返回
      */
     function updateWorkInProgressHook() {
         // This function is used both for updates and for re-renders triggered by a
@@ -17936,6 +17942,7 @@
         return workInProgressHook;
     }
 
+    //DONE
     function createFunctionComponentUpdateQueue() {
         return {
             lastEffect: null,
@@ -17944,13 +17951,13 @@
     }
 
     /**
-     * 
+     * DONE
      */
     function basicStateReducer(state, action) {
-        // $FlowFixMe: Flow doesn't like mixed types
         return typeof action === 'function' ? action(state) : action;
     }
 
+    //DONE useReducer()
     function mountReducer(reducer, initialArg, init) {
         var hook = mountWorkInProgressHook();
         var initialState;
@@ -17976,13 +17983,14 @@
     }
 
     /**
-     * 
+     * DONE 
      * @param {*} reducer 
      * @param {*} initialArg 
      * @param {*} init 
      * @returns 
      */
     function updateReducer(reducer, initialArg, init) {
+        // 从 current的 memoizedState 中拷贝一份对应的hook并返回
         var hook = updateWorkInProgressHook();
         var queue = hook.queue;
 
@@ -17991,10 +17999,11 @@
         }
 
         queue.lastRenderedReducer = reducer;
-        var current = currentHook; // The last rebase update that is NOT part of the base state.
+        var current = currentHook;
 
-        var baseQueue = current.baseQueue; // The last pending update that hasn't been processed yet.
-
+        // The last rebase update that is NOT part of the base state.
+        var baseQueue = current.baseQueue;
+        // The last pending update that hasn't been processed yet.
         var pendingQueue = queue.pending;
 
         if (pendingQueue !== null) {
@@ -18049,7 +18058,8 @@
                         newBaseState = newState;
                     } else {
                         newBaseQueueLast = newBaseQueueLast.next = clone;
-                    } // Update the remaining priority in the queue.
+                    }
+                    // Update the remaining priority in the queue.
                     // TODO: Don't need to accumulate this. Instead, we can remove
                     // renderLanes from the original lanes.
 
@@ -18070,9 +18080,9 @@
                             next: null
                         };
                         newBaseQueueLast = newBaseQueueLast.next = _clone;
-                    } // Process this update.
+                    }
 
-
+                    // Process this update.
                     if (update.hasEagerState) {
                         // If this update is a state update (not a reducer) and was processed eagerly,
                         // we can use the eagerly computed state
@@ -18090,10 +18100,10 @@
                 newBaseState = newState;
             } else {
                 newBaseQueueLast.next = newBaseQueueFirst;
-            } // Mark that the fiber performed work, but only if the new state is
+            }
+
+            // Mark that the fiber performed work, but only if the new state is
             // different from the current state.
-
-
             if (!objectIs(newState, hook.memoizedState)) {
                 markWorkInProgressReceivedUpdate();
             }
@@ -18102,11 +18112,11 @@
             hook.baseState = newBaseState;
             hook.baseQueue = newBaseQueueLast;
             queue.lastRenderedState = newState;
-        } // Interleaved updates are stored on a separate queue. We aren't going to
+        }
+
+        // Interleaved updates are stored on a separate queue. We aren't going to
         // process them during this render, but we do need to track which lanes
         // are remaining.
-
-
         var lastInterleaved = queue.interleaved;
 
         if (lastInterleaved !== null) {
@@ -18421,7 +18431,7 @@
     }
 
     /**
-     * 
+     * DONE 
      */
     function updateState(initialState) {
         return updateReducer(basicStateReducer);
@@ -18431,6 +18441,7 @@
         return rerenderReducer(basicStateReducer);
     }
 
+    //DONE
     function pushEffect(tag, create, destroy, deps) {
         var effect = {
             tag: tag,
@@ -18462,6 +18473,7 @@
         return effect;
     }
 
+    //DONE useRef
     function mountRef(initialValue) {
         var hook = mountWorkInProgressHook();
 
@@ -18474,11 +18486,13 @@
         }
     }
 
+    //DONE
     function updateRef(initialValue) {
         var hook = updateWorkInProgressHook();
         return hook.memoizedState;
     }
 
+    //DONE
     function mountEffectImpl(fiberFlags, hookFlags, create, deps) {
         var hook = mountWorkInProgressHook();
         var nextDeps = deps === undefined ? null : deps;
@@ -18486,6 +18500,7 @@
         hook.memoizedState = pushEffect(HasEffect | hookFlags, create, undefined, nextDeps);
     }
 
+    //DONE
     function updateEffectImpl(fiberFlags, hookFlags, create, deps) {
         var hook = updateWorkInProgressHook();
         var nextDeps = deps === undefined ? null : deps;
@@ -18509,6 +18524,7 @@
         hook.memoizedState = pushEffect(HasEffect | hookFlags, create, destroy, nextDeps);
     }
 
+    //DONE 
     function mountEffect(create, deps) {
         if ((currentlyRenderingFiber$1.mode & StrictEffectsMode) !== NoMode) {
             return mountEffectImpl(MountPassiveDev | Passive | PassiveStatic, Passive$1, create, deps);
@@ -18517,6 +18533,7 @@
         }
     }
 
+    //DONE
     function updateEffect(create, deps) {
         return updateEffectImpl(Passive, Passive$1, create, deps);
     }
@@ -18529,7 +18546,9 @@
         return updateEffectImpl(Update, Insertion, create, deps);
     }
 
+    //DONE
     function mountLayoutEffect(create, deps) {
+        //这个flag和下边的LayoutStatic 用来区分useEffect()。在commit阶段区别对待，useEffect的更新在下次循环执行，而useLayoutEffect()同步更新（同一帧）。
         var fiberFlags = Update;
 
         {
@@ -18543,6 +18562,7 @@
         return mountEffectImpl(fiberFlags, Layout, create, deps);
     }
 
+    //DONE
     function updateLayoutEffect(create, deps) {
         return updateEffectImpl(Update, Layout, create, deps);
     }
@@ -18617,6 +18637,7 @@
 
     var updateDebugValue = mountDebugValue;
 
+    //DONE useCallback
     function mountCallback(callback, deps) {
         var hook = mountWorkInProgressHook();
         var nextDeps = deps === undefined ? null : deps;
@@ -18624,6 +18645,7 @@
         return callback;
     }
 
+    //DONE
     function updateCallback(callback, deps) {
         var hook = updateWorkInProgressHook();
         var nextDeps = deps === undefined ? null : deps;
@@ -18643,6 +18665,7 @@
         return callback;
     }
 
+    //DONE
     function mountMemo(nextCreate, deps) {
         var hook = mountWorkInProgressHook();
         var nextDeps = deps === undefined ? null : deps;
@@ -18651,6 +18674,7 @@
         return nextValue;
     }
 
+    //DONE
     function updateMemo(nextCreate, deps) {
         var hook = updateWorkInProgressHook();
         var nextDeps = deps === undefined ? null : deps;
@@ -18854,10 +18878,13 @@
         return id;
     }
 
+    //DONE useReducer的 dispatch
     function dispatchReducerAction(fiber, queue, action) {
         {
             if (typeof arguments[3] === 'function') {
-                error("State updates from the useState() and useReducer() Hooks don't support the " + 'second callback argument. To execute a side effect after ' + 'rendering, declare it in the component body with useEffect().');
+                error("State updates from the useState() and useReducer() Hooks don't support the "
+                    + 'second callback argument. To execute a side effect after '
+                    + 'rendering, declare it in the component body with useEffect().');
             }
         }
 
@@ -18900,7 +18927,6 @@
                     + 'rendering, declare it in the component body with useEffect().');
             }
         }
-        debugger
         var lane = requestUpdateLane(fiber);
         var update = {
             lane: lane,
@@ -18997,9 +19023,10 @@
         }
 
         queue.pending = update;
-    } // TODO: Move to ReactFiberConcurrentUpdates?
+    }
 
 
+    //DONE
     function entangleTransitionUpdate(root, queue, lane) {
         if (isTransitionLane(lane)) {
             var queueLanes = queue.lanes; // If any entangled lanes are no longer pending on the root, then they
@@ -19020,7 +19047,7 @@
     }
 
     /**
-     * 
+     * DONE
      * @param {*} fiber 
      * @param {*} lane 
      * @param {*} action 
@@ -19077,11 +19104,11 @@
                 + 'https://reactjs.org/link/rules-of-hooks');
         };
         //DONE hooks中心
-        HooksDispatcherOnMountInDEV = {
+        HooksDispatcherOnMountInDEV = {//mount
             readContext: function (context) {
                 return readContext(context);
             },
-            useCallback: function (callback, deps) {
+            useCallback: function (callback, deps) {//DONE
                 currentHookNameInDev = 'useCallback';
                 mountHookTypesDev();
                 checkDepsAreArrayDev(deps);
@@ -19092,7 +19119,7 @@
                 mountHookTypesDev();
                 return readContext(context);
             },
-            useEffect: function (create, deps) {
+            useEffect: function (create, deps) {//DONE
                 currentHookNameInDev = 'useEffect';
                 mountHookTypesDev();
                 checkDepsAreArrayDev(deps);
@@ -19110,13 +19137,13 @@
                 checkDepsAreArrayDev(deps);
                 return mountInsertionEffect(create, deps);
             },
-            useLayoutEffect: function (create, deps) {
+            useLayoutEffect: function (create, deps) {//DONE
                 currentHookNameInDev = 'useLayoutEffect';
                 mountHookTypesDev();
                 checkDepsAreArrayDev(deps);
                 return mountLayoutEffect(create, deps);
             },
-            useMemo: function (create, deps) {
+            useMemo: function (create, deps) {//DONE
                 currentHookNameInDev = 'useMemo';
                 mountHookTypesDev();
                 checkDepsAreArrayDev(deps);
@@ -19129,7 +19156,7 @@
                     ReactCurrentDispatcher$1.current = prevDispatcher;
                 }
             },
-            useReducer: function (reducer, initialArg, init) {
+            useReducer: function (reducer, initialArg, init) {//mount DONE
                 currentHookNameInDev = 'useReducer';
                 mountHookTypesDev();
                 var prevDispatcher = ReactCurrentDispatcher$1.current;
@@ -19141,12 +19168,12 @@
                     ReactCurrentDispatcher$1.current = prevDispatcher;
                 }
             },
-            useRef: function (initialValue) {
+            useRef: function (initialValue) {//DONE
                 currentHookNameInDev = 'useRef';
                 mountHookTypesDev();
                 return mountRef(initialValue);
             },
-            useState: function (initialState) {
+            useState: function (initialState) {//mount DONE
                 currentHookNameInDev = 'useState';
                 mountHookTypesDev();
                 var prevDispatcher = ReactCurrentDispatcher$1.current;
@@ -19299,11 +19326,11 @@
             unstable_isNewReconciler: enableNewReconciler
         };
 
-        HooksDispatcherOnUpdateInDEV = {
+        HooksDispatcherOnUpdateInDEV = {//update
             readContext: function (context) {
                 return readContext(context);
             },
-            useCallback: function (callback, deps) {
+            useCallback: function (callback, deps) {//DONE
                 currentHookNameInDev = 'useCallback';
                 updateHookTypesDev();
                 return updateCallback(callback, deps);
@@ -19313,7 +19340,7 @@
                 updateHookTypesDev();
                 return readContext(context);
             },
-            useEffect: function (create, deps) {
+            useEffect: function (create, deps) {//DONE
                 currentHookNameInDev = 'useEffect';
                 updateHookTypesDev();
                 return updateEffect(create, deps);
@@ -19328,12 +19355,12 @@
                 updateHookTypesDev();
                 return updateInsertionEffect(create, deps);
             },
-            useLayoutEffect: function (create, deps) {
+            useLayoutEffect: function (create, deps) {//DONE
                 currentHookNameInDev = 'useLayoutEffect';
                 updateHookTypesDev();
                 return updateLayoutEffect(create, deps);
             },
-            useMemo: function (create, deps) {
+            useMemo: function (create, deps) {//DONE
                 currentHookNameInDev = 'useMemo';
                 updateHookTypesDev();
                 var prevDispatcher = ReactCurrentDispatcher$1.current;
@@ -19345,7 +19372,7 @@
                     ReactCurrentDispatcher$1.current = prevDispatcher;
                 }
             },
-            useReducer: function (reducer, initialArg, init) {
+            useReducer: function (reducer, initialArg, init) {//DONE 
                 currentHookNameInDev = 'useReducer';
                 updateHookTypesDev();
                 var prevDispatcher = ReactCurrentDispatcher$1.current;
@@ -19357,13 +19384,14 @@
                     ReactCurrentDispatcher$1.current = prevDispatcher;
                 }
             },
-            useRef: function (initialValue) {
+            useRef: function (initialValue) {//DONE
                 currentHookNameInDev = 'useRef';
                 updateHookTypesDev();
                 return updateRef();
             },
-            useState: function (initialState) {
+            useState: function (initialState) {//update
                 currentHookNameInDev = 'useState';
+                //更新时校验hook的调用顺序是否和挂载的时候一致，否则报错警告
                 updateHookTypesDev();
                 var prevDispatcher = ReactCurrentDispatcher$1.current;
                 ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
@@ -20839,7 +20867,7 @@
             // unlike current.memoizedProps which will be the unresolved ones.
             //props浅比较，如果相同，则函数不用重新执行，直接复用之前的。
             var prevProps = currentChild.memoizedProps; // Default to shallow comparison
-
+            //React.memo() ，没有提供比较函数的话，默认是 shallowEqual
             var compare = Component.compare;
             compare = compare !== null ? compare : shallowEqual;
 
@@ -23361,7 +23389,7 @@
         workInProgress.flags |= Update;
     }
 
-    //DONE // 给workInProgress 的flags标记Ref | RefStatic
+    //DONE  给workInProgress 的flags标记Ref | RefStatic
     function markRef$1(workInProgress) {
         workInProgress.flags |= Ref;
 
@@ -24776,8 +24804,9 @@
         }
     }
 
-    //DONE
+    //DONE useEffect()的销毁阶段
     function commitHookEffectListUnmount(flags, finishedWork, nearestMountedAncestor) {
+        debugger
         var updateQueue = finishedWork.updateQueue;
         var lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
 
@@ -24831,6 +24860,7 @@
 
     //DONE
     function commitHookEffectListMount(flags, finishedWork) {
+        debugger
         var updateQueue = finishedWork.updateQueue;
         var lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
 
@@ -24985,6 +25015,7 @@
      * @param {*} committedLanes 
      */
     function commitLayoutEffectOnFiber(finishedRoot, current, finishedWork, committedLanes) {
+        debugger
         if ((finishedWork.flags & LayoutMask) !== NoFlags) {
             switch (finishedWork.tag) {
                 case FunctionComponent:
@@ -26104,6 +26135,7 @@
         // because the fiber tag is more specific. An exception is any flag related
         // to reconcilation, because those can be set on all fiber types.
 
+        debugger
         switch (finishedWork.tag) {
             case FunctionComponent://DONE
             case ForwardRef:
@@ -26113,22 +26145,25 @@
                     recursivelyTraverseMutationEffects(root, finishedWork);
                     commitReconciliationEffects(finishedWork);
 
+                    debugger
                     if (flags & Update) {
                         try {
+                            //useEffect()
                             commitHookEffectListUnmount(Insertion | HasEffect, finishedWork, finishedWork.return);
                             commitHookEffectListMount(Insertion | HasEffect, finishedWork);
                         } catch (error) {
                             captureCommitPhaseError(finishedWork, finishedWork.return, error);
-                        } // Layout effects are destroyed during the mutation phase so that all
+                        }
+
+                        // Layout effects are destroyed during the mutation phase so that all
                         // destroy functions for all fibers are called before any create functions.
                         // This prevents sibling component effects from interfering with each other,
                         // e.g. a destroy function in one component should never override a ref set
                         // by a create function in another component during the same commit.
-
-
                         if (finishedWork.mode & ProfileMode) {
                             try {
                                 startLayoutEffectTimer();
+                                //useLayoutEffect()
                                 commitHookEffectListUnmount(Layout | HasEffect, finishedWork, finishedWork.return);
                             } catch (error) {
                                 captureCommitPhaseError(finishedWork, finishedWork.return, error);
@@ -26723,6 +26758,7 @@
 
     //DONE
     function commitPassiveMountEffects_begin(subtreeRoot, root, committedLanes, committedTransitions) {
+        debugger
         while (nextEffect !== null) {
             var fiber = nextEffect;
             var firstChild = fiber.child;
@@ -26736,6 +26772,7 @@
         }
     }
 
+    //DONE
     function commitPassiveMountEffects_complete(subtreeRoot, root, committedLanes, committedTransitions) {
         while (nextEffect !== null) {
             var fiber = nextEffect;
@@ -26769,6 +26806,7 @@
         }
     }
 
+    //DONE
     function commitPassiveMountOnFiber(finishedRoot, finishedWork, committedLanes, committedTransitions) {
         switch (finishedWork.tag) {
             case FunctionComponent:
@@ -26798,7 +26836,9 @@
         commitPassiveUnmountEffects_begin();
     }
 
+    //DONE
     function commitPassiveUnmountEffects_begin() {
+        debugger
         while (nextEffect !== null) {
             var fiber = nextEffect;
             var child = fiber.child;
@@ -26855,7 +26895,9 @@
         }
     }
 
+    //DONE
     function commitPassiveUnmountEffects_complete() {
+        debugger
         while (nextEffect !== null) {
             var fiber = nextEffect;
 
@@ -26877,6 +26919,7 @@
         }
     }
 
+    //DONE
     function commitPassiveUnmountOnFiber(finishedWork) {
         switch (finishedWork.tag) {
             case FunctionComponent:
@@ -28662,6 +28705,7 @@
      * 
      */
     function commitRootImpl(root, recoverableErrors, transitions, renderPriorityLevel) {
+        debugger
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
             // means `flushPassiveEffects` will sometimes result in additional
@@ -28672,6 +28716,7 @@
             flushPassiveEffects();
         } while (rootWithPendingPassiveEffects !== null);
 
+        debugger
         //commit 之前 ，将严格模式的相关提示log出来
         flushRenderPhaseStrictModeWarningsInDEV();
 
@@ -28732,7 +28777,9 @@
         // TODO: Delete all other places that schedule the passive effect callback
         // They're redundant（adj.	冗余的; 多余的）
 
+        //useEffect()。调度一个回调执行副作用。
         if ((finishedWork.subtreeFlags & PassiveMask) !== NoFlags || (finishedWork.flags & PassiveMask) !== NoFlags) {
+            debugger
             if (!rootDoesHavePassiveEffects) {
                 rootDoesHavePassiveEffects = true;
                 // to store it in pendingPassiveTransitions until they get processed
@@ -28743,6 +28790,7 @@
 
                 pendingPassiveTransitions = transitions;
                 scheduleCallback$1(NormalPriority, function () {
+                    debugger
                     flushPassiveEffects();
                     // This render triggered passive effects: release the root cache pool
                     // *after* passive effects fire to avoid freeing a cache pool that may
@@ -28789,6 +28837,7 @@
             }
 
 
+            debugger
             commitMutationEffects(root, finishedWork, lanes);
 
             resetAfterCommit(root.containerInfo);
@@ -28802,7 +28851,7 @@
             {
                 markLayoutEffectsStarted(lanes);
             }
-
+            debugger
             commitLayoutEffects(finishedWork, root, lanes);
 
             {
@@ -28814,6 +28863,7 @@
 
             setCurrentUpdatePriority(previousPriority);
             ReactCurrentBatchConfig$3.transition = prevTransition;
+            debugger
         } else {
             // No effects.
             root.current = finishedWork; // Measure these anyway so the flamegraph explicitly shows that there were
@@ -28827,6 +28877,7 @@
 
         var rootDidHavePassiveEffects = rootDoesHavePassiveEffects;
 
+        debugger
         if (rootDoesHavePassiveEffects) {
             // This commit has passive effects. Stash a reference to them. But don't
             // schedule a callback until after flushing layout work.
@@ -28939,6 +28990,7 @@
             nestedUpdateCount = 0;
         }
         // If layout work was scheduled, flush it now.
+        // useLayoutEffect()的更新在此处执行
         flushSyncCallbacks();
 
         {
@@ -28971,7 +29023,6 @@
             } finally {
                 setCurrentUpdatePriority(previousPriority);
                 ReactCurrentBatchConfig$3.transition = prevTransition;
-                // Once passive effects have run for the tree - giving components a
             }
         }
 
@@ -28992,13 +29043,14 @@
         }
     }
 
-    //DONE
+    //DONE useEffect
     function flushPassiveEffectsImpl() {
+        debugger
         if (rootWithPendingPassiveEffects === null) {
             return false;
-        } // Cache and clear the transitions flag
+        }
 
-
+        // Cache and clear the transitions flag
         var transitions = pendingPassiveTransitions;
         pendingPassiveTransitions = null;
         var root = rootWithPendingPassiveEffects;
@@ -29028,6 +29080,7 @@
         commitPassiveUnmountEffects(root.current);
         commitPassiveMountEffects(root, root.current, lanes, transitions); // TODO: Move to commitPassiveMountEffects
 
+        debugger
         {
             var profilerEffects = pendingPassiveProfilerEffects;
             pendingPassiveProfilerEffects = [];
@@ -29065,9 +29118,9 @@
 
             isFlushingPassiveEffects = false;
             didScheduleUpdateDuringPassiveEffects = false;
-        } // TODO: Move to commitPassiveMountEffects
+        }
 
-
+        // TODO: Move to commitPassiveMountEffects
         onPostCommitRoot(root);
 
         {

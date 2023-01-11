@@ -1,8 +1,12 @@
 'use strict';
 
+
 const e = React.createElement;
 const useState = React.useState;
+const useReducer = React.useReducer;
 const useTransition = React.useTransition;
+const useEffect = React.useEffect;
+const useLayoutEffect = React.useLayoutEffect;
 const Fragment = React.Fragment;
 
 const dom = document.getElementById("app")
@@ -240,12 +244,45 @@ class MyClassTest extends React.PureComponent {
 
 function HookFunction() {
     const [count, setCount] = useState(0);
-    const [age, setAge] = useState(0);
+
+    // useEffect(() => {
+    //     console.log("useEffect")
+    //     setCount(1)
+    // }, [])
+
+    useLayoutEffect(() => {
+        console.log("useLayoutEffect")
+        setCount(1)
+    }, [])
+
+
+    // const [count, dispatch] = useReducer((state, action) => {
+    //     if (action.type === 'add') {
+    //         return state + 1;
+    //     } else if (action.type === 'jian') {
+    //         return state - 1;
+    //     } else {
+    //         return state;
+    //     }
+    // }, 0);
+
 
     return e('div', {
         onClick: () => {
+            // setCount((state) => {
+            //     return state + 1;
+            // })
+            // setCount((state) => {
+            //     return state + 1;
+            // })
+            // setCount((state) => {
+            //     return state + 3;
+            // })
+            // setCount(count + 1)
+            // setCount(count + 2)
+            // setCount(count + 3)
+            // setCount(count + 999)
             setCount(count + 1)
-            setAge(2)
         }
     }, e('span', {}, `you clicked ${count} counts`))
 }
