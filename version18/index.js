@@ -6,6 +6,7 @@ const useState = React.useState;
 const useReducer = React.useReducer;
 const useTransition = React.useTransition;
 const useEffect = React.useEffect;
+const useId = React.useId;
 const useLayoutEffect = React.useLayoutEffect;
 const Fragment = React.Fragment;
 
@@ -244,6 +245,7 @@ class MyClassTest extends React.PureComponent {
 
 function HookFunction() {
     const [count, setCount] = useState(0);
+    const id = useId()
 
     // useEffect(() => {
     //     console.log("useEffect")

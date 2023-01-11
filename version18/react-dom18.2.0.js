@@ -12942,6 +12942,7 @@
         warnIfNotHydrating();
         return treeForkCount;
     }
+    //DONE
     function getTreeId() {
         var overflow = treeContextOverflow;
         var idWithLeadingBit = treeContextId;
@@ -13047,6 +13048,7 @@
         return 32 - clz32(number);
     }
 
+    //DONE
     function getLeadingBit(id) {
         return 1 << getBitLength(id) - 1;
     }
@@ -18837,9 +18839,11 @@
         }
     }
 
+    //DONE
     function mountId() {
         var hook = mountWorkInProgressHook();
-        var root = getWorkInProgressRoot(); // TODO: In Fizz, id generation is specific to each server config. Maybe we
+        var root = getWorkInProgressRoot();
+        // TODO: In Fizz, id generation is specific to each server config. Maybe we
         // should do this in Fiber, too? Deferring this decision for now because
         // there's no other place to store the prefix except for an internal field on
         // the public createRoot object, which the fiber tree does not currently have
@@ -18872,6 +18876,7 @@
         return id;
     }
 
+    //DONE
     function updateId() {
         var hook = updateWorkInProgressHook();
         var id = hook.memoizedState;
@@ -19210,7 +19215,7 @@
                 mountHookTypesDev();
                 return mountSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
             },
-            useId: function () {
+            useId: function () {//DONE
                 currentHookNameInDev = 'useId';
                 mountHookTypesDev();
                 return mountId();
@@ -19427,7 +19432,7 @@
                 updateHookTypesDev();
                 return updateSyncExternalStore(subscribe, getSnapshot);
             },
-            useId: function () {
+            useId: function () {//DONE
                 currentHookNameInDev = 'useId';
                 updateHookTypesDev();
                 return updateId();

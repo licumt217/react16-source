@@ -1770,6 +1770,7 @@
         var dispatcher = resolveDispatcher();
         return dispatcher.useDeferredValue(value);
     }
+    //DONE
     function useId() {
         var dispatcher = resolveDispatcher();
         return dispatcher.useId();
@@ -3552,7 +3553,7 @@
     exports.useDebugValue = useDebugValue;
     exports.useDeferredValue = useDeferredValue;
     exports.useEffect = useEffect;//-
-    exports.useId = useId;
+    exports.useId = useId;//-
     exports.useImperativeHandle = useImperativeHandle;
     exports.useInsertionEffect = useInsertionEffect;
     exports.useLayoutEffect = useLayoutEffect;
