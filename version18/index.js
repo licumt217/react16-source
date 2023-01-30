@@ -5,8 +5,12 @@ const e = React.createElement;
 const useState = React.useState;
 const useReducer = React.useReducer;
 const useTransition = React.useTransition;
+const useDeferredValue = React.useDeferredValue;
 const useEffect = React.useEffect;
 const useId = React.useId;
+const useRef = React.useRef;
+const useImperativeHandle = React.useImperativeHandle
+const useContext = React.useContext;
 const useLayoutEffect = React.useLayoutEffect;
 const Fragment = React.Fragment;
 
@@ -117,9 +121,9 @@ class ChildClass extends React.Component {
     }
     render() {
         // throw new Error("error!!!")
-        // return e(MyContext.Consumer, null, function (contextValue) {
-        //     return e('span', { style: { color: 'red' } }, contextValue)
-        // });
+        return e(MyContext.Consumer, null, function (contextValue) {
+            return e('span', { style: { color: 'red' } }, contextValue)
+        });
         // return e("span", { onClick: this.handleClick }, this.state.age);
         return e("div", {
         }, '<b style="color:red;">222</b>First <script>console.log(1)</script> Second');
@@ -244,18 +248,28 @@ class MyClassTest extends React.PureComponent {
 }
 
 function HookFunction() {
-    const [count, setCount] = useState(0);
-    const id = useId()
 
-    // useEffect(() => {
-    //     console.log("useEffect")
+    const theContext = useContext(MyContext)
+    const [count, setCount] = useReducer(function (state, action) {
+        if (action.type === 'add') {
+            return 5;
+        } else {
+            return 10;
+        }
+    }, 0);
+    // const id = useId()
+
+    useEffect(() => {
+        console.log("useEffect")
+        return function () {
+            console.log("destroy!");
+        }
+    }, [count])
+
+    // useLayoutEffect(() => {
+    //     console.log("useLayoutEffect")
     //     setCount(1)
     // }, [])
-
-    useLayoutEffect(() => {
-        console.log("useLayoutEffect")
-        setCount(1)
-    }, [])
 
 
     // const [count, dispatch] = useReducer((state, action) => {
@@ -271,6 +285,7 @@ function HookFunction() {
 
     return e('div', {
         onClick: () => {
+            theContext.setColor('yellow')
             // setCount((state) => {
             //     return state + 1;
             // })
@@ -284,13 +299,69 @@ function HookFunction() {
             // setCount(count + 2)
             // setCount(count + 3)
             // setCount(count + 999)
-            setCount(count + 1)
+            // setCount(count + 1)
+            setCount({ type: 'add' })
         }
-    }, e('span', {}, `you clicked ${count} counts`))
+    }, e('span', {}, `you clicked ${count} counts,color:${theContext.color}`))
+
+
+}
+
+function Hook2() {
+    const [color, setColor] = useState('red')
+
+    return e(MyContext.Provider, {
+        value: {
+            color,
+            setColor
+        }
+    }, e(HookFunction))
+}
+
+const FancyInput = React.forwardRef((props, ref) => {
+    const inputRef = useRef();
+
+    useImperativeHandle(ref, () => {
+        debugger
+        return {
+            focus: () => {
+                // 这里可以加自己的逻辑哦
+                inputRef.current.focus();
+            }
+        }
+    });
+
+    return e('input', { ref: inputRef, type: 'text' })
+
+});
+
+const App = props => {
+    const fancyInputRef = useRef();
+
+    return (
+        e('div', null, e(FancyInput, { ref: fancyInputRef }), e('button', { onClick: () => { fancyInputRef.current.focus() } }, '点击'))
+    )
+}
+
+function MyD() {
+    const [pending, start] = useTransition();
+    const [name, setName] = useState("liqiang");
+    // const deferredName = useDeferredValue(name);
+
+    return e('div', null, e('span', {}, pending && '.................................'), e('span', { color: 'red' }, name), e('button', {
+        onClick: () => {
+            start(() => {
+                debugger
+                setName("qiangli")
+            })
+        }
+    }, '点击'))
 }
 
 
-root.render(e(HookFunction));
+
+// root.render(e(Hook2));
+root.render(e(MyD));
 
 
 

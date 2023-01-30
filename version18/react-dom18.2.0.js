@@ -5997,6 +5997,7 @@
     function includesOnlyRetries(lanes) {
         return (lanes & RetryLanes) === lanes;
     }
+    //DONE useDeferredValue
     function includesOnlyNonUrgentLanes(lanes) {
         var UrgentLanes = SyncLane | InputContinuousLane | DefaultLane;
         return (lanes & UrgentLanes) === NoLanes;
@@ -12857,6 +12858,7 @@
             syncQueue.push(callback);
         }
     }
+    //DONE
     function scheduleLegacySyncCallback(callback) {
         includesLegacySyncCallbacks = true;
         scheduleSyncCallback(callback);
@@ -12877,7 +12879,6 @@
      * @returns 
      */
     function flushSyncCallbacks() {
-        debugger
         if (!isFlushingSyncQueue && syncQueue !== null) {
             // Prevent re-entrance.
             isFlushingSyncQueue = true;
@@ -13988,7 +13989,7 @@
             isDisallowedContextReadInDEV = false;
         }
     }
-    //DONE
+    //DONE 每次渲染Provider时，更新context的value为最新的值
     function pushProvider(providerFiber, context, nextValue) {
         {
             push(valueCursor, context._currentValue, providerFiber);
@@ -18569,6 +18570,7 @@
         return updateEffectImpl(Update, Layout, create, deps);
     }
 
+    //DONE
     function imperativeHandleEffect(create, ref) {
         if (typeof ref === 'function') {
             var refCallback = ref;
@@ -18584,7 +18586,9 @@
 
             {
                 if (!refObject.hasOwnProperty('current')) {
-                    error('Expected useImperativeHandle() first argument to either be a ' + 'ref callback or React.createRef() object. Instead received: %s.', 'an object with keys {' + Object.keys(refObject).join(', ') + '}');
+                    error('Expected useImperativeHandle() first argument to either be a '
+                        + 'ref callback or React.createRef() object. Instead received: %s.',
+                        'an object with keys {' + Object.keys(refObject).join(', ') + '}');
                 }
             }
 
@@ -18597,14 +18601,15 @@
         }
     }
 
+    //DONE
     function mountImperativeHandle(ref, create, deps) {
         {
             if (typeof create !== 'function') {
-                error('Expected useImperativeHandle() second argument to be a function ' + 'that creates a handle. Instead received: %s.', create !== null ? typeof create : 'null');
+                error('Expected useImperativeHandle() second argument to be a function '
+                    + 'that creates a handle. Instead received: %s.', create !== null ? typeof create : 'null');
             }
-        } // TODO: If deps are provided, should we skip comparing the ref itself?
-
-
+        }
+        // TODO: If deps are provided, should we skip comparing the ref itself?
         var effectDeps = deps !== null && deps !== undefined ? deps.concat([ref]) : null;
         var fiberFlags = Update;
 
@@ -18618,20 +18623,20 @@
 
         return mountEffectImpl(fiberFlags, Layout, imperativeHandleEffect.bind(null, create, ref), effectDeps);
     }
-
+    //DONE
     function updateImperativeHandle(ref, create, deps) {
         {
             if (typeof create !== 'function') {
                 error('Expected useImperativeHandle() second argument to be a function '
                     + 'that creates a handle. Instead received: %s.', create !== null ? typeof create : 'null');
             }
-        } // TODO: If deps are provided, should we skip comparing the ref itself?
-
-
+        }
+        // TODO: If deps are provided, should we skip comparing the ref itself?
         var effectDeps = deps !== null && deps !== undefined ? deps.concat([ref]) : null;
         return updateEffectImpl(Update, Layout, imperativeHandleEffect.bind(null, create, ref), effectDeps);
     }
 
+    //DONE
     function mountDebugValue(value, formatterFn) {// This hook is normally a no-op.
         // The react-debug-hooks package injects its own implementation
         // so that e.g. DevTools can display custom hook values.
@@ -18698,12 +18703,14 @@
         return nextValue;
     }
 
+    //DONE
     function mountDeferredValue(value) {
         var hook = mountWorkInProgressHook();
         hook.memoizedState = value;
         return value;
     }
 
+    //DONE
     function updateDeferredValue(value) {
         var hook = updateWorkInProgressHook();
         var resolvedCurrentHook = currentHook;
@@ -18725,25 +18732,27 @@
         }
     }
 
+    //DONE
     function updateDeferredValueImpl(hook, prevValue, value) {
         var shouldDeferValue = !includesOnlyNonUrgentLanes(renderLanes);
 
-        if (shouldDeferValue) {
+        if (shouldDeferValue) {//有紧急的更新
             // This is an urgent update. If the value has changed, keep using the
             // previous value and spawn a deferred render to update it later.
             if (!objectIs(value, prevValue)) {
                 // Schedule a deferred render
                 var deferredLane = claimNextTransitionLane();
                 currentlyRenderingFiber$1.lanes = mergeLanes(currentlyRenderingFiber$1.lanes, deferredLane);
-                markSkippedUpdateLanes(deferredLane); // Set this to true to indicate that the rendered value is inconsistent
+                markSkippedUpdateLanes(deferredLane);
+                // Set this to true to indicate that the rendered value is inconsistent
                 // from the latest value. The name "baseState" doesn't really match how we
                 // use it because we're reusing a state hook field instead of creating a
                 // new one.
 
                 hook.baseState = true;
-            } // Reuse the previous value
+            }
 
-
+            // Reuse the previous value
             return prevValue;
         } else {
             // This is not an urgent update, so we can use the latest value regardless
@@ -18765,6 +18774,7 @@
         }
     }
 
+    //DONE useTransition
     function startTransition(setPending, callback, options) {
         var previousPriority = getCurrentUpdatePriority();
         setCurrentUpdatePriority(higherEventPriority(previousPriority, ContinuousEventPriority));
@@ -18789,7 +18799,9 @@
                     var updatedFibersCount = currentTransition._updatedFibers.size;
 
                     if (updatedFibersCount > 10) {
-                        warn('Detected a large number of updates inside startTransition. ' + 'If this is due to a subscription please re-write it to use React provided hooks. ' + 'Otherwise concurrent mode guarantees are off the table.');
+                        warn('Detected a large number of updates inside startTransition. '
+                            + 'If this is due to a subscription please re-write it to use React provided hooks. '
+                            + 'Otherwise concurrent mode guarantees are off the table.');
                     }
 
                     currentTransition._updatedFibers.clear();
@@ -18799,7 +18811,7 @@
     }
 
     /**
-     * 
+     * DONE
      * @returns 
      */
     function mountTransition() {
@@ -18814,6 +18826,7 @@
         return [isPending, start];
     }
 
+    //DONE
     function updateTransition() {
         var _updateState = updateState(),
             isPending = _updateState[0];
@@ -19110,7 +19123,7 @@
         };
         //DONE hooks中心
         HooksDispatcherOnMountInDEV = {//mount
-            readContext: function (context) {
+            readContext: function (context) {//DONE
                 return readContext(context);
             },
             useCallback: function (callback, deps) {//DONE
@@ -19119,7 +19132,7 @@
                 checkDepsAreArrayDev(deps);
                 return mountCallback(callback, deps);
             },
-            useContext: function (context) {
+            useContext: function (context) {//DONE
                 currentHookNameInDev = 'useContext';
                 mountHookTypesDev();
                 return readContext(context);
@@ -19130,7 +19143,7 @@
                 checkDepsAreArrayDev(deps);
                 return mountEffect(create, deps);
             },
-            useImperativeHandle: function (ref, create, deps) {
+            useImperativeHandle: function (ref, create, deps) {//DONE
                 currentHookNameInDev = 'useImperativeHandle';
                 mountHookTypesDev();
                 checkDepsAreArrayDev(deps);
@@ -19190,17 +19203,17 @@
                     ReactCurrentDispatcher$1.current = prevDispatcher;
                 }
             },
-            useDebugValue: function (value, formatterFn) {
+            useDebugValue: function (value, formatterFn) {//DONE
                 currentHookNameInDev = 'useDebugValue';
                 mountHookTypesDev();
                 return mountDebugValue();
             },
-            useDeferredValue: function (value) {
+            useDeferredValue: function (value) {//DONE
                 currentHookNameInDev = 'useDeferredValue';
                 mountHookTypesDev();
                 return mountDeferredValue(value);
             },
-            useTransition: function () {
+            useTransition: function () {//DONE
                 currentHookNameInDev = 'useTransition';
                 mountHookTypesDev();
                 return mountTransition();
@@ -19332,7 +19345,7 @@
         };
 
         HooksDispatcherOnUpdateInDEV = {//update
-            readContext: function (context) {
+            readContext: function (context) {//DONE
                 return readContext(context);
             },
             useCallback: function (callback, deps) {//DONE
@@ -19340,7 +19353,7 @@
                 updateHookTypesDev();
                 return updateCallback(callback, deps);
             },
-            useContext: function (context) {
+            useContext: function (context) {//DONE
                 currentHookNameInDev = 'useContext';
                 updateHookTypesDev();
                 return readContext(context);
@@ -19350,7 +19363,7 @@
                 updateHookTypesDev();
                 return updateEffect(create, deps);
             },
-            useImperativeHandle: function (ref, create, deps) {
+            useImperativeHandle: function (ref, create, deps) {//DONE
                 currentHookNameInDev = 'useImperativeHandle';
                 updateHookTypesDev();
                 return updateImperativeHandle(ref, create, deps);
@@ -19407,17 +19420,17 @@
                     ReactCurrentDispatcher$1.current = prevDispatcher;
                 }
             },
-            useDebugValue: function (value, formatterFn) {
+            useDebugValue: function (value, formatterFn) {//DONE
                 currentHookNameInDev = 'useDebugValue';
                 updateHookTypesDev();
                 return updateDebugValue();
             },
-            useDeferredValue: function (value) {
+            useDeferredValue: function (value) {//DONE
                 currentHookNameInDev = 'useDeferredValue';
                 updateHookTypesDev();
                 return updateDeferredValue(value);
             },
-            useTransition: function () {
+            useTransition: function () {//DONE
                 currentHookNameInDev = 'useTransition';
                 updateHookTypesDev();
                 return updateTransition();
@@ -19440,7 +19453,7 @@
             unstable_isNewReconciler: enableNewReconciler
         };
 
-        HooksDispatcherOnRerenderInDEV = {
+        HooksDispatcherOnRerenderInDEV = {//Rerender
             readContext: function (context) {
                 return readContext(context);
             },
@@ -22778,9 +22791,9 @@
             }
         }
 
+        //每次渲染Provider时，更新context的value为最新的值
         pushProvider(workInProgress, context, newValue);
 
-        // hehe
         {
             if (oldProps !== null) {
                 var oldValue = oldProps.value;
@@ -24811,7 +24824,7 @@
 
     //DONE useEffect()的销毁阶段
     function commitHookEffectListUnmount(flags, finishedWork, nearestMountedAncestor) {
-        debugger
+
         var updateQueue = finishedWork.updateQueue;
         var lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
 
@@ -24865,7 +24878,6 @@
 
     //DONE
     function commitHookEffectListMount(flags, finishedWork) {
-        debugger
         var updateQueue = finishedWork.updateQueue;
         var lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
 
@@ -25020,7 +25032,6 @@
      * @param {*} committedLanes 
      */
     function commitLayoutEffectOnFiber(finishedRoot, current, finishedWork, committedLanes) {
-        debugger
         if ((finishedWork.flags & LayoutMask) !== NoFlags) {
             switch (finishedWork.tag) {
                 case FunctionComponent:
@@ -26140,7 +26151,6 @@
         // because the fiber tag is more specific. An exception is any flag related
         // to reconcilation, because those can be set on all fiber types.
 
-        debugger
         switch (finishedWork.tag) {
             case FunctionComponent://DONE
             case ForwardRef:
@@ -26150,7 +26160,6 @@
                     recursivelyTraverseMutationEffects(root, finishedWork);
                     commitReconciliationEffects(finishedWork);
 
-                    debugger
                     if (flags & Update) {
                         try {
                             //useEffect()
@@ -26763,7 +26772,6 @@
 
     //DONE
     function commitPassiveMountEffects_begin(subtreeRoot, root, committedLanes, committedTransitions) {
-        debugger
         while (nextEffect !== null) {
             var fiber = nextEffect;
             var firstChild = fiber.child;
@@ -26843,7 +26851,6 @@
 
     //DONE
     function commitPassiveUnmountEffects_begin() {
-        debugger
         while (nextEffect !== null) {
             var fiber = nextEffect;
             var child = fiber.child;
@@ -26902,7 +26909,6 @@
 
     //DONE
     function commitPassiveUnmountEffects_complete() {
-        debugger
         while (nextEffect !== null) {
             var fiber = nextEffect;
 
@@ -26931,6 +26937,7 @@
             case ForwardRef:
             case SimpleMemoComponent:
                 {
+
                     if (finishedWork.mode & ProfileMode) {
                         startPassiveEffectTimer();
                         commitHookEffectListUnmount(Passive$1 | HasEffect, finishedWork, finishedWork.return);
@@ -27283,6 +27290,7 @@
     var currentEventTime = NoTimestamp;
     var currentEventTransitionLane = NoLanes;
     var isRunningInsertionEffect = false;
+    //DONE
     function getWorkInProgressRoot() {
         return workInProgressRoot;
     }
@@ -27331,6 +27339,7 @@
             return pickArbitraryLane(workInProgressRootRenderLanes);
         }
 
+        //useTransition
         var isTransition = requestCurrentTransition() !== NoTransition;
 
         if (isTransition) {
@@ -27342,15 +27351,15 @@
                 }
 
                 transition._updatedFibers.add(fiber);
-            } // The algorithm for assigning an update to a lane should be stable for all
+            }
+
+            // The algorithm for assigning an update to a lane should be stable for all
             // updates at the same priority within the same event. To do this, the
             // inputs to the algorithm must be the same.
             //
             // The trick we use is to cache the first of each of these inputs within an
             // event. Then reset the cached values once we can be sure the event is
             // over. Our heuristic for that is whenever we enter a concurrent work loop.
-
-
             if (currentEventTransitionLane === NoLane) {
                 // All transitions within the same event are assigned the same lane.
                 currentEventTransitionLane = claimNextTransitionLane();
@@ -27390,7 +27399,7 @@
     }
 
     /**
-     * DONE
+     * DONE 调度中心
      * root.pendingLanes |= updateLane;给root的eventTimes在对应跑道上设置eventTime:eventTimes[index] = eventTime;
      * ensureRootIsScheduled(root, eventTime);
      * @param {*} root 
@@ -27527,6 +27536,7 @@
      * @returns 
      */
     function ensureRootIsScheduled(root, currentTime) {
+        debugger
         var existingCallbackNode = root.callbackNode;
 
         // Check if any lanes are being starved by other work. If so, mark them as expired so we know to work on those next.
@@ -27602,7 +27612,6 @@
                     ReactCurrentActQueue$1.current.push(flushSyncCallbacks);
                 } else {
                     //调度一个微任务
-
                     scheduleMicrotask(function () {//DONE
                         // We don't support running callbacks in the middle of render or commit so we need to check against that.
                         if ((executionContext & (RenderContext | CommitContext)) === NoContext) {
@@ -27615,7 +27624,7 @@
             }
 
             newCallbackNode = null;
-        } else {//DONE （初始化会进入此）
+        } else {//DONE （初始化会进入此）。useDeferredValue的再次渲染也进入此流程
             var schedulerPriorityLevel;
 
             //将lanes转为事件优先级，然后根据事件优先级计算调度优先级
@@ -27628,7 +27637,7 @@
                     schedulerPriorityLevel = UserBlockingPriority;
                     break;
 
-                case DefaultEventPriority://16 DONE 初始化进入此
+                case DefaultEventPriority://16 DONE 初始化进入此。useDeferredValue的再次渲染也进入此流程。useTransition的低优先级任务也进入此。
                     schedulerPriorityLevel = NormalPriority;
                     break;
 
@@ -28710,7 +28719,6 @@
      * 
      */
     function commitRootImpl(root, recoverableErrors, transitions, renderPriorityLevel) {
-        debugger
         do {
             // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
             // means `flushPassiveEffects` will sometimes result in additional
@@ -28721,7 +28729,6 @@
             flushPassiveEffects();
         } while (rootWithPendingPassiveEffects !== null);
 
-        debugger
         //commit 之前 ，将严格模式的相关提示log出来
         flushRenderPhaseStrictModeWarningsInDEV();
 
@@ -28784,7 +28791,6 @@
 
         //useEffect()。调度一个回调执行副作用。
         if ((finishedWork.subtreeFlags & PassiveMask) !== NoFlags || (finishedWork.flags & PassiveMask) !== NoFlags) {
-            debugger
             if (!rootDoesHavePassiveEffects) {
                 rootDoesHavePassiveEffects = true;
                 // to store it in pendingPassiveTransitions until they get processed
@@ -28794,8 +28800,7 @@
                 // with setTimeout
 
                 pendingPassiveTransitions = transitions;
-                scheduleCallback$1(NormalPriority, function () {
-                    debugger
+                scheduleCallback$1(NormalPriority, function () {//异步执行，MessageChannel，会闪烁
                     flushPassiveEffects();
                     // This render triggered passive effects: release the root cache pool
                     // *after* passive effects fire to avoid freeing a cache pool that may
@@ -28842,7 +28847,6 @@
             }
 
 
-            debugger
             commitMutationEffects(root, finishedWork, lanes);
 
             resetAfterCommit(root.containerInfo);
@@ -28856,7 +28860,6 @@
             {
                 markLayoutEffectsStarted(lanes);
             }
-            debugger
             commitLayoutEffects(finishedWork, root, lanes);
 
             {
@@ -28868,7 +28871,6 @@
 
             setCurrentUpdatePriority(previousPriority);
             ReactCurrentBatchConfig$3.transition = prevTransition;
-            debugger
         } else {
             // No effects.
             root.current = finishedWork; // Measure these anyway so the flamegraph explicitly shows that there were
@@ -28882,7 +28884,6 @@
 
         var rootDidHavePassiveEffects = rootDoesHavePassiveEffects;
 
-        debugger
         if (rootDoesHavePassiveEffects) {
             // This commit has passive effects. Stash a reference to them. But don't
             // schedule a callback until after flushing layout work.
@@ -29050,7 +29051,6 @@
 
     //DONE useEffect
     function flushPassiveEffectsImpl() {
-        debugger
         if (rootWithPendingPassiveEffects === null) {
             return false;
         }
@@ -29085,7 +29085,6 @@
         commitPassiveUnmountEffects(root.current);
         commitPassiveMountEffects(root, root.current, lanes, transitions); // TODO: Move to commitPassiveMountEffects
 
-        debugger
         {
             var profilerEffects = pendingPassiveProfilerEffects;
             pendingPassiveProfilerEffects = [];

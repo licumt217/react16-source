@@ -1759,13 +1759,14 @@
         }
     }
     /**
-     * 
+     * DONE
      * @returns 
      */
     function useTransition() {
         var dispatcher = resolveDispatcher();
         return dispatcher.useTransition();
     }
+    //DONE
     function useDeferredValue(value) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useDeferredValue(value);
@@ -3549,14 +3550,14 @@
     exports.startTransition = startTransition;//-
     exports.unstable_act = act;
     exports.useCallback = useCallback;//-
-    exports.useContext = useContext;
-    exports.useDebugValue = useDebugValue;
+    exports.useContext = useContext;//-
+    exports.useDebugValue = useDebugValue;//-
     exports.useDeferredValue = useDeferredValue;
     exports.useEffect = useEffect;//-
     exports.useId = useId;//-
-    exports.useImperativeHandle = useImperativeHandle;
+    exports.useImperativeHandle = useImperativeHandle;//-
     exports.useInsertionEffect = useInsertionEffect;
-    exports.useLayoutEffect = useLayoutEffect;
+    exports.useLayoutEffect = useLayoutEffect;//-
     exports.useMemo = useMemo;//-
     exports.useReducer = useReducer;//-
     exports.useRef = useRef;//-
