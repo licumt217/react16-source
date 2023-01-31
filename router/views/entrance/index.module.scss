@@ -1,0 +1,13 @@
+.info-wrapper {
+    >div {
+        padding-top: 1em;
+        border-bottom: 1px dashed gray;
+    }
+
+    >div:last-child {
+        border: none;
+    }
+}
+.noImage{
+    max-height: 64vh;
+}

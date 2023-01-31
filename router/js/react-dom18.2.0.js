@@ -27538,7 +27538,6 @@
      * @returns 
      */
     function ensureRootIsScheduled(root, currentTime) {
-        debugger
         var existingCallbackNode = root.callbackNode;
 
         // Check if any lanes are being starved by other work. If so, mark them as expired so we know to work on those next.
