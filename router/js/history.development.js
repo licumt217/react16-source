@@ -800,7 +800,7 @@
                     });
                 };
             },
-            call: function call(arg) {
+            call: function call(arg) {//路由改变后，调用添加的 setState回调，使得页面重新渲染，重新匹配路由
                 handlers.forEach(function (fn) {
                     return fn && fn(arg);
                 });

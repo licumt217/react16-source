@@ -33,6 +33,7 @@
         return _extends.apply(this, arguments);
     }
 
+    //DONE loose 释放、放任、宽松的
     function _objectWithoutPropertiesLoose(source, excluded) {
         if (source == null) return {};
         var target = {};
@@ -72,10 +73,10 @@
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * DONE
      * A `<Router>` for use in web browsers. Provides the cleanest(彻底地，完全地;) URLs.
      */
     function BrowserRouter(_ref) {
-        // debugger
         let {
             basename,
             children,
@@ -94,7 +95,11 @@
             action: history$1.action,
             location: history$1.location
         });
-        React.useLayoutEffect(() => history$1.listen(setState), [history$1]);
+        //路由改变后，触发setState，然后route重新匹配，展现新的内容
+        React.useLayoutEffect(() => {
+            history$1.listen(setState)
+        }, [history$1]);
+
         return React.createElement(reactRouter.Router, {
             basename: basename,
             children: children,
@@ -105,6 +110,7 @@
     }
 
     /**
+     * DONE
      * A `<Router>` for use in web browsers. Stores the location in the hash
      * portion of the URL so it is not sent to the server.
      */
@@ -138,8 +144,9 @@
     }
 
     /**
+     * DONE
      * A `<Router>` that accepts a pre-instantiated history object. It's important
-     * to note that using your own history object is highly discouraged and may add
+     * to note that using your own history object is highly discouraged(劝阻) and may add
      * two versions of the history library to your bundles unless you use the same
      * version of the history library that React Router uses internally.
      */
@@ -167,11 +174,13 @@
         HistoryRouter.displayName = "unstable_HistoryRouter";
     }
 
+    //DONE
     function isModifiedEvent(event) {
         return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
     }
 
     /**
+     * DONE
      * The public API for rendering a history-aware <a>.
      */
     const Link = React.forwardRef(function LinkWithRef(_ref4, ref) {
@@ -186,6 +195,7 @@
             rest = _objectWithoutPropertiesLoose(_ref4, _excluded);
 
         let href = reactRouter.useHref(to);
+
         let internalOnClick = useLinkClickHandler(to, {
             replace,
             state,
@@ -280,6 +290,7 @@
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * DONE
      * Handles the click behavior for router `<Link>` components. This is useful if
      * you need to create custom `<Link>` components with the same click behavior we
      * use in our exported `<Link>`.
@@ -311,6 +322,7 @@
         }, [location, navigate, path, replaceProp, state, target, to]);
     }
     /**
+     * DONE 获取url参数
      * A convenient wrapper for reading and writing search parameters via the
      * URLSearchParams interface.
      */
@@ -323,8 +335,11 @@
             + "https://polyfill.io/v3/ which provides some recommendations about how "
             + "to load polyfills only for users that need them, instead of for every "
             + "user.");
+
         let defaultSearchParamsRef = React.useRef(createSearchParams(defaultInit));
+
         let location = reactRouter.useLocation();
+
         let searchParams = React.useMemo(() => {
             let searchParams = createSearchParams(location.search);
 
@@ -338,6 +353,7 @@
 
             return searchParams;
         }, [location.search]);
+
         let navigate = reactRouter.useNavigate();
         let setSearchParams = React.useCallback((nextInit, navigateOptions) => {
             navigate("?" + createSearchParams(nextInit), navigateOptions);
@@ -347,8 +363,8 @@
 
     /**
      * Creates a URLSearchParams object using the given initializer.
-     *
-     * This is identical to `new URLSearchParams(init)` except it also
+     * DONE
+     * This is identical（完全相同的） to `new URLSearchParams(init)` except it also
      * supports arrays as values in the object form of the initializer
      * instead of just strings. This is convenient when you need multiple
      * values for a given key, but don't want to use an array initializer.
@@ -553,13 +569,13 @@
         }
     });
     exports.BrowserRouter = BrowserRouter;//-
-    exports.HashRouter = HashRouter;
+    exports.HashRouter = HashRouter;//-
     exports.Link = Link;//-
-    exports.NavLink = NavLink;
-    exports.createSearchParams = createSearchParams;
-    exports.unstable_HistoryRouter = HistoryRouter;
-    exports.useLinkClickHandler = useLinkClickHandler;
-    exports.useSearchParams = useSearchParams;
+    exports.NavLink = NavLink;//-
+    exports.createSearchParams = createSearchParams;//-
+    exports.unstable_HistoryRouter = HistoryRouter;//- 
+    exports.useLinkClickHandler = useLinkClickHandler;//-
+    exports.useSearchParams = useSearchParams;//- 获取url参数
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

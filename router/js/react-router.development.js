@@ -36,6 +36,7 @@
         RouteContext.displayName = "Route";
     }
 
+    //不变的、恒定的
     function invariant(cond, message) {
         if (!cond) throw new Error(message);
     }
@@ -63,8 +64,9 @@
     }
 
     /**
-     * Returns a path with params interpolated.
-     *
+     * DONE
+     * Returns a path with params interpolated（插入、插值）
+     * 将类似 let str = "/parent/:son/:child*"; 这样的字符串转换为 /parent/realSon/realChild
      * @see https://reactrouter.com/docs/en/v6/api#generatepath
      */
     function generatePath(path, params) {
@@ -72,16 +74,22 @@
             params = {};
         }
 
+        // \w	匹配字母、数字、下划线。等价于'[A-Za-z0-9_]'
+        // \s	匹配任何空白字符，包括空格、制表符、换页符等等
         return path.replace(/:(\w+)/g, (_, key) => {
             !(params[key] != null) ? invariant(false, "Missing \":" + key + "\" param") : void 0;
             return params[key];
-        }).replace(/\/*\*$/, _ => params["*"] == null ? "" : params["*"].replace(/^\/*/, "/"));
+        }).replace(/\/*\*$/, _ => {
+            return params["*"] == null ? "" : params["*"].replace(/^\/*/, "/")
+        });
     }
+
     /**
      * A RouteMatch contains info about how a route matched a URL.
      */
 
     /**
+     * DONE 返回匹配的route
      * Matches the given routes to a location and returns the match data.
      *
      * @see https://reactrouter.com/docs/en/v6/api#matchroutes
@@ -105,10 +113,19 @@
         for (let i = 0; matches == null && i < branches.length; ++i) {
             matches = matchRouteBranch(branches[i], pathname);
         }
-
         return matches;
     }
 
+    /**
+     * DONE
+     * 把什么弄平
+     * TODO
+     * @param {*} routes 
+     * @param {*} branches 
+     * @param {*} parentsMeta 
+     * @param {*} parentPath 
+     * @returns 
+     */
     function flattenRoutes(routes, branches, parentsMeta, parentPath) {
         if (branches === void 0) {
             branches = [];
@@ -139,7 +156,8 @@
             }
 
             let path = joinPaths([parentPath, meta.relativePath]);
-            let routesMeta = parentsMeta.concat(meta); // Add the children before adding this route to the array so we traverse the
+            let routesMeta = parentsMeta.concat(meta);
+            // Add the children before adding this route to the array so we traverse the
             // route tree depth-first and child routes appear before their parents in
             // the "flattened" version.
 
@@ -164,8 +182,12 @@
         return branches;
     }
 
+    /**
+     * DONE 按分数降序排列路由
+     * @param {*} branches 
+     */
     function rankRouteBranches(branches) {
-        branches.sort((a, b) => a.score !== b.score ? b.score - a.score // Higher score first
+        branches.sort((a, b) => a.score !== b.score ? b.score - a.score // Higher score first。按照分数降序。
             : compareIndexes(a.routesMeta.map(meta => meta.childrenIndex), b.routesMeta.map(meta => meta.childrenIndex)));
     }
 
@@ -178,6 +200,7 @@
 
     const isSplat = s => s === "*";
 
+    //DONE 计算Route的score
     function computeScore(path, index) {
         let segments = path.split("/");
         let initialScore = segments.length;
@@ -190,10 +213,23 @@
             initialScore += indexRouteValue;
         }
 
-        return segments.filter(s => !isSplat(s)).reduce((score, segment) => score + (paramRe.test(segment)
-            ? dynamicSegmentValue : segment === "" ? emptySegmentValue : staticSegmentValue), initialScore);
+        //去掉 * 
+        const segmentsWithoutXing = segments.filter(s => {
+            return !isSplat(s);
+        });
+
+        return segmentsWithoutXing.reduce((score, segment) => {
+            return score + (
+                paramRe.test(segment)
+                    ? dynamicSegmentValue
+                    : segment === ""
+                        ? emptySegmentValue
+                        : staticSegmentValue
+            );
+        }, initialScore);
     }
 
+    //DONE 兄弟路由，优先匹配早出现的
     function compareIndexes(a, b) {
         let siblings = a.length === b.length && a.slice(0, -1).every((n, i) => n === b[i]);
         return siblings ? // If two routes are siblings, we should try to match the earlier sibling
@@ -204,6 +240,13 @@
             // so they sort equally.
             0;
     }
+
+    /**
+     * DONE 具体的路由匹配，判断特定路由是否和pathname匹配
+     * @param {} branch 
+     * @param {*} pathname 
+     * @returns 
+     */
     function matchRouteBranch(branch, pathname) {
         let {
             routesMeta
@@ -239,11 +282,12 @@
         return matches;
     }
     /**
-     * A PathPattern is used to match on some portion of a URL pathname.
+     * A PathPattern is used to match on some portion（部分） of a URL pathname.
      */
 
 
     /**
+     * DONE 返回具体的匹配
      * Performs pattern matching on a URL pathname and returns information about
      * the match.
      *
@@ -264,6 +308,7 @@
         let matchedPathname = match[0];
         let pathnameBase = matchedPathname.replace(/(.)\/+$/, "$1");
         let captureGroups = match.slice(1);
+
         let params = paramNames.reduce((memo, paramName, index) => {
             // We need to compute the pathnameBase here using the raw splat value
             // instead of using params["*"] later because it will be decoded then
@@ -275,6 +320,7 @@
             memo[paramName] = safelyDecodeURIComponent(captureGroups[index] || "", paramName);
             return memo;
         }, {});
+
         return {
             params,
             pathname: matchedPathname,
@@ -283,6 +329,7 @@
         };
     }
 
+    //DONE
     function compilePath(path, caseSensitive, end) {
         if (caseSensitive === void 0) {
             caseSensitive = false;
@@ -299,6 +346,7 @@
             + "always follow a `/` in the pattern. To get rid of this warning, "
             + ("please change the route path to \""
                 + path.replace(/\*$/, "/*") + "\"."));
+
         let paramNames = [];
         let regexpSource = "^" + path.replace(/\/*\*?$/, "") // Ignore trailing / and /*, we'll handle it below
             .replace(/^\/*/, "/") // Make sure it has a leading /
@@ -327,11 +375,14 @@
         return [matcher, paramNames];
     }
 
+    //DONE
     function safelyDecodeURIComponent(value, paramName) {
         try {
             return decodeURIComponent(value);
         } catch (error) {
-            warning(false, "The value for the URL param \"" + paramName + "\" will not be decoded because" + (" the string \"" + value + "\" is a malformed URL segment. This is probably") + (" due to a bad percent encoding (" + error + ")."));
+            warning(false, "The value for the URL param \"" + paramName + "\" will not be decoded because"
+                + (" the string \"" + value + "\" is a malformed URL segment. This is probably")
+                + (" due to a bad percent encoding (" + error + ")."));
             return value;
         }
     }
@@ -340,8 +391,6 @@
      *
      * @see https://reactrouter.com/docs/en/v6/api#resolvepath
      */
-
-
     function resolvePath(to, fromPathname) {
         if (fromPathname === void 0) {
             fromPathname = "/";
@@ -374,9 +423,11 @@
         return segments.length > 1 ? segments.join("/") : "/";
     }
 
+    //DONE
     function resolveTo(toArg, routePathnames, locationPathname) {
         let to = typeof toArg === "string" ? history.parsePath(toArg) : toArg;
-        let toPathname = toArg === "" || to.pathname === "" ? "/" : to.pathname; // If a pathname is explicitly provided in `to`, it should be relative to the
+        let toPathname = toArg === "" || to.pathname === "" ? "/" : to.pathname;
+        // If a pathname is explicitly provided in `to`, it should be relative to the
         // route context. This is explained in `Note on `<Link to>` values` in our
         // migration guide from v5 as a means of disambiguation between `to` values
         // that begin with `/` and those that do not. However, this is problematic for
@@ -392,7 +443,8 @@
             let routePathnameIndex = routePathnames.length - 1;
 
             if (toPathname.startsWith("..")) {
-                let toSegments = toPathname.split("/"); // Each leading .. segment means "go up one route" instead of "go up one
+                let toSegments = toPathname.split("/");
+                // Each leading .. segment means "go up one route" instead of "go up one
                 // URL segment".  This is a key difference from how <a href> works and a
                 // major reason we call this a "to" value instead of a "href".
 
@@ -402,9 +454,9 @@
                 }
 
                 to.pathname = toSegments.join("/");
-            } // If there are more ".." segments than parent routes, resolve relative to
+            }
+            // If there are more ".." segments than parent routes, resolve relative to
             // the root / URL.
-
 
             from = routePathnameIndex >= 0 ? routePathnames[routePathnameIndex] : "/";
         }
@@ -417,10 +469,12 @@
 
         return path;
     }
+    //DONE
     function getToPathname(to) {
         // Empty strings should be treated the same as / paths
         return to === "" || to.pathname === "" ? "/" : typeof to === "string" ? history.parsePath(to).pathname : to.pathname;
     }
+    //DONE strip(剥去、脱去)。从pathname中去掉 basename后返回
     function stripBasename(pathname, basename) {
         if (basename === "/") return pathname;
 
@@ -438,6 +492,8 @@
         return pathname.slice(basename.length) || "/";
     }
     const joinPaths = paths => paths.join("/").replace(/\/\/+/g, "/");
+
+    //DONE 将basename的结尾/去掉，且如果开头有且只能有一个/
     const normalizePathname = pathname => pathname.replace(/\/+$/, "").replace(/^\/*/, "/");
 
     const normalizeSearch = search => !search || search === "?" ? "" : search.startsWith("?") ? search : "?" + search;
@@ -450,7 +506,6 @@
      *
      * @see https://reactrouter.com/docs/en/v6/api#usehref
      */
-
     function useHref(to) {
         !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of the
             // router loaded. We can help them understand how to avoid that.
@@ -459,11 +514,13 @@
             basename,
             navigator
         } = React.useContext(NavigationContext);
+
         let {
             hash,
             pathname,
             search
         } = useResolvedPath(to);
+
         let joinedPathname = pathname;
 
         if (basename !== "/") {
@@ -478,15 +535,18 @@
             hash
         });
     }
+
     /**
-     * Returns true if this component is a descendant of a <Router>.
-     *
+     * DONE 判断是否在 Router 下边又使用了 Router
+     * Returns true if this component is a descendant(后代、子孙) of a <Router>.
      * @see https://reactrouter.com/docs/en/v6/api#useinroutercontext
      */
     function useInRouterContext() {
         return React.useContext(LocationContext) != null;
     }
+
     /**
+     * DONE
      * Returns the current location object, which represents the current URL in web
      * browsers.
      *
@@ -496,23 +556,23 @@
      *
      * @see https://reactrouter.com/docs/en/v6/api#uselocation
      */
-
     function useLocation() {
         !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of the
             // router loaded. We can help them understand how to avoid that.
             "useLocation() may be used only in the context of a <Router> component.") : void 0;
         return React.useContext(LocationContext).location;
     }
+
     /**
      * Returns the current navigation action which describes how the router came to
      * the current location, either by a pop, push, or replace on the history stack.
      *
      * @see https://reactrouter.com/docs/en/v6/api#usenavigationtype
      */
-
     function useNavigationType() {
         return React.useContext(LocationContext).navigationType;
     }
+
     /**
      * Returns true if the URL for the given "to" value matches the current URL.
      * This is useful for components that need to know "active" state, e.g.
@@ -520,7 +580,6 @@
      *
      * @see https://reactrouter.com/docs/en/v6/api#usematch
      */
-
     function useMatch(pattern) {
         !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of the
             // router loaded. We can help them understand how to avoid that.
@@ -530,17 +589,20 @@
         } = useLocation();
         return React.useMemo(() => matchPath(pattern, pathname), [pathname, pattern]);
     }
+
     /**
      * The interface for the navigate() function returned from useNavigate().
      */
 
     /**
+     * DONE
      * Returns an imperative method for changing the location. Used by <Link>s, but
      * may also be used by other elements to change the location.
      *
      * @see https://reactrouter.com/docs/en/v6/api#usenavigate
      */
     function useNavigate() {
+
         !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of the
             // router loaded. We can help them understand how to avoid that.
             "useNavigate() may be used only in the context of a <Router> component.") : void 0;
@@ -548,18 +610,24 @@
             basename,
             navigator
         } = React.useContext(NavigationContext);
+
         let {
             matches
         } = React.useContext(RouteContext);
+
         let {
             pathname: locationPathname
         } = useLocation();
+
         let routePathnamesJson = JSON.stringify(matches.map(match => match.pathnameBase));
         let activeRef = React.useRef(false);
+
         React.useEffect(() => {
             activeRef.current = true;
         });
+
         let navigate = React.useCallback(function (to, options) {
+
             if (options === void 0) {
                 options = {};
             }
@@ -579,26 +647,30 @@
             }
 
             (!!options.replace ? navigator.replace : navigator.push)(path, options.state);
+
         }, [basename, navigator, routePathnamesJson, locationPathname]);
+
         return navigate;
     }
+
+    //outlet (出口、出路)
     const OutletContext = React.createContext(null);
+
     /**
      * Returns the context (if provided) for the child route at this level of the route
      * hierarchy.
      * @see https://reactrouter.com/docs/en/v6/api#useoutletcontext
      */
-
     function useOutletContext() {
         return React.useContext(OutletContext);
     }
+
     /**
      * Returns the element for the child route at this level of the route
      * hierarchy. Used internally by <Outlet> to render child routes.
      *
      * @see https://reactrouter.com/docs/en/v6/api#useoutlet
      */
-
     function useOutlet(context) {
         let outlet = React.useContext(RouteContext).outlet;
 
@@ -616,7 +688,6 @@
      *
      * @see https://reactrouter.com/docs/en/v6/api#useparams
      */
-
     function useParams() {
         let {
             matches
@@ -624,37 +695,43 @@
         let routeMatch = matches[matches.length - 1];
         return routeMatch ? routeMatch.params : {};
     }
+
     /**
      * Resolves the pathname of the given `to` value against the current location.
-     *
+     * DONE
      * @see https://reactrouter.com/docs/en/v6/api#useresolvedpath
      */
-
     function useResolvedPath(to) {
         let {
             matches
         } = React.useContext(RouteContext);
+
         let {
             pathname: locationPathname
         } = useLocation();
+
         let routePathnamesJson = JSON.stringify(matches.map(match => match.pathnameBase));
+
         return React.useMemo(() => resolveTo(to, JSON.parse(routePathnamesJson), locationPathname), [to, routePathnamesJson, locationPathname]);
     }
+
     /**
+     * DONE
      * Returns the element of the route that matched the current location, prepared
      * with the correct context to render the remainder of the route tree. Route
      * elements in the tree must render an <Outlet> to render their child route's
      * element.
-     *
      * @see https://reactrouter.com/docs/en/v6/api#useroutes
      */
     function useRoutes(routes, locationArg) {
         !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of the
             // router loaded. We can help them understand how to avoid that.
             "useRoutes() may be used only in the context of a <Router> component.") : void 0;
+
         let {
             matches: parentMatches
         } = React.useContext(RouteContext);
+
         let routeMatch = parentMatches[parentMatches.length - 1];
         let parentParams = routeMatch ? routeMatch.params : {};
         let parentPathname = routeMatch ? routeMatch.pathname : "/";
@@ -683,7 +760,8 @@
             //   );
             // }
             let parentPath = parentRoute && parentRoute.path || "";
-            warningOnce(parentPathname, !parentRoute || parentPath.endsWith("*"), "You rendered descendant <Routes> (or called `useRoutes()`) at "
+            warningOnce(parentPathname, !parentRoute || parentPath.endsWith("*"),
+                "You rendered descendant <Routes> (or called `useRoutes()`) at "
                 + ("\"" + parentPathname + "\" (under <Route path=\"" + parentPath + "\">) but the ")
                 + "parent route path has no trailing \"*\". This means if you navigate "
                 + "deeper, the parent won't match anymore and therefore the child "
@@ -699,7 +777,14 @@
             var _parsedLocationArg$pa;
 
             let parsedLocationArg = typeof locationArg === "string" ? history.parsePath(locationArg) : locationArg;
-            !(parentPathnameBase === "/" || ((_parsedLocationArg$pa = parsedLocationArg.pathname) == null ? void 0 : _parsedLocationArg$pa.startsWith(parentPathnameBase))) ? invariant(false, "When overriding the location using `<Routes location>` or `useRoutes(routes, location)`, " + "the location pathname must begin with the portion of the URL pathname that was " + ("matched by all parent routes. The current pathname base is \"" + parentPathnameBase + "\" ") + ("but pathname \"" + parsedLocationArg.pathname + "\" was given in the `location` prop.")) : void 0;
+            !(parentPathnameBase === "/" || ((_parsedLocationArg$pa = parsedLocationArg.pathname) == null
+                ? void 0 : _parsedLocationArg$pa.startsWith(parentPathnameBase)))
+                ? invariant(false, "When overriding the location using `<Routes location>` or `useRoutes(routes, location)`, "
+                    + "the location pathname must begin with the portion of the URL pathname that was "
+                    + ("matched by all parent routes. The current pathname base is \""
+                        + parentPathnameBase + "\" ")
+                    + ("but pathname \"" + parsedLocationArg.pathname
+                        + "\" was given in the `location` prop.")) : void 0;
             location = parsedLocationArg;
         } else {
             location = locationFromContext;
@@ -715,6 +800,7 @@
             warning(parentRoute || matches != null, "No routes matched location \""
                 + location.pathname + location.search
                 + location.hash + "\" ");
+
             warning(matches == null || matches[matches.length - 1].route.element !== undefined, "Matched leaf route at location \""
                 + location.pathname + location.search + location.hash + "\" does not have an element. "
                 + "This means it will render an <Outlet /> with a null value by default resulting in an \"empty\" page.");
@@ -726,6 +812,8 @@
             pathnameBase: match.pathnameBase === "/" ? parentPathnameBase : joinPaths([parentPathnameBase, match.pathnameBase])
         })), parentMatches);
     }
+
+    //DONE 将匹配的路由对应的组件返回
     function _renderMatches(matches, parentMatches) {
         if (parentMatches === void 0) {
             parentMatches = [];
@@ -818,6 +906,7 @@
     }
 
     /**
+     * DONE
      * Declares an element that should be rendered at a certain URL path.
      *
      * @see https://reactrouter.com/docs/en/v6/api#route
@@ -828,8 +917,8 @@
     }
 
     /**
+     * DONE
      * Provides location context for the rest of the app.
-     *
      * Note: You usually won't render a <Router> directly. Instead, you'll render a
      * router that is more specific to your environment such as a <BrowserRouter>
      * in web browsers or a <StaticRouter> for server rendering.
@@ -837,6 +926,7 @@
      * @see https://reactrouter.com/docs/en/v6/api#router
      */
     function Router(_ref3) {
+
         let {
             basename: basenameProp = "/",
             children = null,
@@ -849,7 +939,9 @@
         !!useInRouterContext() ? invariant(false, "You cannot render a <Router> inside another <Router>."
             + " You should never have more than one in your app.") : void 0;
 
+        //将basename的结尾/去掉，且如果开头有且只能有一个/
         let basename = normalizePathname(basenameProp);
+
         let navigationContext = React.useMemo(() => ({
             basename,
             navigator,
@@ -869,6 +961,7 @@
         } = locationProp;
 
         let location = React.useMemo(() => {
+            //trail 追踪。从pathname中去掉 basename后返回
             let trailingPathname = stripBasename(pathname, basename);
 
             if (trailingPathname == null) {
@@ -904,9 +997,9 @@
     }
 
     /**
+     * DONE
      * A container for a nested tree of <Route> elements that renders the branch
      * that best matches the current location.
-     *
      * @see https://reactrouter.com/docs/en/v6/api#routes
      */
     function Routes(_ref4) {
@@ -922,6 +1015,7 @@
     ///////////////////////////////////////////////////////////////////////////////
 
     /**
+     * DONE
      * Creates a route config from a React "children" object, which is usually
      * either a `<Route>` element or an array of them. Used internally by
      * `<Routes>` to create a route config from its children.
@@ -962,10 +1056,10 @@
         });
         return routes;
     }
+
     /**
      * Renders the result of `matchRoutes()` into a React element.
      */
-
     function renderMatches(matches) {
         return _renderMatches(matches);
     }
@@ -994,26 +1088,26 @@
     exports.Route = Route;//-
     exports.Router = Router;//-
     exports.Routes = Routes;//-
-    exports.UNSAFE_LocationContext = LocationContext;
-    exports.UNSAFE_NavigationContext = NavigationContext;
-    exports.UNSAFE_RouteContext = RouteContext;
-    exports.createRoutesFromChildren = createRoutesFromChildren;
-    exports.generatePath = generatePath;
-    exports.matchPath = matchPath;
-    exports.matchRoutes = matchRoutes;
-    exports.renderMatches = renderMatches;
+    exports.UNSAFE_LocationContext = LocationContext;//-
+    exports.UNSAFE_NavigationContext = NavigationContext;//-
+    exports.UNSAFE_RouteContext = RouteContext;//-
+    exports.createRoutesFromChildren = createRoutesFromChildren;//-
+    exports.generatePath = generatePath;//-
+    exports.matchPath = matchPath;//-
+    exports.matchRoutes = matchRoutes;//-
+    exports.renderMatches = renderMatches;//-
     exports.resolvePath = resolvePath;
-    exports.useHref = useHref;
-    exports.useInRouterContext = useInRouterContext;
-    exports.useLocation = useLocation;
+    exports.useHref = useHref;//-
+    exports.useInRouterContext = useInRouterContext;//-
+    exports.useLocation = useLocation;//-
     exports.useMatch = useMatch;
-    exports.useNavigate = useNavigate;
+    exports.useNavigate = useNavigate;//-
     exports.useNavigationType = useNavigationType;
     exports.useOutlet = useOutlet;
     exports.useOutletContext = useOutletContext;
     exports.useParams = useParams;
-    exports.useResolvedPath = useResolvedPath;
-    exports.useRoutes = useRoutes;
+    exports.useResolvedPath = useResolvedPath;//-
+    exports.useRoutes = useRoutes;//-
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

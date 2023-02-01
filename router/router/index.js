@@ -7,8 +7,8 @@ import List from "../views/list/index.js";
 const routers = [
     { path: '/*', component: Home },
     { path: '/a', component: A },
+    { path: '/b', component: C },
     { path: '/b', component: B },
-    { path: '/c', component: C },
     { path: '/list', component: List },
 ]
 

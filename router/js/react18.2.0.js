@@ -1685,6 +1685,7 @@
 
         return dispatcher;
     }
+
     function useContext(Context) {
         var dispatcher = resolveDispatcher();
 
