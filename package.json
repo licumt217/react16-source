@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/licumt217/react16-source#readme",
   "dependencies": {
+    "mobx": "^6.7.0",
     "react-router": "6.3",
-    "react-router-dom": "6.3"
+    "react-router-dom": "6.3",
+    "redux": "^4.2.1"
   }
 }
