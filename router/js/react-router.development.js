@@ -89,7 +89,10 @@
      */
 
     /**
-     * DONE 返回匹配的route
+     * DONE 返回匹配的route的matches
+     * 1、展开路由为一维数组
+     * 2、路由优先级排序
+     * 3、所有路由和pathname匹配，找到对应的matches
      * Matches the given routes to a location and returns the match data.
      *
      * @see https://reactrouter.com/docs/en/v6/api#matchroutes
@@ -108,6 +111,7 @@
 
         let branches = flattenRoutes(routes);
         rankRouteBranches(branches);
+
         let matches = null;
 
         for (let i = 0; matches == null && i < branches.length; ++i) {
@@ -118,7 +122,7 @@
 
     /**
      * DONE
-     * 把什么弄平
+     * 将Routes有层级的数组展开成一维数组,routesMeta属性存放着每一级路由的具体信息。
      * TODO
      * @param {*} routes 
      * @param {*} branches 
@@ -183,7 +187,7 @@
     }
 
     /**
-     * DONE 按分数降序排列路由
+     * DONE 按分数降序排列路由，分数越大越靠前，优先级越高。
      * @param {*} branches 
      */
     function rankRouteBranches(branches) {
@@ -229,7 +233,7 @@
         }, initialScore);
     }
 
-    //DONE 兄弟路由，优先匹配早出现的
+    //DONE 兄弟路由，优先匹配早出现的，计算score时用到
     function compareIndexes(a, b) {
         let siblings = a.length === b.length && a.slice(0, -1).every((n, i) => n === b[i]);
         return siblings ? // If two routes are siblings, we should try to match the earlier sibling
@@ -243,6 +247,8 @@
 
     /**
      * DONE 具体的路由匹配，判断特定路由是否和pathname匹配
+     * 将所有的路由branch都调用此函数，判断和地址栏的具体路由是否匹配。
+     * 不匹配返回null，匹配则返回对应的matches数组。包含所有匹配的子路径。比如 “/invoice/list/:detailId”，包含['/','/invoice','/invoice/list','/invoice/list/xxx']
      * @param {} branch 
      * @param {*} pathname 
      * @returns 
@@ -251,13 +257,14 @@
         let {
             routesMeta
         } = branch;
-        let matchedParams = {};
+        let matchedParams = {};//动态路由参数
         let matchedPathname = "/";
         let matches = [];
 
         for (let i = 0; i < routesMeta.length; ++i) {
             let meta = routesMeta[i];
             let end = i === routesMeta.length - 1;
+            //具体路由的每一级分别和pathname的每一级比较，有相同的话，之后只比较pathname剩余的部分。
             let remainingPathname = matchedPathname === "/" ? pathname : pathname.slice(matchedPathname.length) || "/";
             let match = matchPath({
                 path: meta.relativePath,
@@ -265,6 +272,7 @@
                 end
             }, remainingPathname);
             if (!match) return null;
+
             Object.assign(matchedParams, match.params);
             let route = meta.route;
             matches.push({
@@ -274,23 +282,25 @@
                 route
             });
 
-            if (match.pathnameBase !== "/") {
+            if (match.pathnameBase !== "/") {//更新已匹配到的路由信息
                 matchedPathname = joinPaths([matchedPathname, match.pathnameBase]);
             }
         }
 
+        debugger
         return matches;
     }
+
     /**
      * A PathPattern is used to match on some portion（部分） of a URL pathname.
      */
-
-
     /**
      * DONE 返回具体的匹配
+     * 根据paramNames数组，计算出动态路由参数对象
      * Performs pattern matching on a URL pathname and returns information about
      * the match.
-     *
+     * @pattern 具体路由的每一段的信息
+     * @pathname 去除已匹配的路径后剩余的 pathname
      * @see https://reactrouter.com/docs/en/v6/api#matchpath
      */
     function matchPath(pattern, pathname) {
@@ -302,6 +312,7 @@
             };
         }
 
+        //根据patten构建正则。动态路由比如:age，去掉具体的age等。返回match和动态路由参数名数组
         let [matcher, paramNames] = compilePath(pattern.path, pattern.caseSensitive, pattern.end);
         let match = pathname.match(matcher);
         if (!match) return null;
@@ -309,6 +320,7 @@
         let pathnameBase = matchedPathname.replace(/(.)\/+$/, "$1");
         let captureGroups = match.slice(1);
 
+        //根据paramNames数组，计算出动态路由参数对象
         let params = paramNames.reduce((memo, paramName, index) => {
             // We need to compute the pathnameBase here using the raw splat value
             // instead of using params["*"] later because it will be decoded then
@@ -329,7 +341,7 @@
         };
     }
 
-    //DONE
+    //DONE 根据patten构建正则。动态路由比如:age，去掉具体的age等。返回match和动态路由参数名数组
     function compilePath(path, caseSensitive, end) {
         if (caseSensitive === void 0) {
             caseSensitive = false;
@@ -347,7 +359,7 @@
             + ("please change the route path to \""
                 + path.replace(/\*$/, "/*") + "\"."));
 
-        let paramNames = [];
+        let paramNames = [];//动态路由参数数组，由路由path中的:age(没有冒号:)或 * 组成。
         let regexpSource = "^" + path.replace(/\/*\*?$/, "") // Ignore trailing / and /*, we'll handle it below
             .replace(/^\/*/, "/") // Make sure it has a leading /
             .replace(/[\\.*+^$?{}|()[\]]/g, "\\$&") // Escape special regex chars
@@ -386,7 +398,11 @@
             return value;
         }
     }
+
     /**
+     * DONE
+     * 根据 fromPathname， 返回 Link的 to 属性对应的解析后的path对象 { pathname(处理后是绝对路径),search,hash}
+     * 此时返回的pathname是绝对路径，如果是相对路径的话，此方法会进行处理（和父级路径合并）
      * Returns a resolved path object relative to the given pathname.
      *
      * @see https://reactrouter.com/docs/en/v6/api#resolvepath
@@ -401,7 +417,13 @@
             search = "",
             hash = ""
         } = typeof to === "string" ? history.parsePath(to) : to;
-        let pathname = toPathname ? toPathname.startsWith("/") ? toPathname : resolvePathname(toPathname, fromPathname) : fromPathname;
+
+        let pathname = toPathname ?
+            toPathname.startsWith("/")
+                ? toPathname //绝对路径
+                : resolvePathname(toPathname, fromPathname) //相对路径
+            : fromPathname;//to 参数为空的话，用fromPathname
+
         return {
             pathname,
             search: normalizeSearch(search),
@@ -409,24 +431,41 @@
         };
     }
 
+    /**
+     * DONE 处理Link的 to 属性是相对路径的情况。将相对路径解析为绝对路径后返回
+     * 比如A页面的路径是 /list，此时点击A页面的link（to=“abc”），则最终路由会变为 /list/abc
+     * @param {*} relativePath to 属性对应的相对路径
+     * @param {*} fromPathname 点击前跳转前的 路径
+     * @returns 
+     */
     function resolvePathname(relativePath, fromPathname) {
+        //去掉结尾 / 
         let segments = fromPathname.replace(/\/+$/, "").split("/");
+
         let relativeSegments = relativePath.split("/");
         relativeSegments.forEach(segment => {
             if (segment === "..") {
                 // Keep the root "" segment so the pathname starts at /
                 if (segments.length > 1) segments.pop();
-            } else if (segment !== ".") {
+            } else if (segment !== ".") {//当前目录 ./ 产生的 . 不处理(抛弃.)
                 segments.push(segment);
             }
         });
         return segments.length > 1 ? segments.join("/") : "/";
     }
 
-    //DONE
+    /**
+     * DONE 
+     * 解析Link的to属性，返回解析后的path对象，包含 {hash,search,pathname}
+     * @param {*} toArg Link组件的 to 参数
+     * @param {*} routePathnames 
+     * @param {*} locationPathname 
+     * @returns path对象 {hash,search,pathname}
+     */
     function resolveTo(toArg, routePathnames, locationPathname) {
         let to = typeof toArg === "string" ? history.parsePath(toArg) : toArg;
         let toPathname = toArg === "" || to.pathname === "" ? "/" : to.pathname;
+
         // If a pathname is explicitly provided in `to`, it should be relative to the
         // route context. This is explained in `Note on `<Link to>` values` in our
         // migration guide from v5 as a means of disambiguation between `to` values
@@ -434,7 +473,6 @@
         // `to` values that do not provide a pathname. `to` can simply be a search or
         // hash string, in which case we should assume that the navigation is relative
         // to the current location's pathname and *not* the route pathname.
-
         let from;
 
         if (toPathname == null) {
@@ -442,8 +480,10 @@
         } else {
             let routePathnameIndex = routePathnames.length - 1;
 
+            //如果 Link 的 to属性值是带有'..'的相对路径，则循环去除前导的'..'，且routePathnameIndex依次减 1 
             if (toPathname.startsWith("..")) {
                 let toSegments = toPathname.split("/");
+                // 相对路径。是相对具体的路由层级，而不是URL中的上一级！！！ 
                 // Each leading .. segment means "go up one route" instead of "go up one
                 // URL segment".  This is a key difference from how <a href> works and a
                 // major reason we call this a "to" value instead of a "href".
@@ -455,9 +495,9 @@
 
                 to.pathname = toSegments.join("/");
             }
+
             // If there are more ".." segments than parent routes, resolve relative to
             // the root / URL.
-
             from = routePathnameIndex >= 0 ? routePathnames[routePathnameIndex] : "/";
         }
 
@@ -491,16 +531,34 @@
 
         return pathname.slice(basename.length) || "/";
     }
+
+    //DONE 将数组中的内容用 / 串成字符串，相邻的多个 / 合并成一个。
     const joinPaths = paths => paths.join("/").replace(/\/\/+/g, "/");
 
-    //DONE 将basename的结尾/去掉，且如果开头有且只能有一个/
+    //DONE 将pathname的结尾/去掉，且设置开头有且只能有一个/
     const normalizePathname = pathname => pathname.replace(/\/+$/, "").replace(/^\/*/, "/");
 
-    const normalizeSearch = search => !search || search === "?" ? "" : search.startsWith("?") ? search : "?" + search;
+    //DONE 标准化search串，空或只有？的直接返回空，没有前导?的补上?
+    const normalizeSearch = search => {
+        return !search || search === "?"
+            ? ""
+            : search.startsWith("?")
+                ? search
+                : "?" + search
+    };
 
-    const normalizeHash = hash => !hash || hash === "#" ? "" : hash.startsWith("#") ? hash : "#" + hash;
+    //DONE 标准化hash串，空或只有#的直接返回空，没有前导#的补上#
+    const normalizeHash = hash => {
+        return !hash || hash === "#"
+            ? ""
+            : hash.startsWith("#")
+                ? hash :
+                "#" + hash;
+    }
 
     /**
+     * DONE 
+     * 将Link的to 属性 解析为正确的url【比如将相对路径解析为绝对路径】
      * Returns the full href for the given "to" value. This is useful for building
      * custom links that are also accessible and preserve right-click behavior.
      *
@@ -519,7 +577,7 @@
             hash,
             pathname,
             search
-        } = useResolvedPath(to);
+        } = useResolvedPath(to);//相对路径解析为绝对路径
 
         let joinedPathname = pathname;
 
@@ -546,7 +604,7 @@
     }
 
     /**
-     * DONE
+     * DONE 返回当前URL的location对象
      * Returns the current location object, which represents the current URL in web
      * browsers.
      *
@@ -574,6 +632,7 @@
     }
 
     /**
+     * DONE
      * Returns true if the URL for the given "to" value matches the current URL.
      * This is useful for components that need to know "active" state, e.g.
      * <NavLink>.
@@ -595,7 +654,8 @@
      */
 
     /**
-     * DONE
+     * DONE 
+     * 返回navigate,用于Link的点击跳转，进行路由变更
      * Returns an imperative method for changing the location. Used by <Link>s, but
      * may also be used by other elements to change the location.
      *
@@ -683,6 +743,7 @@
         return outlet;
     }
     /**
+     * DONE 获取动态路由参数
      * Returns an object of key/value pairs of the dynamic params from the current
      * URL that were matched by the route path.
      *
@@ -692,12 +753,15 @@
         let {
             matches
         } = React.useContext(RouteContext);
+
         let routeMatch = matches[matches.length - 1];
+
         return routeMatch ? routeMatch.params : {};
     }
 
     /**
      * Resolves the pathname of the given `to` value against the current location.
+     * 解析Link 的 to属性，根据当前location。将相对路径解析为正确的绝对路径。
      * DONE
      * @see https://reactrouter.com/docs/en/v6/api#useresolvedpath
      */
@@ -712,11 +776,15 @@
 
         let routePathnamesJson = JSON.stringify(matches.map(match => match.pathnameBase));
 
-        return React.useMemo(() => resolveTo(to, JSON.parse(routePathnamesJson), locationPathname), [to, routePathnamesJson, locationPathname]);
+        return React.useMemo(() => {
+            return resolveTo(to, JSON.parse(routePathnamesJson), locationPathname)
+        }, [to, routePathnamesJson, locationPathname]);
     }
 
     /**
      * DONE
+     * 1、匹配路由
+     * 2、返回匹配的路由对应的元素（RE）
      * Returns the element of the route that matched the current location, prepared
      * with the correct context to render the remainder of the route tree. Route
      * elements in the tree must render an <Outlet> to render their child route's
@@ -739,26 +807,28 @@
         let parentRoute = routeMatch && routeMatch.route;
 
         {
-            // You won't get a warning about 2 different <Routes> under a <Route>
-            // without a trailing *, but this is a best-effort warning anyway since we
-            // cannot even give the warning unless they land at the parent route.
-            //
-            // Example:
-            //
-            // <Routes>
-            //   {/* This route path MUST end with /* because otherwise
-            //       it will never match /blog/post/123 */}
-            //   <Route path="blog" element={<Blog />} />
-            //   <Route path="blog/feed" element={<BlogFeed />} />
-            // </Routes>
-            //
-            // function Blog() {
-            //   return (
-            //     <Routes>
-            //       <Route path="post/:id" element={<Post />} />
-            //     </Routes>
-            //   );
-            // }
+            {
+                // You won't get a warning about 2 different <Routes> under a <Route>
+                // without a trailing *, but this is a best-effort warning anyway since we
+                // cannot even give the warning unless they land at the parent route.
+                //
+                // Example:
+                //
+                // <Routes>
+                //   {/* This route path MUST end with /* because otherwise
+                //       it will never match /blog/post/123 */}
+                //   <Route path="blog" element={<Blog />} />
+                //   <Route path="blog/feed" element={<BlogFeed />} />
+                // </Routes>
+                //
+                // function Blog() {
+                //   return (
+                //     <Routes>
+                //       <Route path="post/:id" element={<Post />} />
+                //     </Routes>
+                //   );
+                // }
+            }
             let parentPath = parentRoute && parentRoute.path || "";
             warningOnce(parentPathname, !parentRoute || parentPath.endsWith("*"),
                 "You rendered descendant <Routes> (or called `useRoutes()`) at "
@@ -806,20 +876,32 @@
                 + "This means it will render an <Outlet /> with a null value by default resulting in an \"empty\" page.");
         }
 
-        return _renderMatches(matches && matches.map(match => Object.assign({}, match, {
-            params: Object.assign({}, parentParams, match.params),
-            pathname: joinPaths([parentPathnameBase, match.pathname]),
-            pathnameBase: match.pathnameBase === "/" ? parentPathnameBase : joinPaths([parentPathnameBase, match.pathnameBase])
-        })), parentMatches);
+
+        const finalMatches = matches && matches.map(match => {
+            return Object.assign({}, match, {
+                params: Object.assign({}, parentParams, match.params),
+                pathname: joinPaths([parentPathnameBase, match.pathname]),
+                pathnameBase: match.pathnameBase === "/" ? parentPathnameBase : joinPaths([parentPathnameBase, match.pathnameBase])
+            })
+        });
+
+        return _renderMatches(finalMatches, parentMatches);
     }
 
-    //DONE 将匹配的路由对应的组件返回
+    /**
+     * DONE 将匹配的路由对应的组件返回
+     * 比如匹配到3个路由 ['/','/invoice','/invoice/detail']，则通过reduceRight返回最外层路由对应的RE，下级路由作为属性value.outlet传递。
+     * @param {*} matches 
+     * @param {*} parentMatches 
+     * @returns 
+     */
     function _renderMatches(matches, parentMatches) {
         if (parentMatches === void 0) {
             parentMatches = [];
         }
 
         if (matches == null) return null;
+
         return matches.reduceRight((outlet, match, index) => {
             return React.createElement(RouteContext.Provider, {
                 children: match.route.element !== undefined ? match.route.element : outlet,
@@ -832,8 +914,8 @@
     }
 
     /**
+     * DONE
      * A <Router> that stores all entries in memory.
-     *
      * @see https://reactrouter.com/docs/en/v6/api#memoryrouter
      */
     function MemoryRouter(_ref) {
@@ -868,6 +950,8 @@
     }
 
     /**
+     * DONE
+     * 类组件中用于路由跳转
      * Changes the current location.
      *
      * Note: This API is mostly useful in React.Component subclasses that are not
@@ -882,10 +966,15 @@
             replace,
             state
         } = _ref2;
+
         !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of
             // the router loaded. We can help them understand how to avoid that.
             "<Navigate> may be used only in the context of a <Router> component.") : void 0;
-        warning(!React.useContext(NavigationContext).static, "<Navigate> must not be used on the initial render in a <StaticRouter>. " + "This is a no-op, but you should modify your code so the <Navigate> is " + "only ever rendered in response to some user interaction or state change.");
+
+        warning(!React.useContext(NavigationContext).static, "<Navigate> must not be used on the initial render in a <StaticRouter>. "
+            + "This is a no-op, but you should modify your code so the <Navigate> is "
+            + "only ever rendered in response to some user interaction or state change.");
+
         let navigate = useNavigate();
         React.useEffect(() => {
             navigate(to, {
@@ -897,6 +986,7 @@
     }
 
     /**
+     * DONE
      * Renders the child route's element, if there is one.
      *
      * @see https://reactrouter.com/docs/en/v6/api#outlet
@@ -917,7 +1007,7 @@
     }
 
     /**
-     * DONE
+     * DONE 提供 Navigation 和 Location 上下文
      * Provides location context for the rest of the app.
      * Note: You usually won't render a <Router> directly. Instead, you'll render a
      * router that is more specific to your environment such as a <BrowserRouter>
@@ -997,7 +1087,7 @@
     }
 
     /**
-     * DONE
+     * DONE Route容器
      * A container for a nested tree of <Route> elements that renders the branch
      * that best matches the current location.
      * @see https://reactrouter.com/docs/en/v6/api#routes
@@ -1015,7 +1105,8 @@
     ///////////////////////////////////////////////////////////////////////////////
 
     /**
-     * DONE
+     * DONE 将Routes下的所有子孙 Route汇集起来，route对象包含index/element/path等信息。
+     * 
      * Creates a route config from a React "children" object, which is usually
      * either a `<Route>` element or an array of them. Used internally by
      * `<Routes>` to create a route config from its children.
@@ -1037,10 +1128,12 @@
                 return;
             }
 
+            //<Routes> 的子孙组件只能是<Route>
             !(element.type === Route) ? invariant(false, "["
                 + (typeof element.type === "string"
                     ? element.type : element.type.name)
                 + "] is not a <Route> component. All component children of <Routes> must be a <Route> or <React.Fragment>") : void 0;
+
             let route = {
                 caseSensitive: element.props.caseSensitive,
                 element: element.props.element,
@@ -1058,33 +1151,34 @@
     }
 
     /**
+     * DONE
      * Renders the result of `matchRoutes()` into a React element.
      */
     function renderMatches(matches) {
         return _renderMatches(matches);
     }
 
-    Object.defineProperty(exports, 'NavigationType', {
+    Object.defineProperty(exports, 'NavigationType', {//-
         enumerable: true,
         get: function () {
             return history.Action;
         }
     });
-    Object.defineProperty(exports, 'createPath', {
+    Object.defineProperty(exports, 'createPath', {//-
         enumerable: true,
         get: function () {
             return history.createPath;
         }
     });
-    Object.defineProperty(exports, 'parsePath', {
+    Object.defineProperty(exports, 'parsePath', {//-
         enumerable: true,
         get: function () {
             return history.parsePath;
         }
     });
-    exports.MemoryRouter = MemoryRouter;
-    exports.Navigate = Navigate;
-    exports.Outlet = Outlet;
+    exports.MemoryRouter = MemoryRouter;//-
+    exports.Navigate = Navigate;//-类组件中用于路由跳转
+    exports.Outlet = Outlet;//-
     exports.Route = Route;//-
     exports.Router = Router;//-
     exports.Routes = Routes;//-
@@ -1096,16 +1190,16 @@
     exports.matchPath = matchPath;//-
     exports.matchRoutes = matchRoutes;//-
     exports.renderMatches = renderMatches;//-
-    exports.resolvePath = resolvePath;
+    exports.resolvePath = resolvePath;//-返回 Link的 to 属性对应的解析后的path对象 { pathname(处理后是绝对路径),search,hash}
     exports.useHref = useHref;//-
     exports.useInRouterContext = useInRouterContext;//-
     exports.useLocation = useLocation;//-
-    exports.useMatch = useMatch;
-    exports.useNavigate = useNavigate;//-
-    exports.useNavigationType = useNavigationType;
-    exports.useOutlet = useOutlet;
-    exports.useOutletContext = useOutletContext;
-    exports.useParams = useParams;
+    exports.useMatch = useMatch;//-
+    exports.useNavigate = useNavigate;//-返回navigate,用于Link的点击跳转，进行路由变更
+    exports.useNavigationType = useNavigationType;//-
+    exports.useOutlet = useOutlet;//-
+    exports.useOutletContext = useOutletContext;//-
+    exports.useParams = useParams;//-获取动态路由参数
     exports.useResolvedPath = useResolvedPath;//-
     exports.useRoutes = useRoutes;//-
 
