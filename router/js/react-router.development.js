@@ -161,10 +161,10 @@
 
             let path = joinPaths([parentPath, meta.relativePath]);
             let routesMeta = parentsMeta.concat(meta);
+
             // Add the children before adding this route to the array so we traverse the
             // route tree depth-first and child routes appear before their parents in
             // the "flattened" version.
-
             if (route.children && route.children.length > 0) {
                 !(route.index !== true) ? invariant(false, "Index routes must not have child routes. Please remove "
                     + ("all child routes from route path \"" + path + "\".")) : void 0;
@@ -213,7 +213,7 @@
             initialScore += splatPenalty;
         }
 
-        if (index) {
+        if (index) {//默认路由
             initialScore += indexRouteValue;
         }
 
@@ -287,7 +287,6 @@
             }
         }
 
-        debugger
         return matches;
     }
 
