@@ -1777,6 +1777,7 @@
         var dispatcher = resolveDispatcher();
         return dispatcher.useId();
     }
+    //DONE
     function useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
@@ -3563,7 +3564,7 @@
     exports.useReducer = useReducer;//-
     exports.useRef = useRef;//-
     exports.useState = useState;//-
-    exports.useSyncExternalStore = useSyncExternalStore;
+    exports.useSyncExternalStore = useSyncExternalStore;//-
     exports.useTransition = useTransition;
     exports.version = ReactVersion;//-
 

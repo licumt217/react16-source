@@ -18204,6 +18204,13 @@
         }
     }
 
+    /**
+     * DONE
+     * @param {*} subscribe 
+     * @param {*} getSnapshot 获取selector函数返回值的函数
+     * @param {*} getServerSnapshot 
+     * @returns 
+     */
     function mountSyncExternalStore(subscribe, getSnapshot, getServerSnapshot) {
         var fiber = currentlyRenderingFiber$1;
         var hook = mountWorkInProgressHook();
@@ -18268,9 +18275,11 @@
             value: nextSnapshot,
             getSnapshot: getSnapshot
         };
-        hook.queue = inst; // Schedule an effect to subscribe to the store.
+        hook.queue = inst;
 
+        // Schedule an effect to subscribe to the store.
         mountEffect(subscribeToStore.bind(null, fiber, inst, subscribe), [subscribe]);
+
         // Schedule an effect to update the mutable instance fields. We will update
         // this whenever subscribe, getSnapshot, or value changes. Because there's no
         // clean-up function, and we track the deps correctly, we can call pushEffect
@@ -18278,15 +18287,16 @@
         // don't need to set a static flag, either.
         // TODO: We can move this to the passive phase once we add a pre-commit
         // consistency check. See the next comment.
-
         fiber.flags |= Passive;
         pushEffect(HasEffect | Passive$1, updateStoreInstance.bind(null, fiber, inst, nextSnapshot, getSnapshot), undefined, null);
         return nextSnapshot;
     }
 
+    //DONE
     function updateSyncExternalStore(subscribe, getSnapshot, getServerSnapshot) {
         var fiber = currentlyRenderingFiber$1;
-        var hook = updateWorkInProgressHook(); // Read the current snapshot from the store on every render. This breaks the
+        var hook = updateWorkInProgressHook();
+        // Read the current snapshot from the store on every render. This breaks the
         // normal rules of React, and only works because store updates are
         // always synchronous.
 
@@ -18313,16 +18323,19 @@
         }
 
         var inst = hook.queue;
-        updateEffect(subscribeToStore.bind(null, fiber, inst, subscribe), [subscribe]); // Whenever getSnapshot or subscribe changes, we need to check in the
+        updateEffect(subscribeToStore.bind(null, fiber, inst, subscribe), [subscribe]);
+        // Whenever getSnapshot or subscribe changes, we need to check in the
         // commit phase if there was an interleaved mutation. In concurrent mode
         // this can happen all the time, but even in synchronous mode, an earlier
         // effect may have mutated the store.
 
-        if (inst.getSnapshot !== getSnapshot || snapshotChanged || // Check if the susbcribe function changed. We can save some memory by
+        if (inst.getSnapshot !== getSnapshot || snapshotChanged ||
+            // Check if the susbcribe function changed. We can save some memory by
             // checking whether we scheduled a subscription effect above.
             workInProgressHook !== null && workInProgressHook.memoizedState.tag & HasEffect) {
             fiber.flags |= Passive;
-            pushEffect(HasEffect | Passive$1, updateStoreInstance.bind(null, fiber, inst, nextSnapshot, getSnapshot), undefined, null); // Unless we're rendering a blocking lane, schedule a consistency check.
+            pushEffect(HasEffect | Passive$1, updateStoreInstance.bind(null, fiber, inst, nextSnapshot, getSnapshot), undefined, null);
+            // Unless we're rendering a blocking lane, schedule a consistency check.
             // Right before committing, we will walk the tree and check if any of the
             // stores were mutated.
 
@@ -18340,6 +18353,7 @@
         return nextSnapshot;
     }
 
+    //DONE
     function pushStoreConsistencyCheck(fiber, getSnapshot, renderedSnapshot) {
         fiber.flags |= StoreConsistency;
         var check = {
@@ -18363,10 +18377,12 @@
         }
     }
 
+    //DONE
     function updateStoreInstance(fiber, inst, nextSnapshot, getSnapshot) {
         // These are updated in the passive phase
         inst.value = nextSnapshot;
-        inst.getSnapshot = getSnapshot; // Something may have been mutated in between render and commit. This could
+        inst.getSnapshot = getSnapshot;
+        // Something may have been mutated in between render and commit. This could
         // have been in an event that fired before the passive effects, or it could
         // have been in a layout effect. In that case, we would have used the old
         // snapsho and getSnapshot values to bail out. We need to check one more time.
@@ -18377,6 +18393,7 @@
         }
     }
 
+    //DONE 使用了useSelector 钩子函数的函数组件，订阅一个store 的更新 
     function subscribeToStore(fiber, inst, subscribe) {
         var handleStoreChange = function () {
             // The store changed. Check if the snapshot changed since the last time we
@@ -18385,12 +18402,12 @@
                 // Force a re-render.
                 forceStoreRerender(fiber);
             }
-        }; // Subscribe to the store and return a clean-up function.
-
-
+        };
+        // Subscribe to the store and return a clean-up function.
         return subscribe(handleStoreChange);
     }
 
+    //DONE
     function checkIfSnapshotChanged(inst) {
         var latestGetSnapshot = inst.getSnapshot;
         var prevValue = inst.value;
@@ -18403,6 +18420,7 @@
         }
     }
 
+    //DONE
     function forceStoreRerender(fiber) {
         var root = enqueueConcurrentRenderForLane(fiber, SyncLane);
 
@@ -19225,7 +19243,7 @@
                 mountHookTypesDev();
                 return mountMutableSource();
             },
-            useSyncExternalStore: function (subscribe, getSnapshot, getServerSnapshot) {
+            useSyncExternalStore: function (subscribe, getSnapshot, getServerSnapshot) {//-
                 currentHookNameInDev = 'useSyncExternalStore';
                 mountHookTypesDev();
                 return mountSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
@@ -19442,7 +19460,7 @@
                 updateHookTypesDev();
                 return updateMutableSource();
             },
-            useSyncExternalStore: function (subscribe, getSnapshot, getServerSnapshot) {
+            useSyncExternalStore: function (subscribe, getSnapshot, getServerSnapshot) {//-
                 currentHookNameInDev = 'useSyncExternalStore';
                 updateHookTypesDev();
                 return updateSyncExternalStore(subscribe, getSnapshot);
@@ -28119,6 +28137,7 @@
             }
         }
     }
+    //DONE
     function batchedUpdates$1(fn, a) {
         var prevExecutionContext = executionContext;
         executionContext |= BatchedContext;
@@ -32166,7 +32185,7 @@
     exports.hydrateRoot = hydrateRoot$1;
     exports.render = render;//- 18版本已不再支持 legacy
     exports.unmountComponentAtNode = unmountComponentAtNode;//- 卸载通过ReactDOM.render()渲染的节点  legacy
-    exports.unstable_batchedUpdates = batchedUpdates$1;
+    exports.unstable_batchedUpdates = batchedUpdates$1;//-
     exports.unstable_renderSubtreeIntoContainer = renderSubtreeIntoContainer;
     exports.version = ReactVersion;//-
 
