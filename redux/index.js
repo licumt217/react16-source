@@ -38,11 +38,10 @@ function Child() {
 
 class MyClassComponent extends React.Component {
     render() {
+        debugger
         return e('div', null, `parentValue:${this.props.value}`, e('button', {
             onClick: () => {
-                this.props.dispatch({
-                    type: 'counter/increment'
-                })
+                this.props.add()
             }
         }, '点击我'))
     }
@@ -51,6 +50,16 @@ class MyClassComponent extends React.Component {
 const mapStateToProps = state => {
     return {
         value: state.value
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        add() {
+            dispatch({
+                type: 'counter/increment'
+            })
+        }
     }
 }
 

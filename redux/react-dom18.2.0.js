@@ -18205,13 +18205,14 @@
     }
 
     /**
-     * DONE
+     * DONE ReactRedux使用
      * @param {*} subscribe 
      * @param {*} getSnapshot 获取selector函数返回值的函数
      * @param {*} getServerSnapshot 
      * @returns 
      */
     function mountSyncExternalStore(subscribe, getSnapshot, getServerSnapshot) {
+        debugger
         var fiber = currentlyRenderingFiber$1;
         var hook = mountWorkInProgressHook();
         var nextSnapshot;

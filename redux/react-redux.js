@@ -858,7 +858,7 @@
     var objectPrototype = Object.prototype;
 
     /**
-     * 
+     * DONE
      * @param {*} targetComponent Connect函数
      * @param {*} sourceComponent 要被connect包裹的类
      * @param {*} blacklist 
@@ -1149,6 +1149,7 @@
 
     }
 
+    //DONE
     function verify(selector, methodName) {
         if (!selector) {
             throw new Error(`Unexpected value for ${methodName} in connect.`);
@@ -1159,6 +1160,7 @@
         }
     }
 
+    //DONE
     function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps) {
         verify(mapStateToProps, 'mapStateToProps');
         verify(mapDispatchToProps, 'mapDispatchToProps');
@@ -1168,6 +1170,7 @@
     const _excluded$1 = ["initMapStateToProps", "initMapDispatchToProps", "initMergeProps"];
 
 
+    //DONE
     function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, {
         areStatesEqual,
         areOwnPropsEqual,
@@ -1181,6 +1184,7 @@
         let mergedProps;
 
         function handleFirstCall(firstState, firstOwnProps) {
+            debugger
             state = firstState;
             ownProps = firstOwnProps;
             stateProps = mapStateToProps(state, ownProps);
@@ -1228,6 +1232,7 @@
         };
     }
 
+    // DONE
     // TODO: Add more comments
     // The selector returned by selectorFactory will memoize its results,
     // allowing connect's shouldComponentUpdate to return false if final
@@ -1240,7 +1245,7 @@
         } = _ref,
             options = _objectWithoutPropertiesLoose(_ref, _excluded$1);
 
-        const mapStateToProps = initMapStateToProps(dispatch, options);
+        const mapStateToProps = initMapStateToProps(dispatch, options);//proxy
         const mapDispatchToProps = initMapDispatchToProps(dispatch, options);
         const mergeProps = initMergeProps(dispatch, options);
 
@@ -1288,6 +1293,7 @@
         }
     }
 
+    //DONE
     function wrapMapToPropsConstant( // * Note:
         //  It seems that the dispatch argument
         //  could be a dispatch function in some cases (ex: whenMapDispatchToPropsIsMissing)
@@ -1318,7 +1324,7 @@
         return mapToProps.dependsOnOwnProps ? Boolean(mapToProps.dependsOnOwnProps) : mapToProps.length !== 1;
     }
 
-    // 
+    // DONE
     // Used by whenMapStateToPropsIsFunction and whenMapDispatchToPropsIsFunction,
     // this function wraps mapToProps in a proxy function which does several things:
     //
@@ -1332,15 +1338,13 @@
     //    the developer that their mapToProps function is not returning a valid result.
     //
     function wrapMapToPropsFunc(mapToProps, methodName) {
-        // debugger
         return function initProxySelector(dispatch, {
             displayName
         }) {
             const proxy = function mapToPropsProxy(stateOrDispatch, ownProps) {
                 return proxy.dependsOnOwnProps ? proxy.mapToProps(stateOrDispatch, ownProps) : proxy.mapToProps(stateOrDispatch, undefined);
-            }; // allow detectFactoryAndVerify to get ownProps
-
-
+            };
+            // allow detectFactoryAndVerify to get ownProps
             proxy.dependsOnOwnProps = true;
 
             proxy.mapToProps = function detectFactoryAndVerify(stateOrDispatch, ownProps) {
@@ -1777,7 +1781,6 @@
         // the context consumer to use
         context = ReactReduxContext
     } = {}) {
-        debugger
         {
             if (pure !== undefined && !hasWarnedAboutDeprecatedPureOption) {
                 hasWarnedAboutDeprecatedPureOption = true;
@@ -1792,7 +1795,6 @@
         const shouldHandleStateChanges = Boolean(mapStateToProps);
 
         const wrapWithConnect = WrappedComponent => {
-            debugger
             if (!reactIs.isValidElementType(WrappedComponent)) {
                 throw new Error(`You must pass a component to the function returned by connect. `
                     + `Instead received ${stringifyComponent(WrappedComponent)}`);
@@ -1829,6 +1831,8 @@
 
                     return [props.context, reactReduxForwardedRef, wrapperProps];
                 }, [props]);
+                debugger
+
                 const ContextToUse = React.useMemo(() => {
                     // Users may optionally pass in a custom context instance to use instead of our ReactReduxContext.
                     // Memoize the check that determines which context instance we should use.
@@ -1855,11 +1859,15 @@
                 // Based on the previous check, one of these must be true
                 const store = didStoreComeFromProps ? props.store : contextValue.store;
                 const getServerState = didStoreComeFromContext ? contextValue.getServerState : store.getState;
+
+                //从store的state中获取需要的属性
                 const childPropsSelector = React.useMemo(() => {
                     // The child props selector needs the store reference as an input.
                     // Re-create this selector whenever the store changes.
                     return finalPropsSelectorFactory(store.dispatch, selectorFactoryOptions);
                 }, [store]);
+
+
                 const [subscription, notifyNestedSubs] = React.useMemo(() => {
                     if (!shouldHandleStateChanges) return NO_SUBSCRIPTION_ARRAY;
 
@@ -1906,6 +1914,7 @@
                         isMounted.current = false;
                     };
                 }, []);
+
                 const actualChildPropsSelector = React.useMemo(() => {
                     const selector = () => {
                         // Tricky logic here:
@@ -1924,7 +1933,6 @@
                         // to determine what the child props should be.
                         return childPropsSelector(store.getState(), wrapperProps);
                     };
-
                     return selector;
                 }, [store, wrapperProps]);
 
@@ -1947,9 +1955,10 @@
 
                 useIsomorphicLayoutEffectWithArgs(captureWrapperProps, [lastWrapperProps, lastChildProps, renderIsScheduled,
                     wrapperProps, childPropsFromStoreUpdate, notifyNestedSubs]);
-                let actualChildProps;
+                let actualChildProps;//合并了redux中的对应state后的props
 
                 try {
+
                     actualChildProps = useSyncExternalStore( // TODO We're passing through a big wrapper that does a bunch of extra side effects besides subscribing
                         subscribeForReact, // TODO This is incredibly hacky. We've already processed the store update and calculated new child props,
                         // TODO and we're just passing that through so it triggers a re-render for us rather than relying on `uSES`.
@@ -2168,7 +2177,7 @@
     });
     exports.Provider = Provider;//-
     exports.ReactReduxContext = ReactReduxContext;//-
-    exports.connect = connect;
+    exports.connect = connect;//-
     exports.createDispatchHook = createDispatchHook;//-
     exports.createSelectorHook = createSelectorHook;//-
     exports.createStoreHook = createStoreHook;//-
