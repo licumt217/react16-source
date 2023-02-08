@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>app</title>
+    <script src="./vue2.6.14.js"></script>
+
+</head>
+
+<body>
+
+    <div id="app" name="liqiang" @click="handleClick">
+        {{age}}
+        <div>
+            <p>
+                <span>123</span>
+                <span>123</span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+
+        new Vue({
+            el: "#app",
+            // template: '<div>1</div>',
+            data: {
+                age: 18
+            },
+            beforeCreate: function () {
+                console.log('111')
+            },
+            mounted() {
+                setTimeout(() => {
+                    this.age = 20;
+                }, 3000)
+            },
+            methods: {
+                handleClick() {
+                    alert(1)
+                }
+            }
+        })
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
