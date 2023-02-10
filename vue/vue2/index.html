@@ -9,30 +9,28 @@
 
 <body>
 
-    <div id="app" name="liqiang" @click="handleClick">
-        {{age}}
-        <div>
-            <p>
-                <span>123</span>
-                <span>123</span>
-            </p>
-        </div>
+    <div id="app">
+        {{todos[0]}}
     </div>
 
     <script>
 
+
+
         new Vue({
             el: "#app",
-            // template: '<div>1</div>',
-            data: {
-                age: 18
-            },
+            data: { todos: [[2, 3]] },
             beforeCreate: function () {
                 console.log('111')
             },
             mounted() {
                 setTimeout(() => {
-                    this.age = 20;
+                    // this.aaa.bbb = 111;
+                    // Vue.set(this.aaa, 'bbb', 111)
+                    // this.cc.todos[1].text = 66;
+                    // this.todos[0][0].age = 6;
+                    this.todos[0].push(5)
+                    // this.todos.push(5)
                 }, 3000)
             },
             methods: {

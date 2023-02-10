@@ -918,7 +918,7 @@
             while (len--) args[len] = arguments[len];
 
             var result = original.apply(this, args);
-            //TODO ob相关的再好好看下
+            debugger
             var ob = this.__ob__;
             var inserted;
             switch (method) {
@@ -937,7 +937,6 @@
         });
     });
 
-    /*  */
     //7个方法
     var arrayKeys = Object.getOwnPropertyNames(arrayMethods);
 
@@ -961,6 +960,7 @@
      * collect dependencies and dispatch updates.
      */
     var Observer = function Observer(value) {
+
 
         this.value = value;
         this.dep = new Dep();//方便数组的push等方法进行依赖收集和更新。在get方法进行depend和dependArray
@@ -1009,9 +1009,7 @@
      * 绑定原型
      */
     function protoAugment(target, src) {
-        /* eslint-disable no-proto */
         target.__proto__ = src;
-        /* eslint-enable no-proto */
     }
 
     /**
@@ -1058,7 +1056,7 @@
     }
 
     /**
-     * DONE;Define a reactive property on an Object.
+     * DONE;Define a reactive property on an Object. 响应式
      * 给对象的属性定义成响应式的。
      * 如果value也是对象，则继续调用observe进行逐层定义响应式
      */
@@ -1093,11 +1091,16 @@
 
                 var value = getter ? getter.call(obj) : val;
                 if (Dep.target) {
-                    dep.depend();
+                    dep.depend();//将当前Watcher添加到dep的订阅者中；且将当前dep和id放入 Watcher的newDeps和newDepIds中
                     if (childOb) {
                         //将Dep.target添加进child的依赖，以便在val是数组时，执行push等方法时能根据__ob__中的dep拿到对应的watcher进行更新用
-                        childOb.dep.depend();
-                        if (Array.isArray(value)) {//遍历数组，给所有的子数组进行依赖收集
+                        childOb.dep.depend();//#99
+                        if (Array.isArray(value)) {//遍历数组，给所有的子项进行依赖收集
+                            // * Collect dependencies on array elements when the array is touched, since
+                            // * we cannot intercept array element access like property getters.
+                            // 页面是 ：{{todos[0]}}，数据：data: {todos: [ [2, 3]] }, this.todos对应的外层数组，可以拿到依赖(#99处)。
+                            // 但是todos[0]对应的内层数组却拿不到依赖，如果是对象的话 todos.obj则可以拿到。所以此处，手动给外层数组的每个子数组元素
+                            // （包含孙子数组元素）手动添加依赖。否则todos[0].push()之类的操作不生效。因为数组改写的原型方法中，会拿不到依赖。
                             dependArray(value);
                         }
                     }
@@ -2018,7 +2021,6 @@
         }
     }
 
-    /*  */
 
     var isUsingMicroTask = false;
 
@@ -2846,7 +2848,6 @@
         return resolveAsset(this.$options, 'filters', id, true) || identity
     }
 
-    /*  */
 
     function isKeyNotMatch(expect, actual) {
         if (Array.isArray(expect)) {
@@ -4270,6 +4271,7 @@
         }
         callHook(vm, 'beforeMount');
 
+
         var updateComponent;
         updateComponent = function () {
             //_render()执行后，返回VNode节点树
@@ -4560,7 +4562,6 @@
         callUpdatedHooks(updatedQueue);//调用生命周期钩子函数updated
 
         // devtool hook
-        /* istanbul ignore if */
         if (devtools && config.devtools) {
             devtools.emit('flush');
         }
@@ -4698,7 +4699,7 @@
 
     /**
      * DONE;Evaluate the getter, and re-collect dependencies.
-     * 执行get方法，以便依赖收集能够收集到当前Watcher。返回最新值。
+     * 初始化时执行get方法，以便依赖收集能够收集到当前Watcher。返回最新值。
      */
     Watcher.prototype.get = function get() {
         pushTarget(this);
@@ -4727,7 +4728,8 @@
 
     /**
      * DONE; Add a dependency to this directive.
-     * 添加依赖。将依赖id添加到newDeps和newDepIds
+     * 添加依赖。将依赖id添加到newDeps和newDepIds。同时将当前watcher添加到dep的 subs中去。
+     * set 方法中执行
      */
     Watcher.prototype.addDep = function addDep(dep) {
         var id = dep.id;
@@ -4771,7 +4773,6 @@
      * 下次事件循环执行对应的run方法。
      */
     Watcher.prototype.update = function update() {
-        /* istanbul ignore else */
         if (this.lazy) {
             this.dirty = true;
         } else if (this.sync) {
@@ -6145,7 +6146,6 @@
         setStyleScope: setStyleScope
     });
 
-    /*  */
 
     var ref = {
         create: function create(_, vnode) {
@@ -6244,43 +6244,45 @@
     function createPatchFunction(backend) {
         var i, j;
         var cbs = {};
-        // [
-        //     {
-        //         create:updateAttrs,
-        //         update:updateAttrs
-        //     },
-        //     {
-        //         create:updateClass,
-        //         update:updateClass
-        //     },
-        //     {
-        //         create:updateDOMListeners,
-        //         update:updateDOMListeners
-        //     },
-        //     {
-        //         create:updateDOMProps,
-        //         update:updateDOMProps
-        //     },
-        //     {
-        //         create:updateStyle,
-        //         update:updateStyle
-        //     },
-        //     {
-        //         create:_enter,
-        //         avtivate:_enter,
-        //         remove:remove$$1
-        //     },
-        //     {
-        //         create:create,
-        //         destroy:destroy,
-        //         update:update
-        //     },
-        //     {
-        //         create:updateDirectives,
-        //         update:updateDirectives,
-        //         destroy:unbindDirectives
-        //     },
-        // ]
+        {
+            // [
+            //     {
+            //         create:updateAttrs,
+            //         update:updateAttrs
+            //     },
+            //     {
+            //         create:updateClass,
+            //         update:updateClass
+            //     },
+            //     {
+            //         create:updateDOMListeners,
+            //         update:updateDOMListeners
+            //     },
+            //     {
+            //         create:updateDOMProps,
+            //         update:updateDOMProps
+            //     },
+            //     {
+            //         create:updateStyle,
+            //         update:updateStyle
+            //     },
+            //     {
+            //         create:_enter,
+            //         avtivate:_enter,
+            //         remove:remove$$1
+            //     },
+            //     {
+            //         create:create,
+            //         destroy:destroy,
+            //         update:update
+            //     },
+            //     {
+            //         create:updateDirectives,
+            //         update:updateDirectives,
+            //         destroy:unbindDirectives
+            //     },
+            // ]
+        }
         var modules = backend.modules;
         var nodeOps = backend.nodeOps;
 
@@ -6385,7 +6387,6 @@
                     : nodeOps.createElement(tag, vnode);//createElement$1
                 setScope(vnode);
 
-                /* istanbul ignore if */
                 {
                     //循环遍历所有的child，从深到浅逐步insert
                     createChildren(vnode, children, insertedVnodeQueue);
@@ -6400,13 +6401,10 @@
                 if (data && data.pre) {
                     creatingElmInVPre--;
                 }
-            }
-            else if (isTrue(vnode.isComment)) {
+            } else if (isTrue(vnode.isComment)) {
                 vnode.elm = nodeOps.createComment(vnode.text);
                 insert(parentElm, vnode.elm, refElm);
-            }
-            //文本节点。将当前节点的parentEle append当前的vnode.ele。
-            else {
+            } else {//文本节点。将当前节点的parentEle append当前的vnode.ele。
                 vnode.elm = nodeOps.createTextNode(vnode.text);
                 insert(parentElm, vnode.elm, refElm);
             }
@@ -6811,30 +6809,30 @@
             }
             //新节点非文本节点。
             if (isUndef(vnode.text)) {
-                //都有children则更新children
-                if (isDef(oldCh) && isDef(ch)) {
+
+                if (isDef(oldCh) && isDef(ch)) {//都有children则更新children
                     if (oldCh !== ch) { updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly); }
-                }
-                //没有旧children，直接将新的插入
-                else if (isDef(ch)) {
+
+                } else if (isDef(ch)) {//没有旧children，直接将新的插入
                     {
                         checkDuplicateKeys(ch);
                     }
-                    if (isDef(oldVnode.text)) { nodeOps.setTextContent(elm, ''); }//旧节点是文本节点，新的不是，则将textContent置空。
+                    if (isDef(oldVnode.text)) {//旧节点是文本节点，新的不是，则将textContent置空。
+                        nodeOps.setTextContent(elm, '');
+                    }
                     addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue);
-                }
-                //没新的，则删除旧的children
-                else if (isDef(oldCh)) {
+
+                } else if (isDef(oldCh)) {//没新的，则删除旧的children
                     removeVnodes(oldCh, 0, oldCh.length - 1);
-                }
-                else if (isDef(oldVnode.text)) {
+
+                } else if (isDef(oldVnode.text)) {
+
                     nodeOps.setTextContent(elm, '');
                 }
-            }
-            //新节点是文本节点且值和老的不同，直接更新文本
-            else if (oldVnode.text !== vnode.text) {//text不相同，直接更新
+            } else if (oldVnode.text !== vnode.text) {//新节点是文本节点且值和老的不同，直接更新文本。text不相同，直接更新
                 nodeOps.setTextContent(elm, vnode.text);
             }
+
             //postpatch
             if (isDef(data)) {
                 if (isDef(i = data.hook) && isDef(i = i.postpatch)) { i(oldVnode, vnode); }
@@ -6965,7 +6963,7 @@
             }
         }
 
-        //patch
+        //patch中心
         return function patch(oldVnode, vnode, hydrating, removeOnly) {
             if (isUndef(vnode)) {//有旧没新，直接销毁旧的。
                 if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); }
@@ -6979,17 +6977,14 @@
                 // empty mount (likely as component), create new root element
                 isInitialPatch = true;
                 createElm(vnode, insertedVnodeQueue);
-            }
-            //两个都有，进行具体patch
-            else {
+
+            } else {//两个都有，进行具体patch
                 var isRealElement = isDef(oldVnode.nodeType);//是否真正的dom元素（初始化的时候old是真实dom）
                 //具体更新的patch
                 if (!isRealElement && sameVnode(oldVnode, vnode)) {
                     // patch existing root node
                     patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly);
-                }
-                //初始化的逻辑。根据vnode生成对应的dom并插入文档，然后移除编译前的dom
-                else {
+                } else {//初始化的逻辑。根据vnode生成对应的dom并插入文档，然后移除编译前的dom
                     if (isRealElement) {
                         // mounting to a real element
                         // check if this is server-rendered content and if we can perform
@@ -7851,6 +7846,7 @@
     var RANGE_TOKEN = '__r';
     var CHECKBOX_RADIO_TOKEN = '__c';
 
+    //model指令
     function model(
         el,
         dir,
@@ -7880,11 +7876,11 @@
             return false
         } else if (tag === 'select') {
             genSelect(el, value, modifiers);
-        } else if (tag === 'input' && type === 'checkbox') {
+        } else if (tag === 'input' && type === 'checkbox') {//-
             genCheckboxModel(el, value, modifiers);
-        } else if (tag === 'input' && type === 'radio') {
+        } else if (tag === 'input' && type === 'radio') {//-
             genRadioModel(el, value, modifiers);
-        } else if (tag === 'input' || tag === 'textarea') {
+        } else if (tag === 'input' || tag === 'textarea') {//-
             genDefaultModel(el, value, modifiers);
         } else if (!config.isReservedTag(tag)) {
             genComponentModel(el, value, modifiers);
@@ -7935,6 +7931,7 @@
         );
     }
 
+    //DONE
     function genRadioModel(
         el,
         value,
@@ -10262,7 +10259,8 @@
             //将当前元素push到父元素的children。v-else/v-else-if对应的元素不放入ast树中，放入v-if对应元素的ifConditions中
             if (currentParent && !element.forbidden) {
                 if (element.elseif || element.else) {
-                    ////将当前元素push到父元素的children。v-else/v-else-if对应的元素不放入ast树中，放入v-if对应元素的ifConditions中
+                    //将当前元素push到父元素的children。v-else/v-else-if对应的元素不放入ast树中，放入v-if对应元素的ifConditions中
+
                     processIfConditions(element, currentParent);
                 } else {
                     if (element.slotScope) {
@@ -11646,11 +11644,12 @@
             el.pre = el.pre || el.parent.pre;
         }
 
-        if (el.staticRoot && !el.staticProcessed) {//给定ele是静态根节点的话，设置staticProcessed=true,然后将静态渲染字符串push到state.staticRenderFns。返回_m(index)
+        //给定ele是静态根节点的话，设置staticProcessed=true,然后将静态渲染字符串push到state.staticRenderFns。返回_m(index)
+        if (el.staticRoot && !el.staticProcessed) {
             return genStatic(el, state)
         } else if (el.once && !el.onceProcessed) {
             return genOnce(el, state)
-        } else if (el.for && !el.forProcessed) {
+        } else if (el.for && !el.forProcessed) {//-
             return genFor(el, state)
         } else if (el.if && !el.ifProcessed) {//有v-if的元素，生成对应表达式
             return genIf(el, state)
@@ -11905,14 +11904,18 @@
             var gen = state.directives[dir.name];
             if (gen) {
                 // compile-time directive that manipulates AST.
-                // returns true if it also needs a runtime counterpart.
+                // returns true if it also needs a runtime counterpart(对应方)
                 needRuntime = !!gen(el, dir, state.warn);
             }
             if (needRuntime) {
                 hasRuntime = true;
                 res += "{name:\"" + (dir.name) + "\",rawName:\"" + (dir.rawName) + "\"" +
-                    (dir.value ? (",value:(" + (dir.value) + "),expression:" + (JSON.stringify(dir.value))) : '') +
-                    (dir.arg ? (",arg:" + (dir.isDynamicArg ? dir.arg : ("\"" + (dir.arg) + "\""))) : '') + (dir.modifiers ? (",modifiers:" + (JSON.stringify(dir.modifiers))) : '') + "},";
+                    (dir.value
+                        ? (",value:(" + (dir.value) + "),expression:" + (JSON.stringify(dir.value)))
+                        : '') + (
+                        dir.arg
+                            ? (",arg:" + (dir.isDynamicArg ? dir.arg : ("\"" + (dir.arg) + "\"")))
+                            : '') + (dir.modifiers ? (",modifiers:" + (JSON.stringify(dir.modifiers))) : '') + "},";
             }
         }
         if (hasRuntime) {
@@ -12067,7 +12070,10 @@
                 ? getNormalizationType(children, state.maybeComponent)
                 : 0;
             var gen = altGenNode || genNode;
-            return ("[" + (children.map(function (c) { return gen(c, state); }).join(',')) + "]" + (normalizationType$1 ? ("," + normalizationType$1) : ''))
+
+            return ("[" + (children.map(function (c) {
+                return gen(c, state);
+            }).join(',')) + "]" + (normalizationType$1 ? ("," + normalizationType$1) : ''))
         }
     }
 
@@ -12571,6 +12577,7 @@
     }
 
 
+
     // `createCompilerCreator` allows creating compilers that use alternative
     // parser/optimizer/codegen, e.g the SSR optimizing compiler.
     // Here we just export a default compiler using the default parts.
@@ -12581,12 +12588,11 @@
     ) {
         var ast = parse(template.trim(), options);
 
-        debugger
+
         if (options.optimize !== false) {
             //给节点标记static和staticRoot属性
             optimize(ast, options);
         }
-        debugger
         //根据ast树，生成对应的渲染函数字符串形式,返回对象包括staticRenderFns和render
         var code = generate(ast, options);
         return {
@@ -12675,8 +12681,6 @@
                     delimiters: options.delimiters,//undefined
                     comments: options.comments//undefined
                 }, this);
-
-                let aaa = JSON.stringify(ref.render.toString())
 
                 var render = ref.render;
                 var staticRenderFns = ref.staticRenderFns;
