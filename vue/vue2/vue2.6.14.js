@@ -918,7 +918,6 @@
             while (len--) args[len] = arguments[len];
 
             var result = original.apply(this, args);
-            debugger
             var ob = this.__ob__;
             var inserted;
             switch (method) {
@@ -946,6 +945,7 @@
      */
     var shouldObserve = true;
 
+    //DONE
     function toggleObserving(value) {
         shouldObserve = value;
     }
@@ -1776,6 +1776,7 @@
     }
 
     /**
+     * DONE 。组件props的required和其它校验相关。
      * Assert whether a prop is valid.
      */
     function assertProp(
@@ -1785,6 +1786,7 @@
         vm,
         absent
     ) {
+        //required验证
         if (prop.required && absent) {
             warn(
                 'Missing required prop: "' + name + '"',
@@ -1792,6 +1794,7 @@
             );
             return
         }
+        //没有值，且非必须时直接返回。
         if (value == null && !prop.required) {
             return
         }
@@ -1830,7 +1833,7 @@
 
     var simpleCheckRE = /^(String|Number|Boolean|Function|Symbol|BigInt)$/;
 
-    //TODO 结合业务看
+    // 结合业务看。组件prop类型的校验相关
     function assertType(value, type, vm) {
         var valid;
         var expectedType = getType(type);
@@ -1891,7 +1894,7 @@
         return -1
     }
 
-    //TODO 结合业务看
+    //组件prop的类型不合法时提示信息 结合业务看
     function getInvalidTypeMessage(name, value, expectedTypes) {
         var message = "Invalid prop: type check failed for prop \"" + name + "\"." +
             " Expected " + (expectedTypes.map(capitalize).join(', '));
@@ -2234,7 +2237,6 @@
         };
     }
 
-    /*  */
 
     var seenObjects = new _Set();
 
@@ -2612,9 +2614,6 @@
             return result
         }
     }
-
-    /*  */
-
 
 
     /**
@@ -3418,10 +3417,21 @@
 
         // return a placeholder vnode
         var name = Ctor.options.name || tag;
+
         var vnode = new VNode(
             ("vue-component-" + (Ctor.cid) + (name ? ("-" + name) : '')),
-            data, undefined, undefined, undefined, context,
-            { Ctor: Ctor, propsData: propsData, listeners: listeners, tag: tag, children: children },
+            data,
+            undefined,
+            undefined,
+            undefined,
+            context,
+            {
+                Ctor: Ctor,
+                propsData: propsData,
+                listeners: listeners,
+                tag: tag,
+                children: children
+            },
             asyncFactory
         );
 
@@ -3617,13 +3627,10 @@
                     config.parsePlatformTagName(tag), data, children,
                     undefined, undefined, context
                 );
-            }
-            //元素是组件元素时
-            else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
+            } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {//元素是组件元素时
                 // component。Ctor：组件的构造函数，定义组件时返回的。
                 vnode = createComponent(Ctor, data, context, children, tag);
-            }
-            else {
+            } else {
                 // unknown or unlisted namespaced elements
                 // check at runtime because it may get assigned a namespace when its
                 // parent normalizes children
@@ -3972,20 +3979,24 @@
         // init parent attached events
         var listeners = vm.$options._parentListeners;
         if (listeners) {
+            //将父组件在组件标签上注册的事件，更新到子组件的事件监听器上
             updateComponentListeners(vm, listeners);
         }
     }
 
     var target;
 
+    //DONE
     function add(event, fn) {
         target.$on(event, fn);
     }
 
+    //DONE
     function remove$1(event, fn) {
         target.$off(event, fn);
     }
 
+    //DONE
     function createOnceHandler(event, fn) {
         var _target = target;
         return function onceHandler() {
@@ -3996,6 +4007,7 @@
         }
     }
 
+    //DONE 将父组件在组件标签上注册的事件，更新到子组件的事件监听器上
     function updateComponentListeners(
         vm,
         listeners,
@@ -4108,7 +4120,6 @@
         };
     }
 
-    /*  */
 
     var activeInstance = null;
     var isUpdatingChildComponent = false;
@@ -4166,6 +4177,7 @@
             vm._vnode = vnode;
             // Vue.prototype.__patch__ is injected in entry points
             // based on the rendering backend used.
+            debugger
             if (!prevVnode) {
                 // initial render
                 vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */);
@@ -4252,7 +4264,6 @@
         if (!vm.$options.render) {
             vm.$options.render = createEmptyVNode;
             {
-                /* istanbul ignore if */
                 if ((vm.$options.template && vm.$options.template.charAt(0) !== '#') ||
                     vm.$options.el || el) {
                     warn(
@@ -4653,6 +4664,7 @@
         isRenderWatcher
     ) {
 
+
         this.vm = vm;
         if (isRenderWatcher) {
             vm._watcher = this;
@@ -4889,10 +4901,14 @@
     function initState(vm) {
         vm._watchers = [];
         var opts = vm.$options;
-        if (opts.props) { initProps(vm, opts.props); }
+        if (opts.props) {//组件
+            initProps(vm, opts.props);
+        }
 
         //将options中的methods遍历一遍，然后将每个方法都复制到实例上，且固话上下文为当前实例
-        if (opts.methods) { initMethods(vm, opts.methods); }
+        if (opts.methods) {
+            initMethods(vm, opts.methods);
+        }
 
         //对data进行observe，方便进行依赖收集和更新
         if (opts.data) {
@@ -4910,6 +4926,7 @@
         }
     }
 
+    //DONE 组件初始化props
     function initProps(vm, propsOptions) {
         var propsData = vm.$options.propsData || {};
         var props = vm._props = {};
@@ -4924,7 +4941,6 @@
         var loop = function (key) {
             keys.push(key);
             var value = validateProp(key, propsOptions, propsData, vm);
-            /* istanbul ignore else */
             {
                 var hyphenatedKey = hyphenate(key);
                 if (isReservedAttribute(hyphenatedKey) ||
@@ -5122,6 +5138,7 @@
      */
     function createComputedGetter(key) {
         return function computedGetter() {
+            let mmm = Watcher;
             var watcher = this._computedWatchers && this._computedWatchers[key];
             if (watcher) {
                 if (watcher.dirty) {
@@ -5330,6 +5347,7 @@
      * @param {*} options 
      */
     function initInternalComponent(vm, options) {
+
         var opts = vm.$options = Object.create(vm.constructor.options);
         // doing this because it's faster than dynamic enumeration.
         var parentVnode = options._parentVnode;
@@ -5565,7 +5583,6 @@
                 if (!definition) {
                     return this.options[type + 's'][id]
                 } else {
-                    /* DONE; istanbul ignore if */
                     if (type === 'component') {
                         validateComponentName(id);//验证组件名称name的合法性
                     }
@@ -5574,6 +5591,7 @@
                         definition.name = definition.name || id;
                         definition = this.options._base.extend(definition);
                     }
+
                     if (type === 'directive' && typeof definition === 'function') {
                         definition = { bind: definition, update: definition };
                     }
@@ -6349,6 +6367,7 @@
             index
         ) {
 
+
             if (isDef(vnode.elm) && isDef(ownerArray)) {
                 // This vnode was used in a previous render!
                 // now it's used as a new node, overwriting its elm would cause
@@ -6415,7 +6434,8 @@
             var i = vnode.data;
             if (isDef(i)) {
                 var isReactivated = isDef(vnode.componentInstance) && i.keepAlive;
-                //组件的初始化流程init()，类似页面初始化。
+
+                //组件的初始化流程init()和mount，类似页面初始化。
                 if (isDef(i = i.hook) && isDef(i = i.init)) {
                     i(vnode, false /* hydrating */);
                 }
@@ -6425,6 +6445,7 @@
                 // in that case we can just return the element and be done.
                 if (isDef(vnode.componentInstance)) {
                     //组件初始化后，将vnode.componentInstance.$el 赋值给vnode.elm。insertedVnodeQueue.push(vnode);
+                    //将组件的实际dom元素 .ele赋值给 组件Vnode的.ele
                     initComponent(vnode, insertedVnodeQueue);
                     //组件元素插入实际的父元素中
                     insert(parentElm, vnode.elm, refElm);
@@ -11645,7 +11666,7 @@
         }
 
         //给定ele是静态根节点的话，设置staticProcessed=true,然后将静态渲染字符串push到state.staticRenderFns。返回_m(index)
-        if (el.staticRoot && !el.staticProcessed) {
+        if (el.staticRoot && !el.staticProcessed) {//-
             return genStatic(el, state)
         } else if (el.once && !el.onceProcessed) {
             return genOnce(el, state)
@@ -12587,6 +12608,7 @@
         options
     ) {
         var ast = parse(template.trim(), options);
+
 
 
         if (options.optimize !== false) {
