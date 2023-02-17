@@ -10,9 +10,7 @@
 <body>
 
     <div id="app">
-        <p>current</p>
-        <child name="liq" age="18">
-        </child>
+        <input ref="input"></input>
     </div>
 
 
@@ -43,6 +41,10 @@
 
             created() {
                 console.log("main created!")
+
+            },
+            mounted() {
+                this.$refs.input.focus()
             },
             methods: {
                 eat2() {

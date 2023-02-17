@@ -4196,6 +4196,7 @@
             // updated in a parent's updated hook.
         };
 
+        //-
         Vue.prototype.$forceUpdate = function () {
             var vm = this;
             if (vm._watcher) {
@@ -4203,6 +4204,7 @@
             }
         };
 
+        //-
         Vue.prototype.$destroy = function () {
             var vm = this;
             if (vm._isBeingDestroyed) {
@@ -6165,6 +6167,7 @@
     });
 
 
+    //patch阶段调用
     var ref = {
         create: function create(_, vnode) {
             registerRef(vnode);
@@ -6180,6 +6183,7 @@
         }
     };
 
+    //- ref注册
     function registerRef(vnode, isRemoval) {
         var key = vnode.data.ref;
         if (!isDef(key)) { return }
@@ -12607,6 +12611,7 @@
         var ast = parse(template.trim(), options);
 
 
+        debugger
 
         if (options.optimize !== false) {
             //给节点标记static和staticRoot属性
