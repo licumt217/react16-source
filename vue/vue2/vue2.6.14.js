@@ -528,7 +528,7 @@
         }
     }
 
-    /*  */
+
 
     // can we use __proto__?
     var hasProto = '__proto__' in {};
@@ -623,7 +623,7 @@
         }());
     }
 
-    /*  */
+
 
     var warn = noop;
     var tip = noop;
@@ -731,7 +731,6 @@
         };
     }
 
-    /*  */
 
     var uid = 0;
 
@@ -790,7 +789,6 @@
         Dep.target = targetStack[targetStack.length - 1];
     }
 
-    /*  */
 
     //VNode构造函数
     var VNode = function VNode(
@@ -1129,7 +1127,7 @@
     }
 
     /**
-     * Set a property on an object. Adds the new property and
+     * DONE Set a property on an object. Adds the new property and
      * triggers change notification if the property doesn't
      * already exist.
      * 动态添加新属性的方法
@@ -1278,6 +1276,7 @@
         vm
     ) {
         if (!vm) {
+
             // in a Vue.extend merge, both should be functions
             if (!childVal) {
                 return parentVal
@@ -1624,19 +1623,17 @@
 
         //props格式化，key变为驼峰
         normalizeProps(child, vm);
-        normalizeInject(child, vm);
+        normalizeInject(child, vm);//- inject 将数组形式改为 {from:'xxx'} 的形式
         normalizeDirectives(child);
 
         // Apply extends and mixins on the child options,
         // but only if it is a raw options object that isn't
         // the result of another mergeOptions call.
         // Only merged options has the _base property.
-        if (!child._base) {
-            //TODO 
+        if (!child._base) {//合并extends和mixins，二者主要是执行优先级的区别。
             if (child.extends) {
                 parent = mergeOptions(parent, child.extends, vm);
             }
-            //TODO 
             if (child.mixins) {
                 for (var i = 0, l = child.mixins.length; i < l; i++) {
                     parent = mergeOptions(parent, child.mixins[i], vm);
@@ -1941,7 +1938,7 @@
         return args.some(function (elem) { return elem.toLowerCase() === 'boolean'; })
     }
 
-    /*  */
+
 
     function handleError(err, vm, info) {
         // Deactivate deps tracking while processing error handler to avoid possible infinite rendering.
@@ -2016,7 +2013,7 @@
         {
             warn(("Error in " + info + ": \"" + (err.toString()) + "\""), vm);
         }
-        /* istanbul ignore else */
+
         if ((inBrowser || inWeex) && typeof console !== 'undefined') {
             console.error(err);
         } else {
@@ -2354,8 +2351,8 @@
         }
     }
 
-    /*  */
 
+    //-
     function mergeVNodeHook(def, hookKey, hook) {
         if (def instanceof VNode) {
             def = def.data.hook || (def.data.hook = {});
@@ -2374,7 +2371,6 @@
             // no existing hook
             invoker = createFnInvoker([wrappedHook]);
         } else {
-            /* istanbul ignore if */
             if (isDef(oldHook.fns) && isTrue(oldHook.merged)) {
                 // already a merged invoker
                 invoker = oldHook;
@@ -2458,7 +2454,7 @@
         return false
     }
 
-    /*  */
+
 
     // The template compiler attempts to minimize the need for normalization by
     // statically analyzing the template at compile time.
@@ -2546,7 +2542,7 @@
         return res
     }
 
-    /*  */
+
 
     function initProvide(vm) {
         var provide = vm.$options.provide;
@@ -2557,13 +2553,14 @@
         }
     }
 
-    //TODO
+    //-  inject
     function initInjections(vm) {
+        //inject 递归的向上回溯，去父亲组件中找provide对应的值
         var result = resolveInject(vm.$options.inject, vm);
         if (result) {
             toggleObserving(false);
+            //将inject进来的属性绑定到实例上，不进行响应式绑定
             Object.keys(result).forEach(function (key) {
-                /* istanbul ignore else */
                 {
                     defineReactive$$1(vm, key, result[key], function () {
                         warn(
@@ -2579,6 +2576,7 @@
         }
     }
 
+    // inject 递归的向上回溯，去父亲组件中找provide对应的值
     function resolveInject(inject, vm) {
         if (inject) {
             // inject is :any because flow is not smart enough to figure out cached
@@ -2663,14 +2661,14 @@
         return (node.isComment && !node.asyncFactory) || node.text === ' '
     }
 
-    /*  */
 
+    //-
     function isAsyncPlaceholder(node) {
         return node.isComment && node.asyncFactory
     }
 
-    /*  */
 
+    //
     function normalizeScopedSlots(
         slots,
         normalSlots,
@@ -2747,11 +2745,11 @@
         return normalized
     }
 
+    //DONE
     function proxyNormalSlot(slots, key) {
         return function () { return slots[key]; }
     }
 
-    /*  */
 
     /**
      * 执行带有v-for的vnode，返回数组【】，包含每条具体的条目对应的vnode。
@@ -2799,7 +2797,6 @@
         return ret
     }
 
-    /*  */
 
     /**
      * Runtime helper for rendering <slot>
@@ -2879,7 +2876,7 @@
         return eventKeyCode === undefined
     }
 
-    /*  */
+
 
     /**
      * Runtime helper for merging v-bind="object" into a VNode's data.
@@ -2935,7 +2932,7 @@
         return data
     }
 
-    /*  */
+
 
     /**
      * DONE;Runtime helper for rendering static trees.
@@ -3006,7 +3003,7 @@
         node.isOnce = isOnce;
     }
 
-    /*  */
+
 
     function bindObjectListeners(data, value) {
         if (value) {
@@ -3027,8 +3024,8 @@
         return data
     }
 
-    /*  */
 
+    //-
     function resolveScopedSlots(
         fns, // see flow/vnode
         res,
@@ -3055,7 +3052,7 @@
         return res
     }
 
-    /*  */
+
 
     function bindDynamicKeys(baseObj, values) {
         for (var i = 0; i < values.length; i += 2) {
@@ -3083,25 +3080,24 @@
     //在Vue.prototype上绑定渲染(生成vnode)辅助函数
     function installRenderHelpers(target) {
         target._o = markOnce;
-        target._n = toNumber;
-        target._s = toString;
+        target._n = toNumber;//-
+        target._s = toString;//-
         target._l = renderList;
-        target._t = renderSlot;
+        target._t = renderSlot;//-
         target._q = looseEqual;
-        target._i = looseIndexOf;
+        target._i = looseIndexOf;//-
         target._m = renderStatic;
         target._f = resolveFilter;
         target._k = checkKeyCodes;
         target._b = bindObjectProps;
-        target._v = createTextVNode;
-        target._e = createEmptyVNode;
-        target._u = resolveScopedSlots;
+        target._v = createTextVNode;//-
+        target._e = createEmptyVNode;//-
+        target._u = resolveScopedSlots;//-
         target._g = bindObjectListeners;
         target._d = bindDynamicKeys;
         target._p = prependModifier;//prepend预置、前置
     }
 
-    /*  */
 
     function FunctionalRenderContext(
         data,
@@ -3181,6 +3177,7 @@
 
     installRenderHelpers(FunctionalRenderContext.prototype);
 
+    //-
     function createFunctionalComponent(
         Ctor,
         propsData,
@@ -3222,6 +3219,7 @@
         }
     }
 
+    //-
     function cloneAndMarkFunctionalResult(vnode, data, contextVm, options, renderContext) {
         // #7817 clone node before setting fnContext, otherwise if the node is reused
         // (e.g. it was from a cached normal slot) the fnContext causes named slots
@@ -3385,7 +3383,7 @@
         // extract props
         var propsData = extractPropsFromVNodeData(data, Ctor, tag);
 
-        // functional component
+        // functional component 函数组件
         if (isTrue(Ctor.options.functional)) {
             return createFunctionalComponent(Ctor, propsData, data, context, children)
         }
@@ -3513,7 +3511,6 @@
         }
     }
 
-    /*  */
 
     var SIMPLE_NORMALIZE = 1;
     var ALWAYS_NORMALIZE = 2;
@@ -3772,9 +3769,10 @@
                 vnode = render.call(vm._renderProxy, vm.$createElement);
             } catch (e) {
                 handleError(e, vm, "render");
+
                 // return error render result,
                 // or previous vnode to prevent render error causing blank component
-                /* istanbul ignore else */
+                //当 render 函数遭遇错误时，提供另外一种渲染输出。其错误将会作为第二个参数传递到 renderError。这个功能配合 hot-reload 非常实用。
                 if (vm.$options.renderError) {
                     try {
                         vnode = vm.$options.renderError.call(vm._renderProxy, vm.$createElement, e);
@@ -3809,7 +3807,6 @@
         };
     }
 
-    /*  */
 
     function ensureCtor(comp, base) {
         if (
@@ -3958,8 +3955,7 @@
         }
     }
 
-    /*  */
-
+    //-
     function getFirstComponentChild(children) {
         if (Array.isArray(children)) {
             for (var i = 0; i < children.length; i++) {
@@ -4177,7 +4173,6 @@
             vm._vnode = vnode;
             // Vue.prototype.__patch__ is injected in entry points
             // based on the rendering backend used.
-            debugger
             if (!prevVnode) {
                 // initial render
                 vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */);
@@ -4458,7 +4453,7 @@
         popTarget();
     }
 
-    /*  */
+
 
     var MAX_UPDATE_COUNT = 100;
 
@@ -4643,7 +4638,7 @@
         }
     }
 
-    /*  */
+
 
 
 
@@ -5443,7 +5438,7 @@
     //安装渲染辅助函数（在Vue.prototype上绑定渲染(生成vnode)辅助函数_v, _s, _l等）
     renderMixin(Vue);
 
-    //给Vue绑定use方法  TODO 未看具体用法
+    //给Vue绑定use方法，使用插件
     function initUse(Vue) {
         Vue.use = function (plugin) {
             var installedPlugins = (this._installedPlugins || (this._installedPlugins = []));
@@ -5464,8 +5459,7 @@
         };
     }
 
-    /*  */
-    //给Vue绑定mix方法 TODO
+    //给Vue绑定mixin方法 
     function initMixin$1(Vue) {
         Vue.mixin = function (mixin) {
             this.options = mergeOptions(this.options, mixin);
@@ -5580,6 +5574,7 @@
                 id,
                 definition
             ) {
+
                 if (!definition) {
                     return this.options[type + 's'][id]
                 } else {
@@ -5602,12 +5597,13 @@
         });
     }
 
-    /*  */
 
+    //-
     function getComponentName(opts) {
         return opts && (opts.Ctor.options.name || opts.tag)
     }
 
+    //- keep-alive
     function matches(pattern, name) {
         if (Array.isArray(pattern)) {
             return pattern.indexOf(name) > -1
@@ -5635,6 +5631,7 @@
         }
     }
 
+    //- keep-alive
     function pruneCacheEntry(
         cache,
         key,
@@ -5650,7 +5647,7 @@
     }
 
     var patternTypes = [String, RegExp, Array];
-    //组件持久化，使得组件的状态维持不变，避免重新渲染。比如分页列表第三页进入详情页，返回列表页后还是在第三页。//TODO 具体内容还没看。
+    // DONE- 组件持久化，使得组件的状态维持不变，避免重新渲染。比如分页列表第三页进入详情页，返回列表页后还是在第三页。//TODO 具体内容还没看。
     var KeepAlive = {
         name: 'keep-alive',
         abstract: true,
@@ -5678,7 +5675,7 @@
                         componentInstance: componentInstance,
                     };
                     keys.push(keyToCache);
-                    // prune oldest entry
+                    // prune oldest entry。超限制了，从缓存中删除
                     if (this.max && keys.length > parseInt(this.max)) {
                         pruneCacheEntry(cache, keys[0], keys, this._vnode);
                     }
@@ -5724,6 +5721,7 @@
                 var ref = this;
                 var include = ref.include;
                 var exclude = ref.exclude;
+                //未命中，不需要缓存，直接返回VNODE
                 if (
                     // not included
                     (include && (!name || !matches(include, name))) ||
@@ -5741,12 +5739,14 @@
                     // so cid alone is not enough (#3269)
                     ? componentOptions.Ctor.cid + (componentOptions.tag ? ("::" + (componentOptions.tag)) : '')
                     : vnode.key;
-                if (cache[key]) {
+
+                if (cache[key]) {//之前缓存过，直接拿缓存中的实例
                     vnode.componentInstance = cache[key].componentInstance;
                     // make current key freshest
                     remove(keys, key);
                     keys.push(key);
-                } else {
+                    //重新排序，淘汰机制，优先淘汰不常用的
+                } else {//之前没缓存过，放入待缓存中
                     // delay setting the cache until update
                     this.vnodeToCache = vnode;
                     this.keyToCache = key;
@@ -5796,7 +5796,7 @@
         Vue.delete = del;
         Vue.nextTick = nextTick;
 
-        // 2.6 explicit observable API
+        // 2.6 explicit observable API。将给定对象变为响应式的
         Vue.observable = function (obj) {
             observe(obj);
             return obj
@@ -5983,7 +5983,7 @@
         return res
     }
 
-    /*  */
+
 
     var namespaceMap = {
         svg: 'http://www.w3.org/2000/svg',
@@ -6060,7 +6060,7 @@
 
     var isTextInputType = makeMap('text,number,password,search,email,tel,url');
 
-    /*  */
+
 
     /**
      * DONE;Query an element selector if it's not an element already.
@@ -6082,7 +6082,7 @@
         }
     }
 
-    /*  */
+
 
     /**
      * DONE 根据元素标签新建dom元素并返回
@@ -7065,7 +7065,6 @@
                                 for (var i$1 = 0; i$1 < cbs.create.length; ++i$1) {
                                     cbs.create[i$1](emptyNode, ancestor);
                                 }
-                                // #6513
                                 // invoke insert hooks that may have been merged by create hooks.
                                 // e.g. for directives that uses the "inserted" hook.
                                 var insert = ancestor.data.hook.insert;
@@ -7106,12 +7105,14 @@
         }
     };
 
+    //-
     function updateDirectives(oldVnode, vnode) {
         if (oldVnode.data.directives || vnode.data.directives) {
             _update(oldVnode, vnode);
         }
     }
 
+    //指令
     function _update(oldVnode, vnode) {
         var isCreate = oldVnode === emptyNode;
         var isDestroy = vnode === emptyNode;
@@ -7142,6 +7143,7 @@
             }
         }
 
+        //指令
         if (dirsWithInsert.length) {
             var callInsert = function () {
                 for (var i = 0; i < dirsWithInsert.length; i++) {
@@ -7163,6 +7165,7 @@
             });
         }
 
+        // 指令
         if (!isCreate) {
             for (key in oldDirs) {
                 if (!newDirs[key]) {
@@ -7175,6 +7178,7 @@
 
     var emptyModifiers = Object.create(null);
 
+    //指令
     function normalizeDirectives$1(
         dirs,
         vm
@@ -7226,6 +7230,7 @@
      */
     function updateAttrs(oldVnode, vnode) {
         var opts = vnode.componentOptions;
+        //子组件除了接受props中定义的属性外，不接收父组件额外传递的属性。
         if (isDef(opts) && opts.Ctor.options.inheritAttrs === false) {
             return
         }
@@ -7708,10 +7713,10 @@
         return item
     }
 
-    /*  */
 
     /**
-     * Cross-platform code generation for component v-model
+     * Cross-platform code generation for component v-model.
+     * 组件上的v-model
      */
     function genComponentModel(
         el,
@@ -7858,7 +7863,6 @@
         }
     }
 
-    /*  */
 
     var warn$1;
 
@@ -7867,7 +7871,7 @@
     var RANGE_TOKEN = '__r';
     var CHECKBOX_RADIO_TOKEN = '__c';
 
-    //model指令
+    //- v-model指令
     function model(
         el,
         dir,
@@ -7895,7 +7899,7 @@
             genComponentModel(el, value, modifiers);
             // component v-model doesn't need extra runtime
             return false
-        } else if (tag === 'select') {
+        } else if (tag === 'select') {//-
             genSelect(el, value, modifiers);
         } else if (tag === 'input' && type === 'checkbox') {//-
             genCheckboxModel(el, value, modifiers);
@@ -7903,7 +7907,7 @@
             genRadioModel(el, value, modifiers);
         } else if (tag === 'input' || tag === 'textarea') {//-
             genDefaultModel(el, value, modifiers);
-        } else if (!config.isReservedTag(tag)) {
+        } else if (!config.isReservedTag(tag)) {//-
             genComponentModel(el, value, modifiers);
             // component v-model doesn't need extra runtime
             return false
@@ -8027,6 +8031,7 @@
         //v-model指令的元素，生成事件处理函数内容体的字符串
         var code = genAssignmentCode(value, valueExpression);
         if (needCompositionGuard) {
+            //中文正在输入时不触发input事件
             code = "if($event.target.composing)return;" + code;
         }
 
@@ -8044,7 +8049,6 @@
     // user-attached handlers.
     //处理特殊情况；
     function normalizeEvents(on) {
-        /* istanbul ignore if */
         if (isDef(on[RANGE_TOKEN])) {
             // IE input[type=range] only supports `change` event
             var event = isIE ? 'change' : 'input';
@@ -8053,7 +8057,6 @@
         }
         // This was originally intended to fix #4521 but no longer necessary
         // after 2.5. Keeping it for backwards compat with generated code from < 2.4
-        /* istanbul ignore if */
         if (isDef(on[CHECKBOX_RADIO_TOKEN])) {
             on.change = [].concat(on[CHECKBOX_RADIO_TOKEN], on.change || []);
             delete on[CHECKBOX_RADIO_TOKEN];
@@ -8156,7 +8159,6 @@
         update: updateDOMListeners
     };
 
-    /*  */
 
     var svgContainer;
 
@@ -8348,7 +8350,7 @@
         return res
     }
 
-    /*  */
+
 
     var cssVarRE = /^--/;
     var importantRE = /\s*!important$/;
@@ -8444,7 +8446,7 @@
         update: updateStyle
     };
 
-    /*  */
+
 
     var whitespaceRE = /\s+/;
 
@@ -8453,12 +8455,10 @@
      * SVG elements in IE
      */
     function addClass(el, cls) {
-        /* istanbul ignore if */
         if (!cls || !(cls = cls.trim())) {
             return
         }
 
-        /* istanbul ignore else */
         if (el.classList) {
             if (cls.indexOf(' ') > -1) {
                 cls.split(whitespaceRE).forEach(function (c) { return el.classList.add(c); });
@@ -8479,12 +8479,10 @@
      * 移除dom元素上给定的class
      */
     function removeClass(el, cls) {
-        /* istanbul ignore if */
         if (!cls || !(cls = cls.trim())) {
             return
         }
 
-        /* istanbul ignore else */
         if (el.classList) {
             if (cls.indexOf(' ') > -1) {
                 cls.split(whitespaceRE).forEach(function (c) { return el.classList.remove(c); });
@@ -8509,13 +8507,12 @@
         }
     }
 
-    /*  */
 
     function resolveTransition(def$$1) {
         if (!def$$1) {
             return
         }
-        /* istanbul ignore else */
+
         if (typeof def$$1 === 'object') {
             var res = {};
             if (def$$1.css !== false) {
@@ -8577,6 +8574,7 @@
         });
     }
 
+    //-TG
     function addTransitionClass(el, cls) {
         var transitionClasses = el._transitionClasses || (el._transitionClasses = []);
         if (transitionClasses.indexOf(cls) < 0) {
@@ -8585,6 +8583,7 @@
         }
     }
 
+    //-TG
     function removeTransitionClass(el, cls) {
         if (el._transitionClasses) {
             remove(el._transitionClasses, cls);
@@ -8694,7 +8693,7 @@
         return Number(s.slice(0, -1).replace(',', '.')) * 1000
     }
 
-    /*  */
+
 
     //渲染相关，TODO 暂时流程未走到
     function enter(vnode, toggleDisplay) {
@@ -9006,7 +9005,7 @@
         create: _enter,
         activate: _enter,
         remove: function remove$$1(vnode, rm) {
-            /* istanbul ignore else */
+
             if (vnode.data.show !== true) {
                 leave(vnode, rm);
             } else {
@@ -9024,7 +9023,6 @@
         transition
     ];
 
-    /*  */
 
     // the directive module should be applied last, after all
     // built-in modules have been applied.
@@ -9034,10 +9032,10 @@
 
 
 
+    // v-model
     var directive = {
         inserted: function inserted(el, binding, vnode, oldVnode) {
             if (vnode.tag === 'select') {
-                // #6903
                 if (oldVnode.elm && !oldVnode.elm._vOptions) {
                     mergeVNodeHook(vnode, 'postpatch', function () {
                         directive.componentUpdated(el, binding, vnode);
@@ -9049,6 +9047,7 @@
             } else if (vnode.tag === 'textarea' || isTextInputType(el.type)) {
                 el._vModifiers = binding.modifiers;
                 if (!binding.modifiers.lazy) {
+                    //中文输入法，添加中文输入开始和结束的事件监听
                     el.addEventListener('compositionstart', onCompositionStart);
                     el.addEventListener('compositionend', onCompositionEnd);
                     // Safari < 10.2 & UIWebView doesn't fire compositionend when
@@ -9056,7 +9055,6 @@
                     // this also fixes the issue where some browsers e.g. iOS Chrome
                     // fires "change" instead of "input" on autocomplete.
                     el.addEventListener('change', onCompositionEnd);
-                    /* istanbul ignore if */
                     if (isIE9) {
                         el.vmodel = true;
                     }
@@ -9087,9 +9085,9 @@
         }
     };
 
+    // v-model select
     function setSelected(el, binding, vm) {
         actuallySetSelected(el, binding, vm);
-        /* istanbul ignore if */
         if (isIE || isEdge) {
             setTimeout(function () {
                 actuallySetSelected(el, binding, vm);
@@ -9097,6 +9095,7 @@
         }
     }
 
+    // v-model select
     function actuallySetSelected(el, binding, vm) {
         var value = binding.value;
         var isMultiple = el.multiple;
@@ -9157,7 +9156,7 @@
         el.dispatchEvent(e);
     }
 
-    /*  */
+
 
     // recursively search for possible transition defined inside the component root
     function locateNode(vnode) {
@@ -9226,7 +9225,6 @@
         show: show
     };
 
-    /*  */
 
     var transitionProps = {
         name: String,
@@ -9257,6 +9255,7 @@
         }
     }
 
+    //-
     function extractTransitionData(comp) {
         var data = {};
         var options = comp.$options;
@@ -9273,6 +9272,7 @@
         return data
     }
 
+    //-
     function placeholder(h, rawChild) {
         if (/\d-keep-alive$/.test(rawChild.tag)) {
             return h('keep-alive', {
@@ -9281,6 +9281,7 @@
         }
     }
 
+    //-
     function hasParentTransition(vnode) {
         while ((vnode = vnode.parent)) {
             if (vnode.data.transition) {
@@ -9312,7 +9313,6 @@
 
             // filter out text nodes (possible whitespaces)
             children = children.filter(isNotTextNode);
-            /* istanbul ignore if */
             if (!children.length) {
                 return
             }
@@ -9348,7 +9348,6 @@
             // apply transition data to child
             // use getRealChild() to ignore abstract components e.g. keep-alive
             var child = getRealChild(rawChild);
-            /* istanbul ignore if */
             if (!child) {
                 return rawChild
             }
@@ -9415,7 +9414,6 @@
         }
     };
 
-    /*  */
 
     var props = extend({
         tag: String,
@@ -9529,11 +9527,9 @@
 
         methods: {
             hasMove: function hasMove(el, moveClass) {
-                /* istanbul ignore if */
                 if (!hasTransition) {
                     return false
                 }
-                /* istanbul ignore if */
                 if (this._hasMove) {
                     return this._hasMove
                 }
@@ -9556,21 +9552,22 @@
         }
     };
 
+    //- TG
     function callPendingCbs(c) {
-        /* istanbul ignore if */
         if (c.elm._moveCb) {
             c.elm._moveCb();
         }
-        /* istanbul ignore if */
         if (c.elm._enterCb) {
             c.elm._enterCb();
         }
     }
 
+    //-TG
     function recordPosition(c) {
         c.data.newPos = c.elm.getBoundingClientRect();
     }
 
+    //- TG
     function applyTranslation(c) {
         var oldPos = c.data.pos;
         var newPos = c.data.newPos;
@@ -9589,7 +9586,6 @@
         TransitionGroup: TransitionGroup
     };
 
-    /*  */
 
     // install platform specific utils
     Vue.config.mustUseProp = mustUseProp;
@@ -9642,7 +9638,7 @@
         }, 0);
     }
 
-    /*  */
+
 
     var defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g;
     var regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g;
@@ -9691,7 +9687,7 @@
         }
     }
 
-    /*  */
+
     //DONE 解析元素上的静态类class和动态类:class，并绑定到元素的staticClass和classBingding属性上
     function transformNode(el, options) {
         var warn = options.warn || baseWarn;
@@ -9736,7 +9732,7 @@
         genData: genData
     };
 
-    /*  */
+
     //DONE 解析元素上的静态样式style和动态样式:style，并绑定到元素的staticStyle和styleBingding属性上
     function transformNode$1(el, options) {
         var warn = options.warn || baseWarn;
@@ -9781,7 +9777,7 @@
         genData: genData$1
     };
 
-    /*  */
+
 
     var decoder;
 
@@ -10150,7 +10146,7 @@
         }
     }
 
-    /*  */
+
 
     var onRE = /^@|^v-on:/;
     var dirRE = /^v-|^@|^:|^#/;
@@ -10288,6 +10284,7 @@
                         // scoped slot
                         // keep it in the children list so that v-else(-if) conditions can
                         // find it as the prev node.
+                        // 将<template></template>对应的插槽放入父亲的 scopedSlots 属性中
                         var name = element.slotTarget || '"default"'
                             ; (currentParent.scopedSlots || (currentParent.scopedSlots = {}))[name] = element;
                     }
@@ -10614,7 +10611,7 @@
         processRef(element);         //将:ref表达式绑定到元素上，refInFor确定元素或祖先元素上是否有for属性
         processSlotContent(element);
         processSlotOutlet(element);
-        processComponent(element);
+        processComponent(element);//-
         //将静态和动态class和style绑定到元素对应的属性上
         for (var i = 0; i < transforms.length; i++) {
             element = transforms[i](element, options) || element;
@@ -10769,10 +10766,10 @@
     // handle content being passed to a component as slot,
     // e.g. <template slot="xxx">, <div slot-scope="xxx">
     function processSlotContent(el) {
+
         var slotScope;
         if (el.tag === 'template') {
             slotScope = getAndRemoveAttr(el, 'scope');
-            /* istanbul ignore if */
             if (slotScope) {
                 warn$2(
                     "the \"scope\" attribute for scoped slots have been deprecated and " +
@@ -10785,7 +10782,6 @@
             }
             el.slotScope = slotScope || getAndRemoveAttr(el, 'slot-scope');
         } else if ((slotScope = getAndRemoveAttr(el, 'slot-scope'))) {
-            /* istanbul ignore if */
             if (el.attrsMap['v-for']) {
                 warn$2(
                     "Ambiguous combined usage of slot-scope and v-for on <" + (el.tag) + "> " +
@@ -11161,7 +11157,7 @@
         }
     }
 
-    /*  */
+
     //预处理有v-model属性的input标签。//TODO 内部内容未涉及，后期看
     function preTransformNode(el, options) {
         if (el.tag === 'input') {
@@ -11427,7 +11423,7 @@
         return false
     }
 
-    /*  */
+
 
     var fnExpRE = /^([\w$_]+|\([^)]*?\))\s*=>|^function(?:\s+[\w$]+)?\s*\(/;
     var fnInvokeRE = /\([^)]*?\);*$/;
@@ -11594,7 +11590,7 @@
         )
     }
 
-    /*  */
+
 
     function on(el, dir) {
         if (dir.modifiers) {
@@ -11603,7 +11599,7 @@
         el.wrapListeners = function (code) { return ("_g(" + code + "," + (dir.value) + ")"); };
     }
 
-    /*  */
+
 
     function bind$1(el, dir) {
         el.wrapData = function (code) {
@@ -11611,18 +11607,13 @@
         };
     }
 
-    /*  */
+
 
     var baseDirectives = {
         on: on,
         bind: bind$1,
         cloak: noop
     };
-
-    /*  */
-
-
-
 
 
     //DONE 代码生成状态器。
@@ -11682,12 +11673,13 @@
             // component or element
             var code;
             if (el.component) {
-                code = genComponent(el.component, el, state);
+                code = genComponent(el.component, el, state);//- <component :is="name"></component>
             } else {
                 var data;
                 //不是plain对象的话
                 if (!el.plain || (el.pre && state.maybeComponent(el))) {
                     //生成元素对应的属性对象字符串形式。key/ref/attrs/staticStyle/staticClass/prop/on/nativeOn等
+                    //- 组件有model属性时，在此处提取相关属性。放到el.model属性上。
                     data = genData$2(el, state);
                 }
 
@@ -11851,7 +11843,7 @@
             data += "pre:true,";
         }
         // record original tag name for components using "is" attribute
-        if (el.component) {
+        if (el.component) {//-
             data += "tag:\"" + (el.tag) + "\",";
         }
         // module data generation functions。
@@ -11880,7 +11872,7 @@
             data += "slot:" + (el.slotTarget) + ",";
         }
         // scoped slots
-        if (el.scopedSlots) {
+        if (el.scopedSlots) {//-
             data += (genScopedSlots(el, el.scopedSlots, state)) + ",";
         }
         // component v-model
@@ -11914,6 +11906,7 @@
 
     //生成元素上指令相关的字符串形式
     function genDirectives(el, state) {
+
         var dirs = el.directives;
         if (!dirs) { return }
         var res = 'directives:[';
@@ -11922,7 +11915,7 @@
         for (i = 0, l = dirs.length; i < l; i++) {
             dir = dirs[i];
             needRuntime = true;
-            var gen = state.directives[dir.name];
+            var gen = state.directives[dir.name];//model/html/text/cloak/bind/on 给对应的指令元素绑定事件和设置值
             if (gen) {
                 // compile-time directive that manipulates AST.
                 // returns true if it also needs a runtime counterpart(对应方)
@@ -11958,6 +11951,7 @@
         }
     }
 
+    //- ast 生成渲染函数阶段
     function genScopedSlots(
         el,
         slots,
@@ -12009,7 +12003,8 @@
             .map(function (key) { return genScopedSlot(slots[key], state); })
             .join(',');
 
-        return ("scopedSlots:_u([" + generatedSlots + "]" + (needsForceUpdate ? ",null,true" : "") + (!needsForceUpdate && needsKey ? (",null,false," + (hash(generatedSlots))) : "") + ")")
+        return ("scopedSlots:_u([" + generatedSlots + "]" + (needsForceUpdate ? ",null,true" : "")
+            + (!needsForceUpdate && needsKey ? (",null,false," + (hash(generatedSlots))) : "") + ")")
     }
 
     function hash(str) {
@@ -12031,6 +12026,7 @@
         return false
     }
 
+    //-
     function genScopedSlot(
         el,
         state
@@ -12165,6 +12161,7 @@
         return ("_e(" + (JSON.stringify(comment.text)) + ")")
     }
 
+    //组件的slot 
     function genSlot(el, state) {
         var slotName = el.slotName || '"default"';
         var children = genChildren(el, state);
@@ -12192,7 +12189,7 @@
         return res + ')'
     }
 
-    // componentName is el.component, take it as argument to shun flow's pessimistic refinement
+    //- componentName is el.component, take it as argument to shun flow's pessimistic refinement
     function genComponent(
         componentName,
         el,
@@ -12231,7 +12228,7 @@
             .replace(/\u2029/g, '\\u2029')
     }
 
-    /*  */
+
 
 
     // these keywords should not appear inside expressions, but operators like
@@ -12367,7 +12364,7 @@
         }
     }
 
-    /*  */
+
 
     var range = 2;
 
@@ -12422,7 +12419,7 @@
         return result
     }
 
-    /*  */
+
 
 
     //DONE ;通过构造函数根据字符串创建函数
@@ -12626,6 +12623,7 @@
 
     var ref$1 = createCompiler(baseOptions);
     var compile = ref$1.compile;
+    // Vue.compile 就是这个函数，将模板字符串编译为渲染函数和静态渲染函数数组
     var compileToFunctions = ref$1.compileToFunctions;
 
     // check whether current browser encodes a char inside attribute values
@@ -12641,7 +12639,7 @@
     // #6828: chrome encodes content in a[href]
     var shouldDecodeNewlinesForHref = inBrowser ? getShouldDecode(true) : false;
 
-    /*  */
+
 
     var idToTemplate = cached(function (id) {
         var el = query(id);

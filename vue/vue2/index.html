@@ -10,100 +10,46 @@
 <body>
 
     <div id="app">
-        <!-- <button @click="hanle">jlllll</button>
-        <br /> -->
-        <!-- {{index+1}}=====>:{{item}} -->
-        <!-- <input style="display: block;" v-for="(item,index) in array" :key="index"></input><br /> -->
-        <my-component age="18" @abc="alert(1)" />
-
+        <p>current</p>
+        <child name="liq" age="18">
+        </child>
     </div>
+
 
     <script>
 
-        Vue.component('my-component', {
-            template: `
-                <div>
-                    <button @click="add">加一</button>
-                <div>{{age}}{{count}}</div>
-                    </div>
-            `,
-            data: function () {
-                return {
-                    count: 1
-                }
+
+
+        const Child = Vue.component('child', {
+            // functional: true,
+            props: ['name'],
+            render: function (h, context) {
+                return h('div', 1)
             },
-            props: ['age'],
-            methods: {
-                add() {
-                    this.count++;
-                    this.$emit("abc")
-                }
-            }
+            created() {
+                console.log("functional")
+            },
         })
-
-        Vue.component('my-component')
-
 
 
         new Vue({
-            el: "#app",
+            el: '#app',
+            components: {
+                child: Child
+            },
             data: {
-                name: 'liqiang',
-                age: {
-                    name: 'age',
-                    tip: '1'
-                },
-                array: [{
-                    id: 1,
-                    num: 1
-                }, {
-                    id: 2,
-                    num: 2
-                }, {
-                    id: 3,
-                    num: 3
-                }, {
-                    id: 4,
-                    num: 4
-                },]
+                age: "1811x55",
             },
-            beforeCreate: function () {
-                console.log('111')
-            },
-            computed: {
-                momName: function () {
-                    return 'mama-' + this.name;
-                }
-            },
-            watch: {
-                "age.name": {
-                    handler: function (val) {
-                        console.log("watch age .." + val)
-                    },
-                    // immediate: true,
-                    // deep: true
-                },
-            },
-            mounted() {
-                setTimeout(() => {
-                    this.age = 2
-                    // this.aaa.bbb = 111;
-                    // Vue.set(this.aaa, 'bbb', 111)
-                    // this.cc.todos[1].text = 66;
-                    // this.todos[0][0].age = 6;
-                    // this.todos[0].push(5)
-                    // this.todos.push(5)
-                }, 3000)
+
+            created() {
+                console.log("main created!")
             },
             methods: {
-                hanle() {
-                    this.array.splice(1, 1)
-                },
-                handleClick() {
-                    alert(1)
+                eat2() {
+                    console.log('eat')
                 }
             }
-        })
+        });
 
 
 
