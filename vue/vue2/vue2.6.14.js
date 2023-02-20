@@ -6990,6 +6990,7 @@
 
         //patch中心
         return function patch(oldVnode, vnode, hydrating, removeOnly) {
+            debugger
             if (isUndef(vnode)) {//有旧没新，直接销毁旧的。
                 if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); }
                 return
@@ -7005,8 +7006,8 @@
 
             } else {//两个都有，进行具体patch
                 var isRealElement = isDef(oldVnode.nodeType);//是否真正的dom元素（初始化的时候old是真实dom）
-                //具体更新的patch
-                if (!isRealElement && sameVnode(oldVnode, vnode)) {
+
+                if (!isRealElement && sameVnode(oldVnode, vnode)) {//具体更新的patch
                     // patch existing root node
                     patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly);
                 } else {//初始化的逻辑。根据vnode生成对应的dom并插入文档，然后移除编译前的dom
