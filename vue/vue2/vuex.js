@@ -131,20 +131,22 @@
         }
     };
 
+    //-
     prototypeAccessors$1.namespaced.get = function () {
         return !!this._rawModule.namespaced
     };
 
 
-
+    //- 添加子模块
     Module.prototype.addChild = function addChild(key, module) {
         this._children[key] = module;
     };
-
+    //-
     Module.prototype.removeChild = function removeChild(key) {
         delete this._children[key];
     };
 
+    //-
     Module.prototype.getChild = function getChild(key) {
         return this._children[key]
     };
@@ -162,6 +164,7 @@
         }
     };
 
+    //-
     Module.prototype.forEachChild = function forEachChild(fn) {
         forEachValue(this._children, fn);
     };
@@ -197,6 +200,7 @@
         this.register([], rawRootModule, false);
     };
 
+    //- 根据path返回path的最后一个module对应的父级
     ModuleCollection.prototype.get = function get(path) {
         return path.reduce(function (module, key) {
             return module.getChild(key)
@@ -216,7 +220,7 @@
         update([], this.root, rawRootModule);
     };
 
-    //-
+    //- 模块注册，递归遍历
     ModuleCollection.prototype.register = function register(path, rawModule, runtime) {
         var this$1 = this;
         if (runtime === void 0) runtime = true;
@@ -242,6 +246,7 @@
         }
     };
 
+    //-
     ModuleCollection.prototype.unregister = function unregister(path) {
         var parent = this.get(path.slice(0, -1));
         var key = path[path.length - 1];
@@ -328,6 +333,7 @@
 
     var Vue; // bind on install
 
+    //-
     var Store = function Store(options) {
 
         var this$1 = this;
@@ -421,6 +427,7 @@
         }
     };
 
+    //-
     Store.prototype.commit = function commit(_type, _payload, _options) {
 
         var this$1 = this;
@@ -431,7 +438,6 @@
         var payload = ref.payload;
         var options = ref.options;
 
-        debugger
         var mutation = { type: type, payload: payload };
         var entry = this._mutations[type];
         if (!entry) {
@@ -441,11 +447,15 @@
             return
         }
         this._withCommit(function () {
+            //执行mutation
             entry.forEach(function commitIterator(handler) {
                 handler(payload);
             });
         });
-        this._subscribers.forEach(function (sub) { return sub(mutation, this$1.state); });
+        //插件订阅者
+        this._subscribers.forEach(function (sub) {
+            return sub(mutation, this$1.state);
+        });
 
         if (
             "development" !== 'production' &&
@@ -458,6 +468,7 @@
         }
     };
 
+    //-
     Store.prototype.dispatch = function dispatch(_type, _payload) {
         var this$1 = this;
 
@@ -475,17 +486,23 @@
             return
         }
 
-        this._actionSubscribers.forEach(function (sub) { return sub(action, this$1.state); });
+        this._actionSubscribers.forEach(function (sub) {
+            return sub(action, this$1.state);
+        });
 
         return entry.length > 1
-            ? Promise.all(entry.map(function (handler) { return handler(payload); }))
+            ? Promise.all(entry.map(function (handler) {
+                return handler(payload);
+            }))
             : entry[0](payload)
     };
 
+    //-
     Store.prototype.subscribe = function subscribe(fn) {
         return genericSubscribe(fn, this._subscribers)
     };
 
+    //-
     Store.prototype.subscribeAction = function subscribeAction(fn) {
         return genericSubscribe(fn, this._actionSubscribers)
     };
@@ -496,7 +513,9 @@
         {
             assert(typeof getter === 'function', "store.watch only accepts a function.");
         }
-        return this._watcherVM.$watch(function () { return getter(this$1.state, this$1.getters); }, cb, options)
+        return this._watcherVM.$watch(function () {
+            return getter(this$1.state, this$1.getters);
+        }, cb, options)
     };
 
     Store.prototype.replaceState = function replaceState(state) {
@@ -507,6 +526,7 @@
         });
     };
 
+    //-
     Store.prototype.registerModule = function registerModule(path, rawModule, options) {
         if (options === void 0) options = {};
 
@@ -523,6 +543,7 @@
         resetStoreVM(this, this.state);
     };
 
+    //-
     Store.prototype.unregisterModule = function unregisterModule(path) {
         var this$1 = this;
 
@@ -545,7 +566,7 @@
         resetStore(this, true);
     };
 
-    //-
+    //- 设置 this._committing = true;
     Store.prototype._withCommit = function _withCommit(fn) {
         var committing = this._committing;
         this._committing = true;
@@ -555,6 +576,7 @@
 
     Object.defineProperties(Store.prototype, prototypeAccessors);
 
+    //-
     function genericSubscribe(fn, subs) {
         if (subs.indexOf(fn) < 0) {
             subs.push(fn);
@@ -567,6 +589,7 @@
         }
     }
 
+    //-
     function resetStore(store, hot) {
         store._actions = Object.create(null);
         store._mutations = Object.create(null);
@@ -588,10 +611,17 @@
         var wrappedGetters = store._wrappedGetters;
         var computed = {};
         forEachValue(wrappedGetters, function (fn, key) {
-            // use computed to leverage its lazy-caching mechanism
-            computed[key] = function () { return fn(store); };
+            // use computed to leverage(作用) its lazy-caching mechanism。
+            //计算属性放到store._vm上，响应式。
+            computed[key] = function () {
+                return fn(store);
+            };
+
+            //父组件访问getters时，触发依赖收集
             Object.defineProperty(store.getters, key, {
-                get: function () { return store._vm[key]; },
+                get: function () {
+                    return store._vm[key];
+                },
                 enumerable: true // for local getters
             });
         });
@@ -627,7 +657,7 @@
         }
     }
 
-    //- 注册mutations
+    //- 注册mutations/actions/getters
     function installModule(store, rootState, path, module, hot) {
         var isRoot = !path.length;
         var namespace = store._modules.getNamespace(path);
@@ -638,32 +668,38 @@
         }
 
         // set state
-        if (!isRoot && !hot) {
+        if (!isRoot && !hot) {//非root module
             var parentState = getNestedState(rootState, path.slice(0, -1));
             var moduleName = path[path.length - 1];
+            //通过响应式，将子模块的state设置到父模块state的属性
             store._withCommit(function () {
                 Vue.set(parentState, moduleName, module.state);
             });
         }
 
+
         var local = module.context = makeLocalContext(store, namespace, path);
 
+        //-
         module.forEachMutation(function (mutation, key) {
             var namespacedType = namespace + key;
             registerMutation(store, namespacedType, mutation, local);
         });
 
+        //-
         module.forEachAction(function (action, key) {
             var type = action.root ? key : namespace + key;
             var handler = action.handler || action;
             registerAction(store, type, handler, local);
         });
 
+        //-
         module.forEachGetter(function (getter, key) {
             var namespacedType = namespace + key;
             registerGetter(store, namespacedType, getter, local);
         });
 
+        //-
         module.forEachChild(function (child, key) {
             installModule(store, rootState, path.concat(key), child, hot);
         });
@@ -678,14 +714,14 @@
         var noNamespace = namespace === '';
 
         var local = {
-            dispatch: noNamespace ? store.dispatch : function (_type, _payload, _options) {
+            dispatch: noNamespace ? store.dispatch : function (_type, _payload, _options) {//加上命名空间
                 var args = unifyObjectStyle(_type, _payload, _options);
                 var payload = args.payload;
                 var options = args.options;
                 var type = args.type;
 
                 if (!options || !options.root) {
-                    type = namespace + type;
+                    type = namespace + type;//-
                     if ("development" !== 'production' && !store._actions[type]) {
                         console.error(("[vuex] unknown local action type: " + (args.type) + ", global type: " + type));
                         return
@@ -702,7 +738,7 @@
                 var type = args.type;
 
                 if (!options || !options.root) {
-                    type = namespace + type;
+                    type = namespace + type;//-
                     if ("development" !== 'production' && !store._mutations[type]) {
                         console.error(("[vuex] unknown local mutation type: " + (args.type) + ", global type: " + type));
                         return
@@ -712,6 +748,7 @@
                 store.commit(type, payload, options);
             }
         };
+
 
         // getters and state object must be gotten lazily
         // because they will be changed by vm update
@@ -731,6 +768,7 @@
         return local
     }
 
+    //- local getters
     function makeLocalGetters(store, namespace) {
         var gettersProxy = {};
 
@@ -746,7 +784,9 @@
             // Define as getter property because
             // we do not want to evaluate the getters in this time.
             Object.defineProperty(gettersProxy, localType, {
-                get: function () { return store.getters[type]; },
+                get: function () {
+                    return store.getters[type];
+                },
                 enumerable: true
             });
         });
@@ -756,16 +796,18 @@
 
     //-
     function registerMutation(store, type, handler, local) {
-        debugger
         var entry = store._mutations[type] || (store._mutations[type] = []);
         entry.push(function wrappedMutationHandler(payload) {
             handler.call(store, local.state, payload);
         });
     }
 
+    //-
     function registerAction(store, type, handler, local) {
         var entry = store._actions[type] || (store._actions[type] = []);
+
         entry.push(function wrappedActionHandler(payload, cb) {
+            //action 真实调用的地方
             var res = handler.call(store, {
                 dispatch: local.dispatch,
                 commit: local.commit,
@@ -774,9 +816,11 @@
                 rootGetters: store.getters,
                 rootState: store.state
             }, payload, cb);
+
             if (!isPromise(res)) {
                 res = Promise.resolve(res);
             }
+
             if (store._devtoolHook) {
                 return res.catch(function (err) {
                     store._devtoolHook.emit('vuex:error', err);
@@ -817,7 +861,7 @@
         }, { deep: true, sync: true });
     }
 
-    //-
+    //- 获取parent state
     function getNestedState(state, path) {
         return path.length
             ? path.reduce(function (state, key) {
@@ -883,6 +927,7 @@
         return res
     });
 
+    //- 映射到父组件的方法上
     var mapMutations = normalizeNamespace(function (namespace, mutations) {
         var res = {};
         normalizeMap(mutations).forEach(function (ref) {
@@ -909,6 +954,7 @@
         return res
     });
 
+    //-
     var mapGetters = normalizeNamespace(function (namespace, getters) {
         var res = {};
         normalizeMap(getters).forEach(function (ref) {
@@ -932,6 +978,7 @@
         return res
     });
 
+    //-
     var mapActions = normalizeNamespace(function (namespace, actions) {
         var res = {};
         normalizeMap(actions).forEach(function (ref) {
@@ -958,6 +1005,7 @@
         return res
     });
 
+    //-
     var createNamespacedHelpers = function (namespace) {
         return ({
             mapState: mapState.bind(null, namespace),
@@ -997,6 +1045,7 @@
         }
     }
 
+    //-
     function getModuleByNamespace(store, helper, namespace) {
         var module = store._modulesNamespaceMap[namespace];
         if ("development" !== 'production' && !module) {
@@ -1006,14 +1055,14 @@
     }
 
     var index = {
-        Store: Store,
-        install: install,
-        version: '3.0.0',
-        mapState: mapState,
-        mapMutations: mapMutations,
-        mapGetters: mapGetters,
-        mapActions: mapActions,
-        createNamespacedHelpers: createNamespacedHelpers
+        Store: Store,//-
+        install: install,//-
+        version: '3.0.0',//-
+        mapState: mapState,//-
+        mapMutations: mapMutations,//-
+        mapGetters: mapGetters,//-
+        mapActions: mapActions,//-
+        createNamespacedHelpers: createNamespacedHelpers//-
     };
 
     return index;

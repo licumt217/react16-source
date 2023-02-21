@@ -11,22 +11,67 @@
 <body>
 
     <div id="app">
-        count:{{count}}<br />
-        age:{{aliasAge}}
     </div>
 
 
     <script>
 
-        const store = new Vuex.Store({
+        const moduleA = {
+            namespaced: true,
             state: {
-                count: 0,
-                age: 18
+                namea: 'a',
+                agea: 18
             },
             mutations: {
                 increment(state) {
-                    state.count++;
+                    state.agea++;
                 }
+            },
+            getters: {
+                getA(state) {
+                    return state.namea + ":AAA"
+                }
+            },
+            modules: {
+                c: {
+                    state: {
+                        namec: 'a',
+                        agec: 18
+                    },
+                    mutations: {
+                        increment(state) {
+                            state.agec++;
+                        }
+                    },
+                    getters: {
+                        getC(state) {
+                            return state.namec + ":CCC"
+                        }
+                    },
+                }
+            }
+        }
+        const moduleB = {
+            state: {
+                nameb: 'a',
+                ageb: 18
+            },
+            mutations: {
+                increment(state) {
+                    state.ageb++;
+                }
+            },
+            getters: {
+                getB(state) {
+                    return state.nameb + ":BBB"
+                }
+            }
+        }
+
+        const store = new Vuex.Store({
+            modules: {
+                a: moduleA,
+                b: moduleB
             }
         });
 
@@ -36,12 +81,11 @@
             data: {
 
             },
-            computed: Vuex.mapState({
-                count: state => state.count,
-                aliasAge: 'age',
-            })
 
-        })
+
+        });
+
+        console.log(store.getters['a/getA'])
 
 
 
