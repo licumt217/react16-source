@@ -4,54 +4,49 @@
 <head>
     <title>app</title>
     <script src="./vue2.6.14.js"></script>
+    <script src="./vuex.js"></script>
 
 </head>
 
 <body>
 
     <div id="app">
-        <input ref="input"></input>
+        count:{{count}}<br />
+        age:{{aliasAge}}
     </div>
 
 
     <script>
 
-
-
-        const Child = Vue.component('child', {
-            // functional: true,
-            props: ['name'],
-            render: function (h, context) {
-                return h('div', 1)
+        const store = new Vuex.Store({
+            state: {
+                count: 0,
+                age: 18
             },
-            created() {
-                console.log("functional")
-            },
-        })
-
-
-        new Vue({
-            el: '#app',
-            components: {
-                child: Child
-            },
-            data: {
-                age: "1811x55",
-            },
-
-            created() {
-                console.log("main created!")
-
-            },
-            mounted() {
-                this.$refs.input.focus()
-            },
-            methods: {
-                eat2() {
-                    console.log('eat')
+            mutations: {
+                increment(state) {
+                    state.count++;
                 }
             }
         });
+
+        new Vue({
+            el: '#app',
+            store,
+            data: {
+
+            },
+            computed: Vuex.mapState({
+                count: state => state.count,
+                aliasAge: 'age',
+            })
+
+        })
+
+
+
+
+
 
 
 

@@ -5040,7 +5040,8 @@
 
     /**
      * DONE;初始化计算属性
-     * vm._computedWatchers=[],给所有的用户自定义computed新建Watcher（lazy:true），并push进去上边数组中,将计算属性的key绑定到vm上。get方法根据条件开启缓存或不开启。
+     * vm._computedWatchers=[],给所有的用户自定义computed新建Watcher（lazy:true），
+     * 并push进去上边数组中,将计算属性的key绑定到vm上。get方法根据条件开启缓存或不开启。
      * @param vm
      * @param computed
      */
@@ -6990,7 +6991,6 @@
 
         //patch中心
         return function patch(oldVnode, vnode, hydrating, removeOnly) {
-            debugger
             if (isUndef(vnode)) {//有旧没新，直接销毁旧的。
                 if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); }
                 return
@@ -12612,7 +12612,6 @@
         var ast = parse(template.trim(), options);
 
 
-        debugger
 
         if (options.optimize !== false) {
             //给节点标记static和staticRoot属性

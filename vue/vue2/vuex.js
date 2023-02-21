@@ -5,12 +5,15 @@
  * @license MIT
  */
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-        typeof define === 'function' && define.amd ? define(factory) :
-            (global.Vuex = factory());
+    typeof exports === 'object' && typeof module !== 'undefined'
+        ? module.exports = factory()
+        : typeof define === 'function' && define.amd
+            ? define(factory)
+            : (global.Vuex = factory());
 }(this, (function () {
     'use strict';
 
+    //给Vue绑定生命周期beforeCreate函数： vuexInit，给所有Vue实例注入$store
     var applyMixin = function (Vue) {
         var version = Number(Vue.version.split('.')[0]);
 
@@ -32,12 +35,12 @@
 
         /**
          * Vuex init hook, injected into each instances init hooks list.
+         * 根Vue配置store后，之后所有vue实例都可以通过this.$store拿到 store
          */
-
         function vuexInit() {
             var options = this.$options;
             // store injection
-            if (options.store) {
+            if (options.store) {//父组件vue 有store选项时
                 this.$store = typeof options.store === 'function'
                     ? options.store()
                     : options.store;
@@ -75,6 +78,7 @@
      * @param {Function} f
      * @return {*}
      */
+
     /**
      * Deep copy the given object considering circular structure.
      * This function caches all nested objects and its copies.
@@ -87,24 +91,31 @@
 
 
     /**
-     * forEach for object
+     * //-
+     * forEach for object 
      */
     function forEachValue(obj, fn) {
-        Object.keys(obj).forEach(function (key) { return fn(obj[key], key); });
+        Object.keys(obj).forEach(function (key) {
+            return fn(obj[key], key);
+        });
     }
 
+    //-
     function isObject(obj) {
         return obj !== null && typeof obj === 'object'
     }
 
+    //-
     function isPromise(val) {
         return val && typeof val.then === 'function'
     }
 
+    //-
     function assert(condition, msg) {
         if (!condition) { throw new Error(("[vuex] " + msg)) }
     }
 
+    //-
     var Module = function Module(rawModule, runtime) {
         this.runtime = runtime;
         this._children = Object.create(null);
@@ -113,11 +124,18 @@
         this.state = (typeof rawState === 'function' ? rawState() : rawState) || {};
     };
 
-    var prototypeAccessors$1 = { namespaced: { configurable: true } };
+    // 将 namespaced 绑定到Module的原型上
+    var prototypeAccessors$1 = {
+        namespaced: {
+            configurable: true
+        }
+    };
 
     prototypeAccessors$1.namespaced.get = function () {
         return !!this._rawModule.namespaced
     };
+
+
 
     Module.prototype.addChild = function addChild(key, module) {
         this._children[key] = module;
@@ -147,20 +165,23 @@
     Module.prototype.forEachChild = function forEachChild(fn) {
         forEachValue(this._children, fn);
     };
-
+    //-
     Module.prototype.forEachGetter = function forEachGetter(fn) {
         if (this._rawModule.getters) {
             forEachValue(this._rawModule.getters, fn);
         }
     };
 
+    //-
     Module.prototype.forEachAction = function forEachAction(fn) {
         if (this._rawModule.actions) {
             forEachValue(this._rawModule.actions, fn);
         }
     };
 
+    //-
     Module.prototype.forEachMutation = function forEachMutation(fn) {
+        //将new Store()参数中的mutation提取出来并注册。
         if (this._rawModule.mutations) {
             forEachValue(this._rawModule.mutations, fn);
         }
@@ -168,6 +189,9 @@
 
     Object.defineProperties(Module.prototype, prototypeAccessors$1);
 
+
+
+    //-
     var ModuleCollection = function ModuleCollection(rawRootModule) {
         // register root module (Vuex.Store options)
         this.register([], rawRootModule, false);
@@ -179,6 +203,7 @@
         }, this.root)
     };
 
+    //-
     ModuleCollection.prototype.getNamespace = function getNamespace(path) {
         var module = this.root;
         return path.reduce(function (namespace, key) {
@@ -191,6 +216,7 @@
         update([], this.root, rawRootModule);
     };
 
+    //-
     ModuleCollection.prototype.register = function register(path, rawModule, runtime) {
         var this$1 = this;
         if (runtime === void 0) runtime = true;
@@ -200,6 +226,7 @@
         }
 
         var newModule = new Module(rawModule, runtime);
+
         if (path.length === 0) {
             this.root = newModule;
         } else {
@@ -252,11 +279,13 @@
         }
     }
 
+    //-
     var functionAssert = {
         assert: function (value) { return typeof value === 'function'; },
         expected: 'function'
     };
 
+    //-
     var objectAssert = {
         assert: function (value) {
             return typeof value === 'function' ||
@@ -271,6 +300,7 @@
         actions: objectAssert
     };
 
+    //- 校验 getters/mutations/actions的合法性
     function assertRawModule(path, rawModule) {
         Object.keys(assertTypes).forEach(function (key) {
             if (!rawModule[key]) { return }
@@ -286,6 +316,7 @@
         });
     }
 
+    //-
     function makeAssertionMessage(path, key, type, value, expected) {
         var buf = key + " should be " + expected + " but \"" + key + "." + type + "\"";
         if (path.length > 0) {
@@ -298,7 +329,9 @@
     var Vue; // bind on install
 
     var Store = function Store(options) {
+
         var this$1 = this;
+
         if (options === void 0) options = {};
 
         // Auto install if it is not done yet and `window` has `Vue`.
@@ -317,6 +350,7 @@
         var plugins = options.plugins; if (plugins === void 0) plugins = [];
         var strict = options.strict; if (strict === void 0) strict = false;
 
+        //-
         var state = options.state; if (state === void 0) state = {};
         if (typeof state === 'function') {
             state = state() || {};
@@ -328,6 +362,7 @@
         this._actionSubscribers = [];
         this._mutations = Object.create(null);
         this._wrappedGetters = Object.create(null);
+
         this._modules = new ModuleCollection(options);
         this._modulesNamespaceMap = Object.create(null);
         this._subscribers = [];
@@ -338,6 +373,7 @@
         var ref = this;
         var dispatch = ref.dispatch;
         var commit = ref.commit;
+
         this.dispatch = function boundDispatch(type, payload) {
             return dispatch.call(store, type, payload)
         };
@@ -351,6 +387,7 @@
         // init root module.
         // this also recursively registers all sub-modules
         // and collects all module getters inside this._wrappedGetters
+        // 注册mutations、
         installModule(this, state, [], this._modules.root);
 
         // initialize the store vm, which is responsible for the reactivity
@@ -358,15 +395,22 @@
         resetStoreVM(this, state);
 
         // apply plugins
-        plugins.forEach(function (plugin) { return plugin(this$1); });
+        plugins.forEach(function (plugin) {
+            return plugin(this$1);
+        });
 
         if (Vue.config.devtools) {
             devtoolPlugin(this);
         }
     };
 
-    var prototypeAccessors = { state: { configurable: true } };
+    var prototypeAccessors = {
+        state: {
+            configurable: true
+        }
+    };
 
+    //- store内部新建Vue，将store的根state放到Vue实例的data属性上
     prototypeAccessors.state.get = function () {
         return this._vm._data.$$state
     };
@@ -378,6 +422,7 @@
     };
 
     Store.prototype.commit = function commit(_type, _payload, _options) {
+
         var this$1 = this;
 
         // check object-style commit
@@ -386,6 +431,7 @@
         var payload = ref.payload;
         var options = ref.options;
 
+        debugger
         var mutation = { type: type, payload: payload };
         var entry = this._mutations[type];
         if (!entry) {
@@ -499,6 +545,7 @@
         resetStore(this, true);
     };
 
+    //-
     Store.prototype._withCommit = function _withCommit(fn) {
         var committing = this._committing;
         this._committing = true;
@@ -532,6 +579,7 @@
         resetStoreVM(store, state, hot);
     }
 
+    //-
     function resetStoreVM(store, state, hot) {
         var oldVm = store._vm;
 
@@ -553,6 +601,7 @@
         // some funky global mixins
         var silent = Vue.config.silent;
         Vue.config.silent = true;
+        //store内部新建Vue，将store的根state放到Vue实例的data属性上
         store._vm = new Vue({
             data: {
                 $$state: state
@@ -578,6 +627,7 @@
         }
     }
 
+    //- 注册mutations
     function installModule(store, rootState, path, module, hot) {
         var isRoot = !path.length;
         var namespace = store._modules.getNamespace(path);
@@ -620,6 +670,7 @@
     }
 
     /**
+     * //-
      * make localized dispatch, commit, getters and state
      * if there is no namespace, just use root ones
      */
@@ -670,8 +721,10 @@
                     ? function () { return store.getters; }
                     : function () { return makeLocalGetters(store, namespace); }
             },
-            state: {
-                get: function () { return getNestedState(store.state, path); }
+            state: {//mutation执行时，读取state参数。
+                get: function () {
+                    return getNestedState(store.state, path);
+                }
             }
         });
 
@@ -701,7 +754,9 @@
         return gettersProxy
     }
 
+    //-
     function registerMutation(store, type, handler, local) {
+        debugger
         var entry = store._mutations[type] || (store._mutations[type] = []);
         entry.push(function wrappedMutationHandler(payload) {
             handler.call(store, local.state, payload);
@@ -733,6 +788,7 @@
         });
     }
 
+    //-
     function registerGetter(store, type, rawGetter, local) {
         if (store._wrappedGetters[type]) {
             {
@@ -750,20 +806,27 @@
         };
     }
 
+    //-
     function enableStrictMode(store) {
-        store._vm.$watch(function () { return this._data.$$state }, function () {
+        store._vm.$watch(function () {
+            return this._data.$$state
+        }, function () {
             {
                 assert(store._committing, "Do not mutate vuex store state outside mutation handlers.");
             }
         }, { deep: true, sync: true });
     }
 
+    //-
     function getNestedState(state, path) {
         return path.length
-            ? path.reduce(function (state, key) { return state[key]; }, state)
+            ? path.reduce(function (state, key) {
+                return state[key];
+            }, state)
             : state
     }
 
+    //-
     function unifyObjectStyle(type, payload, options) {
         if (isObject(type) && type.type) {
             options = payload;
@@ -778,6 +841,7 @@
         return { type: type, payload: payload, options: options }
     }
 
+    //- 
     function install(_Vue) {
         if (Vue && _Vue === Vue) {
             {
@@ -791,6 +855,7 @@
         applyMixin(Vue);
     }
 
+    //- done
     var mapState = normalizeNamespace(function (namespace, states) {
         var res = {};
         normalizeMap(states).forEach(function (ref) {
@@ -809,7 +874,7 @@
                     getters = module.context.getters;
                 }
                 return typeof val === 'function'
-                    ? val.call(this, state, getters)
+                    ? val.call(this, state, getters)//读取state中的属性，进行依赖收集
                     : state[val]
             };
             // mark vuex getter for devtools
@@ -902,15 +967,27 @@
         });
     };
 
+    //-
     function normalizeMap(map) {
         return Array.isArray(map)
-            ? map.map(function (key) { return ({ key: key, val: key }); })
-            : Object.keys(map).map(function (key) { return ({ key: key, val: map[key] }); })
+            ? map.map(function (key) {
+                return ({
+                    key: key,
+                    val: key
+                });
+            })
+            : Object.keys(map).map(function (key) {
+                return ({
+                    key: key,
+                    val: map[key]
+                });
+            })
     }
 
+    //-
     function normalizeNamespace(fn) {
         return function (namespace, map) {
-            if (typeof namespace !== 'string') {
+            if (typeof namespace !== 'string') {//-
                 map = namespace;
                 namespace = '';
             } else if (namespace.charAt(namespace.length - 1) !== '/') {
