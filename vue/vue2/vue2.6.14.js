@@ -782,11 +782,13 @@
     function pushTarget(target) {
         targetStack.push(target);
         Dep.target = target;
+        sessionStorage.ttt = Dep.target
     }
 
     function popTarget() {
         targetStack.pop();
         Dep.target = targetStack[targetStack.length - 1];
+        sessionStorage.ttt = Dep.target
     }
 
 
@@ -3099,6 +3101,7 @@
     }
 
 
+    //- 函数组件上下文
     function FunctionalRenderContext(
         data,
         props,

@@ -4,89 +4,99 @@
 <head>
     <title>app</title>
     <script src="./vue2.6.14.js"></script>
-    <script src="./vuex.js"></script>
+    <script src="./vue-router.js"></script>
 
 </head>
 
 <body>
 
     <div id="app">
+        <p>
+            <!-- <router-link to="/foo">go to foo</router-link>
+            <router-link to="/bar">go to bar</router-link>
+            <router-link to="/user/zhangsan">go to zhangsan</router-link> -->
+            <router-link to="/user/lisi/profile?age=18">go to profile</router-link>
+            <router-link to="/user/lisi/post?age=18">go to post</router-link>
+            <router-link to="/user/lisi?age=18">go to default</router-link>
+
+        </p>
+        <router-view></router-view>
     </div>
 
 
     <script>
 
-        const moduleA = {
-            namespaced: true,
-            state: {
-                namea: 'a',
-                agea: 18
-            },
-            mutations: {
-                increment(state) {
-                    state.agea++;
-                }
-            },
-            getters: {
-                getA(state) {
-                    return state.namea + ":AAA"
-                }
-            },
-            modules: {
-                c: {
-                    state: {
-                        namec: 'a',
-                        agec: 18
-                    },
-                    mutations: {
-                        increment(state) {
-                            state.agec++;
-                        }
-                    },
-                    getters: {
-                        getC(state) {
-                            return state.namec + ":CCC"
-                        }
-                    },
-                }
-            }
-        }
-        const moduleB = {
-            state: {
-                nameb: 'a',
-                ageb: 18
-            },
-            mutations: {
-                increment(state) {
-                    state.ageb++;
-                }
-            },
-            getters: {
-                getB(state) {
-                    return state.nameb + ":BBB"
-                }
-            }
+        // const Foo = { template: '<div>foo</div>' }
+        // const Bar = { template: '<div>bar</div>' }
+        const User = {
+            template: `
+                <div>
+                    <router-view></router-view>
+                </div>
+            ` };
+        const UserProfile = {
+            template: `
+                    <div>profile
+                        <h2>User: {{$route.params.id}}</h2>
+                        </div>
+                `
+        };
+
+        const UserPost = {
+            template: `
+                    <div>UserPost
+                        <h2>User: {{$route.params.id}}</h2>
+                        </div>
+                `
         }
 
-        const store = new Vuex.Store({
-            modules: {
-                a: moduleA,
-                b: moduleB
-            }
-        });
+        const Home = {
+            template: `
+            <h1>Home</h1>
+            `
+        }
 
-        new Vue({
-            el: '#app',
-            store,
-            data: {
+        const Home2 = {
+            template: `
+            <h1>Home</h1>
+            `
+        }
 
+        const routes = [
+            // { path: '/foo', component: Foo },
+            {
+                path: '*',
+                component: Home2
+            },
+            {
+                path: '/user/:id',
+                component: User,
+                children: [
+                    {
+                        path: 'profile',
+                        component: UserProfile
+                    },
+                    {
+                        path: 'post',
+                        component: UserPost
+                    },
+                    {
+                        path: '',
+                        component: Home
+                    },
+
+                ]
             },
 
+        ]
 
+        const router = new VueRouter({
+            routes
         });
 
-        console.log(store.getters['a/getA'])
-
+        const app = new Vue({
+            router
+        }).$mount("#app");
 
 
 
