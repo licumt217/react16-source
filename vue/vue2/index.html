@@ -18,9 +18,12 @@
             <router-link to="/user/lisi/profile?age=18">go to profile</router-link>
             <router-link to="/user/lisi/post?age=18">go to post</router-link>
             <router-link to="/user/lisi?age=18">go to default</router-link>
+            <button @click="handle">点击</button>
 
         </p>
         <router-view></router-view>
+        <router-view name="a"></router-view>
+        <router-view name="b"></router-view>
     </div>
 
 
@@ -31,7 +34,7 @@
         const User = {
             template: `
                 <div>
-                    <router-view></router-view>
+                    user
                 </div>
             ` };
         const UserProfile = {
@@ -58,34 +61,40 @@
 
         const Home2 = {
             template: `
-            <h1>Home</h1>
+            <h1>Home2</h1>
             `
         }
 
         const routes = [
             // { path: '/foo', component: Foo },
-            {
-                path: '*',
-                component: Home2
-            },
+            // {
+            //     path: '*',
+            //     component: Home2
+            // },
             {
                 path: '/user/:id',
-                component: User,
-                children: [
-                    {
-                        path: 'profile',
-                        component: UserProfile
-                    },
-                    {
-                        path: 'post',
-                        component: UserPost
-                    },
-                    {
-                        path: '',
-                        component: Home
-                    },
+                name: 'user',
+                components: {
+                    default: User,
+                    a: Home,
+                    b: Home2
+                },
+                // component: User,
+                // children: [
+                //     {
+                //         path: 'profile',
+                //         component: UserProfile
+                //     },
+                //     {
+                //         path: 'post',
+                //         component: UserPost
+                //     },
+                //     {
+                //         path: '',
+                //         component: Home
+                //     },
 
-                ]
+                // ]
             },
 
         ]
@@ -95,7 +104,12 @@
         });
 
         const app = new Vue({
-            router
+            router,
+            methods: {
+                handle() {
+                    this.$router.push({ name: 'user', params: { id: 'post' } })
+                }
+            }
         }).$mount("#app");
 
 

@@ -341,6 +341,7 @@
             // directly use parent context's createElement() function
             // so that components rendered by router-view can resolve named slots
             var h = parent.$createElement;
+            debugger
             var name = props.name;
 
             //此处读取 parent.$route ，因为 $route 是响应式的，故当前组件watcher被收集到依赖中去，$route再次改变时，当前组件重新渲染。进而更新路由。
@@ -382,6 +383,7 @@
             }
 
             var matched = route.matched[depth];
+            //命名视图找到对应的组件
             var component = matched && matched.components[name];
 
             // render empty node if no matched route or no config component
@@ -998,10 +1000,17 @@
 
     var regexpCompileCache = Object.create(null);
 
+    /**
+     * 动态路由参数替换
+     * @param {*} path 
+     * @param {*} params 
+     * @param {*} routeMsg 
+     * @returns 
+     */
     function fillParams(
-        path,
-        params,
-        routeMsg
+        path,//原始path(带通配符的)
+        params,//新的params
+        routeMsg//旧的route msg
     ) {
         params = params || {};
         try {
@@ -1043,9 +1052,9 @@
     ) {
         var next = typeof raw === 'string' ? { path: raw } : raw;
         // named target
-        if (next._normalized) {
+        if (next._normalized) {//已标准化
             return next
-        } else if (next.name) {
+        } else if (next.name) {//命名路由
             next = extend({}, raw);
             var params = next.params;
             if (params && typeof params === 'object') {
@@ -1054,7 +1063,7 @@
             return next
         }
 
-        // relative params
+        // relative params 。push()方法传递了 push({params:{id:'xxx'}})的形式，动态路由切换。
         if (!next.path && next.params && current) {
             next = extend({}, next);
             next._normalized = true;
@@ -1077,6 +1086,7 @@
             ? resolvePath(parsedPath.path, basePath, append || next.append) //根据basePath和 path，获取合并后的路径
             : basePath;
 
+        //解析query
         var query = resolveQuery(
             parsedPath.query,
             next.query,
@@ -1541,7 +1551,7 @@
                 }
             }
             route.children.forEach(function (child) {
-                var childMatchAs = matchAs
+                var childMatchAs = matchAs//路由别名
                     ? cleanPath((matchAs + "/" + (child.path)))
                     : undefined;
                 addRouteRecord(pathList, pathMap, nameMap, child, record, childMatchAs);
@@ -1572,6 +1582,7 @@
                     path: alias,
                     children: route.children
                 };
+                // 路由别名，直接添加一个新的record
                 addRouteRecord(
                     pathList,
                     pathMap,
@@ -1667,11 +1678,13 @@
 
             createRouteMap([route || parentOrRoute], pathList, pathMap, nameMap, parent);
 
-            // add aliases of parent
+            // add aliases of parent。给父级添加别名
             if (parent && parent.alias.length) {
                 createRouteMap(
                     // route is defined if parent is
-                    parent.alias.map(function (alias) { return ({ path: alias, children: [route] }); }),
+                    parent.alias.map(function (alias) {
+                        return ({ path: alias, children: [route] });
+                    }),
                     pathList,
                     pathMap,
                     nameMap,
@@ -1679,14 +1692,16 @@
                 );
             }
         }
-
+        //-
         function getRoutes() {
-            return pathList.map(function (path) { return pathMap[path]; })
+            return pathList.map(function (path) {
+                return pathMap[path];
+            })
         }
 
         //- 判断给定path是否和 路由表中路由的正则匹配。匹配，则返回路由表的路由；否则返回当前path的路由
         function match(
-            raw,
+            raw,// this.$router.push()的第一个参数
             currentRoute,
             redirectedFrom
         ) {
@@ -1694,12 +1709,13 @@
             var location = normalizeLocation(raw, currentRoute, false, router);
             var name = location.name;
 
-            if (name) {
+            if (name) {//命名路由
                 var record = nameMap[name];
                 {
                     warn(record, ("Route with name '" + name + "' does not exist"));
                 }
                 if (!record) { return _createRoute(null, location) }
+
                 var paramNames = record.regex.keys
                     .filter(function (key) { return !key.optional; })
                     .map(function (key) { return key.name; });
@@ -1718,7 +1734,7 @@
 
                 location.path = fillParams(record.path, location.params, ("named route \"" + name + "\""));
                 return _createRoute(record, location, redirectedFrom)
-            } else if (location.path) {
+            } else if (location.path) {//普通路由
                 location.params = {};
                 //解析路由参数
                 for (var i = 0; i < pathList.length; i++) {
@@ -1733,6 +1749,7 @@
             return _createRoute(null, location)
         }
 
+        //-
         function redirect(
             record,
             location
@@ -1765,7 +1782,7 @@
             hash = re.hasOwnProperty('hash') ? re.hash : hash;
             params = re.hasOwnProperty('params') ? re.params : params;
 
-            if (name) {
+            if (name) {// 命名direct
                 // resolved named direct
                 var targetRecord = nameMap[name];
                 {
@@ -1798,6 +1815,7 @@
             }
         }
 
+        //-
         function alias(
             record,
             location,
@@ -1823,10 +1841,10 @@
             location,
             redirectedFrom
         ) {
-            if (record && record.redirect) {
+            if (record && record.redirect) {//重定向
                 return redirect(record, redirectedFrom || location)
             }
-            if (record && record.matchAs) {
+            if (record && record.matchAs) {//别名
                 return alias(record, location, record.matchAs)
             }
             return createRoute(record, location, redirectedFrom, router)
@@ -1873,6 +1891,7 @@
         return true
     }
 
+    //-
     function resolveRecordPath(path, record) {
         return resolvePath(path, record.parent ? record.parent.path : '/', true)
     }
@@ -3318,6 +3337,7 @@
         }
     };
 
+    //-
     VueRouter.prototype.getRoutes = function getRoutes() {
         return this.matcher.getRoutes()
     };
