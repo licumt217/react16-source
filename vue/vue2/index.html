@@ -9,38 +9,49 @@
 </head>
 
 <body>
+    <a href="http://www.baidu.com#123">百度</a>
 
     <div id="app">
         <p>
             <!-- <router-link to="/foo">go to foo</router-link>
             <router-link to="/bar">go to bar</router-link>
             <router-link to="/user/zhangsan">go to zhangsan</router-link> -->
-            <router-link to="/user/lisi/profile?age=18">go to profile</router-link>
-            <router-link to="/user/lisi/post?age=18">go to post</router-link>
-            <router-link to="/user/lisi?age=18">go to default</router-link>
+            <router-link to="/user/profile?age=18">go to profile</router-link>
+            <router-link to="/user/post?age=18">go to post</router-link>
             <button @click="handle">点击</button>
 
         </p>
         <router-view></router-view>
-        <router-view name="a"></router-view>
-        <router-view name="b"></router-view>
     </div>
 
 
     <script>
 
+
         // const Foo = { template: '<div>foo</div>' }
         // const Bar = { template: '<div>bar</div>' }
         const User = {
+            props: ['id'],
             template: `
                 <div>
-                    user
+                    {{id}}
                 </div>
             ` };
         const UserProfile = {
+            beforeRouteEnter(to, from, next) {
+                console.log("组件守卫：beforeRouteEnter")
+                next();
+            },
+            beforeRouteUpdate(to, from, next) {
+                console.log("组件守卫：beforeRouteUpdate")
+                next();
+            },
+            beforeRouteLeave(to, from, next) {
+                console.log("组件守卫：beforeRouteLeave")
+                next();
+            },
             template: `
                     <div>profile
-                        <h2>User: {{$route.params.id}}</h2>
                         </div>
                 `
         };
@@ -48,7 +59,6 @@
         const UserPost = {
             template: `
                     <div>UserPost
-                        <h2>User: {{$route.params.id}}</h2>
                         </div>
                 `
         }
@@ -66,48 +76,46 @@
         }
 
         const routes = [
-            // { path: '/foo', component: Foo },
-            // {
-            //     path: '*',
-            //     component: Home2
-            // },
             {
                 path: '/user/:id',
-                name: 'user',
-                components: {
-                    default: User,
-                    a: Home,
-                    b: Home2
-                },
-                // component: User,
-                // children: [
-                //     {
-                //         path: 'profile',
-                //         component: UserProfile
-                //     },
-                //     {
-                //         path: 'post',
-                //         component: UserPost
-                //     },
-                //     {
-                //         path: '',
-                //         component: Home
-                //     },
-
-                // ]
+                component: UserProfile,
+                beforeEnter: (to, from, next) => {
+                    console.log("路由独享守卫！")
+                    next();
+                }
             },
+            {
+                path: '/user/post',
+                component: UserPost,
+            },
+
 
         ]
 
         const router = new VueRouter({
-            routes
+            routes,
+            scrollBehavior(to, from, savedPosition) {
+                debugger
+                return {
+                    selector: to.hash
+                }
+            }
         });
+
+        router.beforeEach((to, from, next) => {
+            console.log("全局前置守卫1：" + to)
+            next();
+        })
+        router.beforeEach((to, from, next) => {
+            console.log("全局前置守卫2：" + to)
+            next();
+        })
 
         const app = new Vue({
             router,
             methods: {
                 handle() {
-                    this.$router.push({ name: 'user', params: { id: 'post' } })
+                    this.$router.push({ path: '/user/liqiang' })
                 }
             }
         }).$mount("#app");

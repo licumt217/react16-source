@@ -175,7 +175,7 @@
 
         var route = {
             name: location.name || (record && record.name),
-            meta: (record && record.meta) || {},
+            meta: (record && record.meta) || {},//路由记录元信息
             path: location.path || '/',
             hash: location.hash || '',
             query: query,
@@ -303,17 +303,19 @@
         return true
     }
 
-    //-
+    //- 执行beforeRouteEnter守卫中的回调函数，将实例作为参数传进入
     function handleRouteEntered(route) {
         for (var i = 0; i < route.matched.length; i++) {
             var record = route.matched[i];
             for (var name in record.instances) {
                 var instance = record.instances[name];
-                var cbs = record.enteredCbs[name];
+                var cbs = record.enteredCbs[name];//回调函数
                 if (!instance || !cbs) { continue }
                 delete record.enteredCbs[name];
                 for (var i$1 = 0; i$1 < cbs.length; i$1++) {
-                    if (!instance._isBeingDestroyed) { cbs[i$1](instance); }
+                    if (!instance._isBeingDestroyed) {
+                        cbs[i$1](instance);//实例作为参数传进去
+                    }
                 }
             }
         }
@@ -323,7 +325,7 @@
     var View = {
         name: 'RouterView',
         functional: true,
-        props: {
+        props: {//命名路由
             name: {
                 type: String,
                 default: 'default'
@@ -341,7 +343,6 @@
             // directly use parent context's createElement() function
             // so that components rendered by router-view can resolve named slots
             var h = parent.$createElement;
-            debugger
             var name = props.name;
 
             //此处读取 parent.$route ，因为 $route 是响应式的，故当前组件watcher被收集到依赖中去，$route再次改变时，当前组件重新渲染。进而更新路由。
@@ -431,6 +432,7 @@
                 handleRouteEntered(route);
             };
 
+            //路由参数 props:true
             var configProps = matched.props && matched.props[name];
             // save route and configProps in cache
             if (configProps) {
@@ -445,13 +447,15 @@
         }
     };
 
+    //-
     function fillPropsinData(component, data, route, configProps) {
-        // resolve props
+        // resolve props。将route的 params 当成props传递给组件
         var propsToPass = data.props = resolveProps(route, configProps);
         if (propsToPass) {
             // clone to prevent mutation
             propsToPass = data.props = extend({}, propsToPass);
             // pass non-declared props as attrs
+            // 非props 的params当成属性设置给组件
             var attrs = data.attrs = data.attrs || {};
             for (var key in propsToPass) {
                 if (!component.props || !(key in component.props)) {
@@ -462,15 +466,16 @@
         }
     }
 
+    //- 将route的 params 当成组件的props
     function resolveProps(route, config) {
         switch (typeof config) {
             case 'undefined':
                 return
-            case 'object':
+            case 'object'://整个返回
                 return config
-            case 'function':
+            case 'function'://将route当成参数传入
                 return config(route)
-            case 'boolean':
+            case 'boolean'://-
                 return config ? route.params : undefined
             default:
                 {
@@ -1521,12 +1526,12 @@
             matchAs: matchAs,
             redirect: route.redirect,
             beforeEnter: route.beforeEnter,
-            meta: route.meta || {},
-            props:
+            meta: route.meta || {},//路由记录元信息
+            props://路由组件传参
                 route.props == null
                     ? {}
                     : route.components
-                        ? route.props
+                        ? route.props//命名视图
                         : { default: route.props }
         };
 
@@ -1925,10 +1930,15 @@
 
     var positionStore = Object.create(null);
 
+    /**
+     * 1、history.scrollRestoration = 'manual'
+     * 2、window.addEventListener('popstate', handlePopState);
+     * @returns 
+     */
     function setupScroll() {
         // Prevent browser scroll behavior on History popstate
-        if ('scrollRestoration' in window.history) {
-            window.history.scrollRestoration = 'manual';
+        if ('scrollRestoration' in window.history) {//滚动恢复，默认是auto，浏览器帮我们记录上次的位置
+            window.history.scrollRestoration = 'manual';//-
         }
         // Fix for #1585 for Firefox
         // Fix for #2195 Add optional third attribute to workaround a bug in safari https://bugs.webkit.org/show_bug.cgi?id=182678
@@ -1997,7 +2007,7 @@
         });
     }
 
-    //-
+    //- 保存滚动的位置。在pushState时保存，方便下次回来时恢复。
     function saveScrollPosition() {
         var key = getStateKey();
         if (key) {
@@ -2008,6 +2018,7 @@
         }
     }
 
+    //-
     function handlePopState(e) {
         saveScrollPosition();
         if (e.state && e.state.key) {
@@ -2023,7 +2034,7 @@
         }
     }
 
-    //-
+    //- 计算元素偏移后的坐标位置
     function getElementPosition(el, offset) {
         var docEl = document.documentElement;
         var docRect = docEl.getBoundingClientRect();
@@ -2061,22 +2072,25 @@
 
     var hashStartsWithNumberRE = /^#\d/;
 
-    //-
+    //- 滚动到指定位置
     function scrollToPosition(shouldScroll, position) {
         var isObject = typeof shouldScroll === 'object';
-        if (isObject && typeof shouldScroll.selector === 'string') {
+        if (isObject && typeof shouldScroll.selector === 'string') {//有selector
             // getElementById would still fail if the selector contains a more complicated query like #main[data-attr]
             // but at the same time, it doesn't make much sense to select an element with an id and an extra selector
+            // 找到hash 对应的元素
             var el = hashStartsWithNumberRE.test(shouldScroll.selector)
                 ? document.getElementById(shouldScroll.selector.slice(1))
                 : document.querySelector(shouldScroll.selector);
 
+            // selector是对应的元素
             if (el) {
                 var offset =
                     shouldScroll.offset && typeof shouldScroll.offset === 'object'
                         ? shouldScroll.offset
                         : {};
                 offset = normalizeOffset(offset);
+                //计算元素偏移后的坐标位置
                 position = getElementPosition(el, offset);
             } else if (isValidPosition(shouldScroll)) {
                 position = normalizePosition(shouldScroll);
@@ -2086,6 +2100,9 @@
         }
 
         if (position) {
+            // 判断是否支持 behavior
+            // 'scrollBehavior' in document.documentElement.style
+            // 巧妙的使用scrollBehavior的样式有无，来判断。实际上，很多API的兼容性，都可以用类似的方法
             if ('scrollBehavior' in document.documentElement.style) {
                 window.scrollTo({
                     left: position.x,
@@ -2150,7 +2167,7 @@
         duplicated: 16
     };
 
-    //-
+    //- 重定向Error
     function createNavigationRedirectedError(from, to) {
         return createRouterError(
             from,
@@ -2184,6 +2201,7 @@
         )
     }
 
+    //- 导航取消时，调用此函数创建错误对象
     function createNavigationAbortedError(from, to) {
         return createRouterError(
             from,
@@ -2193,7 +2211,7 @@
         )
     }
 
-    //-
+    //- 创建路由错误对象
     function createRouterError(from, to, type, message) {
         var error = new Error(message);
         error._isRouter = true;
@@ -2236,10 +2254,11 @@
     //-
     function runQueue(queue, fn, cb) {
         var step = function (index) {
-            if (index >= queue.length) {
+            if (index >= queue.length) {//hook 函数执行完之后，然后调用回调函数
                 cb();
             } else {
                 if (queue[index]) {// hook 
+                    //从第一个守卫hook开始调用，然后依次调用下一个hook
                     fn(queue[index], function () {// iterator
                         step(index + 1);
                     });
@@ -2410,7 +2429,6 @@
         onAbort
     ) {
 
-
         var this$1$1 = this;
 
         var route;
@@ -2430,7 +2448,8 @@
             function () {
                 this$1$1.updateRoute(route);//更新当前路由$route,触发响应式，导致路由组件更新。
                 onComplete && onComplete(route);
-                this$1$1.ensureURL();
+                this$1$1.ensureURL();//导航确认
+                //全局 afterEach钩子函数此处执行
                 this$1$1.router.afterHooks.forEach(function (hook) {
                     hook && hook(route, prev);
                 });
@@ -2469,11 +2488,12 @@
 
         var current = this.current;
         this.pending = route;
+        //导航取消时调用此函数
         var abort = function (err) {
             // changed after adding errors with
             // https://github.com/vuejs/vue-router/pull/3047 before that change,
             // redirect and aborted navigation would produce an err == null
-            if (!isNavigationFailure(err) && isError(err)) {
+            if (!isNavigationFailure(err) && isError(err)) {//非导航错误
                 if (this$1$1.errorCbs.length) {
                     this$1$1.errorCbs.forEach(function (cb) {
                         cb(err);
@@ -2514,6 +2534,7 @@
         var deactivated = ref.deactivated;
         var activated = ref.activated;
 
+        //按固定顺序合并导航确认前需要调用的守卫钩子函数
         var queue = [].concat(
             // in-component leave guards //在失活组件中调用 beforeRouteLeave
             extractLeaveGuards(deactivated),
@@ -2521,28 +2542,31 @@
             this.router.beforeHooks,
             // in-component update hooks //调用 beforeRouteUpdate
             extractUpdateHooks(updated),
-            // in-config enter guards //调用激活组件中的 beforeEnter
+            // in-config enter guards //调用激活组件中的 beforeEnter。路由独享的守卫函数：beforeEnter
             activated.map(function (m) { return m.beforeEnter; }),
             // async components
             resolveAsyncComponents(activated)
         );
 
-        //调用 hook
+
+        //调用守卫hook函数，之后决定继续调用后续hook，或取消导航，或重定向
         var iterator = function (hook, next) {
 
             if (this$1$1.pending !== route) {
                 return abort(createNavigationCancelledError(current, route))
             }
             try {
+                //钩子函数必须调用第三个参数函数 next()，否则剩下的钩子就不会执行了
                 hook(route/*to*/, current/*from*/, function (to) {
-                    if (to === false) {
+                    if (to === false) {// next(false):取消导航
                         // next(false) -> abort navigation, ensure current URL
+                        // 确保当前的URL不改变，保持不变
                         this$1$1.ensureURL(true);
                         abort(createNavigationAbortedError(current, route));
-                    } else if (isError(to)) {
+                    } else if (isError(to)) {// next(Error):取消导航
                         this$1$1.ensureURL(true);
                         abort(to);
-                    } else if (
+                    } else if (// 导航守卫中重定向到别的路由
                         typeof to === 'string' ||
                         (typeof to === 'object' &&
                             (typeof to.path === 'string' || typeof to.name === 'string'))
@@ -2554,7 +2578,7 @@
                         } else {
                             this$1$1.push(to);
                         }
-                    } else {
+                    } else {//用户钩子中 next()没有传参数的话，直接调用下一个钩子函数
                         // confirm transition and pass on the value
                         next(to);
                     }
@@ -2567,16 +2591,18 @@
         runQueue(queue, iterator, function () {
             // wait until async components are resolved before
             // extracting in-component enter guards
-            var enterGuards = extractEnterGuards(activated);
+            var enterGuards = extractEnterGuards(activated);//解析组件中的beforeRouteEnter守卫
             var queue = enterGuards.concat(this$1$1.router.resolveHooks);
             runQueue(queue, iterator, function () {
                 if (this$1$1.pending !== route) {
                     return abort(createNavigationCancelledError(current, route))
                 }
                 this$1$1.pending = null;
+                //所有钩子执行后，执行完成回调函数，里边调用afterEach钩子函数
                 onComplete(route);
                 if (this$1$1.router.app) {
                     this$1$1.router.app.$nextTick(function () {
+                        //执行beforeRouteEnter守卫中的回调函数，将实例作为参数传进入
                         handleRouteEntered(route);
                     });
                 }
@@ -2666,7 +2692,7 @@
         reverse //是否反转
     ) {
         var guards = flatMapComponents(records, function (def/*component*/, instance, match/*record*/, key) {
-            var guard = extractGuard(def, name);//解析Record中的对应的路由守卫
+            var guard = extractGuard(def, name);//解析Record中的对应的路由守卫。组件中的路由守卫
             if (guard) {
                 return Array.isArray(guard)
                     ? guard.map(function (guard) {
@@ -2687,7 +2713,7 @@
             // extend now so that global mixins are applied.
             def = _Vue.extend(def);
         }
-        return def.options[key]
+        return def.options[key];//组件中的路由守卫
     }
 
     //- 需要反转
@@ -2708,20 +2734,20 @@
         }
     }
 
-    //-
+    //- 解析组件中的beforeRouteEnter守卫
     function extractEnterGuards(
         activated
     ) {
         return extractGuards(
             activated,
             'beforeRouteEnter',
-            function (guard, _, match, key) {
+            function (guard, _/*实例*/, match, key) {
                 return bindEnterGuard(guard, match, key)
             }
         )
     }
 
-    //-
+    //- beforeRouteEnter
     function bindEnterGuard(
         guard,
         match,
@@ -2735,13 +2761,13 @@
                     }
                     match.enteredCbs[key].push(cb);
                 }
-                next(cb);
+                next(cb);//通过传一个回调给 next来访问组件实例。在导航被确认的时候执行回调，并且把组件实例作为回调方法的参数
             })
         }
     }
 
 
-
+    //-
     var HTML5History = (function (History) {
         function HTML5History(router, base) {
             History.call(this, router, base);
@@ -2824,6 +2850,7 @@
             }, onAbort);
         };
 
+        //确保当前的URL不改变，保持不变
         HTML5History.prototype.ensureURL = function ensureURL(push) {
             if (getLocation(this.base) !== this.current.fullPath) {
                 var current = cleanPath(this.base + this.current.fullPath);
@@ -2884,6 +2911,9 @@
             var supportsScroll = supportsPushState && expectScroll;
 
             if (supportsScroll) {
+                // * 1、history.scrollRestoration = 'manual'
+                // * 2、window.addEventListener('popstate', handlePopState);
+                // 返回取消事件监听的函数
                 this.listeners.push(setupScroll());
             }
 
@@ -2894,7 +2924,7 @@
                     return
                 }
                 this$1$1.transitionTo(getHash(), function (route) {
-                    if (supportsScroll) {
+                    if (supportsScroll) {// 滚动条的位置
                         handleScroll(this$1$1.router, route, current, true);
                     }
                     if (!supportsPushState) {
@@ -3209,6 +3239,7 @@
         var history = this.history;
 
         if (history instanceof HTML5History || history instanceof HashHistory) {
+            //滚动条初始化
             var handleInitialScroll = function (routeOrError) {
                 var from = history.current;
                 var expectScroll = this$1$1.options.scrollBehavior;
@@ -3218,12 +3249,13 @@
                     handleScroll(this$1$1, routeOrError, from, false);
                 }
             };
+            // 作为 transitionTo 函数的onComplete参数，在导航确认后调用当前函数。
             var setupListeners = function (routeOrError) {
                 history.setupListeners();
                 handleInitialScroll(routeOrError);
             };
             history.transitionTo(
-                history.getCurrentLocation(),
+                history.getCurrentLocation(),//获取当前url对应的hash
                 setupListeners,
                 setupListeners
             );
@@ -3237,14 +3269,17 @@
         });
     };
 
+    //-全局前置守卫
     VueRouter.prototype.beforeEach = function beforeEach(fn) {
         return registerHook(this.beforeHooks, fn)
     };
 
+    //-
     VueRouter.prototype.beforeResolve = function beforeResolve(fn) {
         return registerHook(this.resolveHooks, fn)
     };
 
+    //-
     VueRouter.prototype.afterEach = function afterEach(fn) {
         return registerHook(this.afterHooks, fn)
     };
@@ -3363,6 +3398,7 @@
 
     var VueRouter$1 = VueRouter;
 
+    //- 注册守卫hooks。返回函数用于取消
     function registerHook(list, fn) {
         list.push(fn);
         return function () {
