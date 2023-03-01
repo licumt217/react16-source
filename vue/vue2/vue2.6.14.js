@@ -3352,11 +3352,13 @@
             return
         }
 
-        // async component
+        // async component 异步组件
         var asyncFactory;
         if (isUndef(Ctor.cid)) {
             asyncFactory = Ctor;
             Ctor = resolveAsyncComponent(asyncFactory, baseCtor);
+            //第一次加载异步组件时，返回是undefined，等到异步组件真正解析后，触发父组件强制更新，然后再次进入这里时，就不是 undefined 了。
+            // 之后的流程和同步组件一样
             if (Ctor === undefined) {
                 // return a placeholder node for async component, which is rendered
                 // as a comment node but preserves all the raw information for the node.
@@ -3811,6 +3813,7 @@
     }
 
 
+    //- 异步组件
     function ensureCtor(comp, base) {
         if (
             comp.__esModule ||
@@ -3823,6 +3826,7 @@
             : comp
     }
 
+    //异步组件占位符 node
     function createAsyncPlaceholder(
         factory,
         data,
@@ -3836,6 +3840,7 @@
         return node
     }
 
+    // 异步组件构造
     function resolveAsyncComponent(
         factory,
         baseCtor
@@ -3866,12 +3871,13 @@
 
                 ; (owner).$on('hook:destroyed', function () { return remove(owners, owner); });
 
+            //- 所有父组件强制更新,然后此时因为已缓存了且构造了异步组件，此时就可以挂载异步组件了
             var forceRender = function (renderCompleted) {
                 for (var i = 0, l = owners.length; i < l; i++) {
                     (owners[i]).$forceUpdate();
                 }
 
-                if (renderCompleted) {
+                if (renderCompleted) {//已超时或已完结，则取消loading 和 timeout
                     owners.length = 0;
                     if (timerLoading !== null) {
                         clearTimeout(timerLoading);
@@ -3886,7 +3892,7 @@
 
             var resolve = once(function (res) {
                 // cache resolved
-                factory.resolved = ensureCtor(res, baseCtor);
+                factory.resolved = ensureCtor(res, baseCtor);//Vue.extend();
                 // invoke callbacks only if this is not a synchronous resolve
                 // (async resolves are shimmed as synchronous during SSR)
                 if (!sync) {
@@ -3910,12 +3916,12 @@
             var res = factory(resolve, reject);
 
             if (isObject(res)) {
-                if (isPromise(res)) {
+                if (isPromise(res)) {//工厂函数返回promise 
                     // () => Promise
                     if (isUndef(factory.resolved)) {
                         res.then(resolve, reject);
                     }
-                } else if (isPromise(res.component)) {
+                } else if (isPromise(res.component)) {// 可更详细配置的异步组件
                     res.component.then(resolve, reject);
 
                     if (isDef(res.error)) {
@@ -5587,7 +5593,7 @@
                     if (type === 'component') {
                         validateComponentName(id);//验证组件名称name的合法性
                     }
-                    //DONE;
+                    // 异步组件不直接扩展
                     if (type === 'component' && isPlainObject(definition)) {
                         definition.name = definition.name || id;
                         definition = this.options._base.extend(definition);

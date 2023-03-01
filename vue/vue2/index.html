@@ -4,118 +4,39 @@
 <head>
     <title>app</title>
     <script src="./vue2.6.14.js"></script>
-    <script src="./vue-router.js"></script>
+    <!-- <script src="./vue-router.js"></script> -->
 
 </head>
 
 <body>
-    <a href="http://www.baidu.com#123">百度</a>
 
     <div id="app">
-        <p>
-            <!-- <router-link to="/foo">go to foo</router-link>
-            <router-link to="/bar">go to bar</router-link>
-            <router-link to="/user/zhangsan">go to zhangsan</router-link> -->
-            <router-link to="/user/profile?age=18">go to profile</router-link>
-            <router-link to="/user/post?age=18">go to post</router-link>
-            <button @click="handle">点击</button>
-
-        </p>
-        <router-view></router-view>
+        <button @click="show=!show">show</button>
+        <div v-if="show">
+            <async-c></async-c>
+        </div>
     </div>
 
 
     <script>
 
-
-        // const Foo = { template: '<div>foo</div>' }
-        // const Bar = { template: '<div>bar</div>' }
-        const User = {
-            props: ['id'],
-            template: `
-                <div>
-                    {{id}}
-                </div>
-            ` };
-        const UserProfile = {
-            beforeRouteEnter(to, from, next) {
-                console.log("组件守卫：beforeRouteEnter")
-                next();
-            },
-            beforeRouteUpdate(to, from, next) {
-                console.log("组件守卫：beforeRouteUpdate")
-                next();
-            },
-            beforeRouteLeave(to, from, next) {
-                console.log("组件守卫：beforeRouteLeave")
-                next();
-            },
-            template: `
-                    <div>profile
-                        </div>
-                `
-        };
-
-        const UserPost = {
-            template: `
-                    <div>UserPost
-                        </div>
-                `
-        }
-
-        const Home = {
-            template: `
-            <h1>Home</h1>
-            `
-        }
-
-        const Home2 = {
-            template: `
-            <h1>Home2</h1>
-            `
-        }
-
-        const routes = [
-            {
-                path: '/user/:id',
-                component: UserProfile,
-                beforeEnter: (to, from, next) => {
-                    console.log("路由独享守卫！")
-                    next();
-                }
-            },
-            {
-                path: '/user/post',
-                component: UserPost,
-            },
-
-
-        ]
-
-        const router = new VueRouter({
-            routes,
-            scrollBehavior(to, from, savedPosition) {
-                debugger
-                return {
-                    selector: to.hash
-                }
-            }
-        });
-
-        router.beforeEach((to, from, next) => {
-            console.log("全局前置守卫1：" + to)
-            next();
+        Vue.component("async-c", function (resolve) {
+            setTimeout(() => {
+                resolve({
+                    template: '<div> async component!</div>'
+                })
+            }, 1000)
         })
-        router.beforeEach((to, from, next) => {
-            console.log("全局前置守卫2：" + to)
-            next();
-        })
+
+
+
 
         const app = new Vue({
-            router,
+            data: {
+                show: false,
+            },
             methods: {
                 handle() {
-                    this.$router.push({ path: '/user/liqiang' })
                 }
             }
         }).$mount("#app");
