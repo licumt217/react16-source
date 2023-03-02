@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>app</title>
+    <script src="./axios.js"></script>
+    <!-- <script src="./vue-router.js"></script> -->
+
+</head>
+
+<body>
+
+    <div id="app">
+    </div>
+
+
+    <script>
+
+        axios.post('https://prep.tingjiandan.com/btcauthorize/pwdSetting/getMinPwdByLogin?age=18', JSON.stringify({ age: 110 }), {
+            data: 'Country=Brasil&City=Belo Horizonte',
+        }).then(data => {
+        }).catch(e => {
+        })
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
