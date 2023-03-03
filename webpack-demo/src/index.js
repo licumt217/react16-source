@@ -1,11 +1,5 @@
-import _ from "lodash";
 
-
-function component() {
-    const element = document.createElement("div");
-    element.innerHTML = _.join(['hello', 'world'], ' ')
-    return element;
-
-}
-
-document.body.appendChild(component())
+import _ from 'lodash';
+// import("lodash").then(({ default: _ }) => {
+console.log(_.join([1, 1]))
+// })
