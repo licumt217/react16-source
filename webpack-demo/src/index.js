@@ -1,5 +1,12 @@
+/**
+ * 
+ */
+import { createApp } from 'vue';//vue3中没有全局Vue
+import App from './App.vue'
+import router from './routers'
 
-import _ from 'lodash';
-// import("lodash").then(({ default: _ }) => {
-console.log(_.join([1, 1]))
-// })
+
+
+createApp(App)
+    .use(router)
+    .mount("#app");

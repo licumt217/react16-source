@@ -11,11 +11,17 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "css-loader": "^6.7.3",
         "html-webpack-plugin": "^5.5.0",
+        "less-loader": "6",
+        "style-loader": "^3.3.1",
+        "vue-loader": "^17.0.1",
         "webpack": "^5.75.0",
         "webpack-cli": "^5.0.1"
     },
     "dependencies": {
-        "lodash": "^4.17.21"
+        "lodash": "^4.17.21",
+        "vue": "^3.2.47",
+        "vue-router": "4"
     }
 }

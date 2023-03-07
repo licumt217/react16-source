@@ -1,0 +1,39 @@
+<template>
+    <div v-title="'登录停简单'">
+        <h1>我的汽车</h1>
+        <div>
+            <button @click="back">返回登录页面</button>
+        </div>
+    </div>
+</template>
+<script type="text/ecmascript-6">
+import _ from 'lodash'
+
+
+export default {
+    components: {
+    },
+    directives: {
+    },
+    data() {
+        return {
+
+        }
+    },
+    computed: {
+
+    },
+    mounted() {
+    },
+    methods: {
+        back() {
+            console.log(_.join(['aaac', 'bbbc']))
+            this.$router.push('/login')
+        }
+    }
+}
+
+</script>
+
+
+<style lang="less" scoped></style>
