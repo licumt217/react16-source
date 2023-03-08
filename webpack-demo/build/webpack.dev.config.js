@@ -8,6 +8,9 @@ const devMode = process.env.NODE_ENV === "production";
 
 const webpackConfig = merge(baseWebpackConfig, {
     mode: "development",
+    output: {
+        publicPath: './static'
+    },
     // devtool: 'eval',//webpack + loader处理后的代码。有列信息
     devtool: 'eval-source-map',//源码。有列信息
     // devtool: 'eval-cheap-source-map',//loader处理后的代码

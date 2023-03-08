@@ -2,6 +2,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack")
 const { merge } = require("webpack-merge")
 const baseWebpackConfig = require('./webpack.base.config')
+const StylesOutputDirectory = "static/css/";
 
 const webpackConfig = merge(baseWebpackConfig, {
     mode: "production",
@@ -40,7 +41,8 @@ const webpackConfig = merge(baseWebpackConfig, {
         // 你可以使用 style - loader，因为它可以使用多个 标签将 CSS 插入到 DOM 中，并且反应会更快。
         // 需要在.css 的loader配置中添加对应的 MiniCssExtractPlugin loader
         new MiniCssExtractPlugin({
-            filename: "[name].[contenthash].css"
+            filename: `${StylesOutputDirectory}[name].[contenthash].css`,
+            chunkFilename: `${StylesOutputDirectory}chunk[id].css`,
         }),
         // DefinePlugin 允许在 编译时 将你代码中的变量替换为其他值或表达式。
         // 这在需要根据开发模式与生产模式进行不同的操作时，非常有用

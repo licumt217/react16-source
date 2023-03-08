@@ -5,7 +5,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader')
 const projectRoot = path.resolve(__dirname, '../');
 const Favicon = path.resolve(`${projectRoot}/src/assets/images/favicon.ico`)
-
+const JsOutputDirectory = "static/js/";
+const AssetsOutputDirectory = "static/images/";
 module.exports = {
 
     entry: {
@@ -14,7 +15,10 @@ module.exports = {
         },
     },
     output: {
-        filename: '[name].[contenthash].bundle.js',
+        filename: `${JsOutputDirectory}[name].[contenthash].bundle.js`,
+        chunkFilename: `${JsOutputDirectory}chunk-[id].bundle.js`,
+        //资产文件输出目录，图片/字体等
+        assetModuleFilename: `${AssetsOutputDirectory}[contenthash][ext][query]`,
         path: path.resolve(projectRoot, './dist'),
         clean: true
     },
@@ -37,7 +41,7 @@ module.exports = {
                     // 如果一个模块源码大小小于 maxSize，那么模块会被作为一个 Base64 编码的字符串注入到包中，
                     // 否则模块文件会被生成到输出的目标目录中。
                     dataUrlCondition: {
-                        maxSize: 12 * 1024
+                        maxSize: 2 * 1024
                     }
                 }
             },
@@ -126,7 +130,6 @@ module.exports = {
                 },
                 //使用mini-css-extract-plugin插件打包css文件时，通常需要配置cacheGroups.{cacheGroup}.enforce属性。
                 styles: {
-                    name: 'styles',
                     test: /\.css$/,
                     chunks: 'all',
                     enforce: true

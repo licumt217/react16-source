@@ -23,8 +23,4 @@ export default {
 }
 
 </script>
-<style lang="less">
-// .outerContainer {
-//     height: 100%;
-// }
-</style>
+
