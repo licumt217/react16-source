@@ -1,3 +1,6 @@
 [submodule "webpack-demo/source/webpack"]
 	path = webpack-demo/source/webpack
 	url = https://github.com/webpack/webpack.git
+[submodule "webpack-demo/source/cli"]
+	path = webpack-demo/source/cli
+	url = https://github.com/webpack/webpack-cli.git
