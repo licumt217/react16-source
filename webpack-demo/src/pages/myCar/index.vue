@@ -1,6 +1,6 @@
 <template>
     <div v-title="'登录停简单'">
-        <h1>我的汽车</h1>
+        <my-header>我的汽车</my-header>
         <div>
             <button @click="back">返回登录页面</button>
         </div>
@@ -8,10 +8,12 @@
 </template>
 <script type="text/ecmascript-6">
 import _ from 'lodash'
+import MyHeader from '@components/MyHeader'
 
 
 export default {
     components: {
+        MyHeader
     },
     directives: {
     },
