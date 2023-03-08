@@ -16,6 +16,8 @@
 import MyHeader from '@components/MyHeader'
 import MyButton from '../../components/MyButton/index.vue'
 import Utils from 'Utils';
+import ABC from './abc.xyz'
+import Async from './asyncTest.async'
 
 
 export default {
@@ -34,6 +36,7 @@ export default {
     },
     mounted() {
         console.log(process.env.NODE_ENV)
+        console.log(JSON.stringify(Async.content, null, 4));
     },
     methods: {
         genDiv() {

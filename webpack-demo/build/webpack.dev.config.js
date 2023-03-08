@@ -2,14 +2,10 @@ const webpack = require("webpack")
 const { merge } = require("webpack-merge")
 const baseWebpackConfig = require('./webpack.base.config')
 
-
-const devMode = process.env.NODE_ENV === "production";
-
-
 const webpackConfig = merge(baseWebpackConfig, {
     mode: "development",
     output: {
-        publicPath: './static'
+        publicPath: ''
     },
     // devtool: 'eval',//webpack + loader处理后的代码。有列信息
     devtool: 'eval-source-map',//源码。有列信息

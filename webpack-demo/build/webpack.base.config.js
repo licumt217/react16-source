@@ -7,6 +7,7 @@ const projectRoot = path.resolve(__dirname, '../');
 const Favicon = path.resolve(`${projectRoot}/src/assets/images/favicon.ico`)
 const JsOutputDirectory = "static/js/";
 const AssetsOutputDirectory = "static/images/";
+const FileListPlugin = require('../plugins/filelist-plugin')
 module.exports = {
 
     entry: {
@@ -22,8 +23,33 @@ module.exports = {
         path: path.resolve(projectRoot, './dist'),
         clean: true
     },
+    resolveLoader: {
+        // webpack会从这些目录依次寻找loader。将自己的自定义目录放到数组中。
+        modules: ['node_modules', 'loaders']
+    },
     module: {
         rules: [
+            {
+                test: /\.xyz$/,
+                use: [
+                    {
+                        loader: 'xyz-loader',
+                        options: {
+                            add: {
+                                author: '447818666'
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.async$/,
+                use: [
+                    {
+                        loader: 'async-loader',
+                    }
+                ]
+            },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
@@ -192,5 +218,8 @@ module.exports = {
             $: "jquery",
             jQuery: "jquery"
         }),
+        new FileListPlugin({
+            filename: 'myFileList.md'
+        })
     ]
 }
