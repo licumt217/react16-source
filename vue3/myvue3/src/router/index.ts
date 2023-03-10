@@ -1,23 +1,146 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Vue from 'vue'
+import Router from 'vue-router'
+import ParkManageRouter from './park-manage'
+import PropertyMangeRouter from './property-manage'
+import BusinessCenterRouter from './business-center'
+import FinanceCenterRouter from './finance-center'
+import OperationRouter from './operation'
+import OperationDataRouter from './operation-data'
+import ParkingOrderRouter from './parking-order'
+import YztRouter from './yzt'
+import HardwareCenterRouter from './hardware-center'
+import KefuRouter from './kefu'
 
-const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
-    routes: [
-        {
-            path: '/',
-            name: 'home',
-            component: HomeView
-        },
-        {
-            path: '/about',
-            name: 'about',
-            // route level code-splitting
-            // this generates a separate chunk (About.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () => import('../views/AboutView.vue')
-        }
-    ]
+Vue.use(Router)
+
+/* Layout */
+import Layout from '@/layout'
+
+/**
+ * Note: 路由配置项
+ *
+ * hidden: true                   // 当设置 true 的时候该路由不会再侧边栏出现 如401，login等页面，或者如一些编辑页面/edit/1
+ * alwaysShow: true               // 当你一个路由下面的 children 声明的路由大于1个时，自动会变成嵌套的模式--如组件页面
+ *                                // 只有一个时，会将那个子路由当做根路由显示在侧边栏--如引导页面
+ *                                // 若你想不管路由下面的 children 声明的个数都显示你的根路由
+ *                                // 你可以设置 alwaysShow: true，这样它就会忽略之前定义的规则，一直显示根路由
+ * redirect: noRedirect           // 当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
+ * name:'router-name'             // 设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
+ * meta : {
+    roles: ['admin','editor']    // 设置该路由进入的权限，支持多个权限叠加
+    title: 'title'               // 设置该路由在侧边栏和面包屑中展示的名字
+    icon: 'svg-name'             // 设置该路由的图标，对应路径src/icons/svg
+    breadcrumb: false            // 如果设置为false，则不会在breadcrumb面包屑中显示
+  }
+ */
+
+// 公共路由
+export const constantRoutes = [
+    {
+        path: '/redirect',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: '/redirect/:path(.*)',
+                component: () => import('@/views/redirect')
+            }
+        ]
+    },
+    {
+        path: '/login',
+        component: () => import('@/views/login'),
+        hidden: true
+    },
+    {
+        path: '/404',
+        component: () => import('@/views/error/404'),
+        hidden: true
+    },
+    {
+        path: '/401',
+        component: () => import('@/views/error/401'),
+        hidden: true
+    },
+    {
+        path: '',
+        component: Layout,
+        redirect: 'index',
+        children: [
+            {
+                path: 'index',
+                component: () => import('@/views/index'),
+                name: '首页',
+                meta: { title: '首页', icon: 'dashboard', noCache: true, affix: true }
+            }
+        ]
+    },
+    {
+        path: '/user',
+        component: Layout,
+        hidden: true,
+        redirect: 'noredirect',
+        children: [
+            {
+                path: 'profile',
+                component: () => import('@/views/system/user/profile/index'),
+                name: 'Profile',
+                meta: { title: '个人中心', icon: 'user' }
+            }
+        ]
+    },
+    {
+        path: '/dict',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: 'type/data/:dictId(\\d+)',
+                component: () => import('@/views/system/dict/data'),
+                name: 'Data',
+                meta: { title: '字典数据', icon: '' }
+            }
+        ]
+    },
+    {
+        path: '/job',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: 'log',
+                component: () => import('@/views/monitor/job/log'),
+                name: 'JobLog',
+                meta: { title: '调度日志' }
+            }
+        ]
+    },
+    {
+        path: '/gen',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: 'edit',
+                component: () => import('@/views/tool/gen/editTable'),
+                name: 'GenEdit',
+                meta: { title: '修改生成配置' }
+            }
+        ]
+    },
+    ...ParkManageRouter,
+    ...PropertyMangeRouter,
+    ...BusinessCenterRouter,
+    ...OperationRouter,
+    ...OperationDataRouter,
+    ...FinanceCenterRouter,
+    ...ParkingOrderRouter,
+    ...YztRouter,
+    ...HardwareCenterRouter,
+    ...KefuRouter
+]
+
+export default new Router({
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
 })
-
-export default router

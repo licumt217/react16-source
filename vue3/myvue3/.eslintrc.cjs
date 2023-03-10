@@ -13,6 +13,7 @@ module.exports = {
         ecmaVersion: 'latest'
     },
     rules: {
-        'vue/comment-directive': 'off'
+        'vue/comment-directive': 'off',
+        'vue/multi-word-component-names': 'off',//组件名称要求大驼峰，且不能用系统常用的名称
     }
 }
