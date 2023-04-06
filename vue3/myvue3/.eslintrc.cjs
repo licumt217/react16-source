@@ -14,6 +14,11 @@ module.exports = {
     },
     rules: {
         'vue/comment-directive': 'off',
+        'no-useless-escape': 'off',
+        'no-constant-condition': 'off',
+        'no-prototype-builtins': 'off',
         'vue/multi-word-component-names': 'off',//组件名称要求大驼峰，且不能用系统常用的名称
     }
+
+
 }

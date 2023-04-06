@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body onload="main()">
+    <div class="container">
+        <canvas id="game-canvas"></canvas>
+    </div>
+
+    <script>
+        var g_canvas, g_context, g_image;
+        function initCanvas() {
+            g_canvas = document.getElementById("game-canvas");
+            g_context = g_canvas.getContext('2d');
+            g_canvas.width = 320;
+            g_canvas.height = 240;
+            return (g_canvas && g_context);
+        }
+
+        function clearScreen() {
+            g_context.fillStyle = "black";
+            g_context.fillRect(0, 0, 320, 240);
+
+        }
+
+        function drawWhiteRect() {
+            g_context.strokeStyle = "white";
+            g_context.strokeRect(10, 30, 300, 10)
+        }
+
+        function fillRedRect() {
+            g_context.fillStyle = "red";
+            g_context.fillRect(10, 10, 300, 10)
+        }
+        function loadPic() {
+            g_image = new Image();
+            g_image.src = "default.png";
+            g_image.onload = function () {
+                drawPic();
+            }
+        }
+
+        function drawPic() {
+            g_context.drawImage(g_image, 0, 0, 300, 180, 10, 50, 300, 180)
+        }
+
+        function main() {
+            initCanvas();
+            clearScreen();
+            fillRedRect();
+            drawWhiteRect();
+            loadPic();
+
+        }
+    </script>
+</body>
+
+</html>

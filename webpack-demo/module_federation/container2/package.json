@@ -1,0 +1,28 @@
+{
+    "name": "container",
+    "version": "1.0.0",
+    "description": "",
+    "main": "webpack.config.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "webpack"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^6.9.0",
+        "typescript": "^5.0.2",
+        "webpack": "^5.76.3"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.21.3",
+        "@types/react": "^18.0.30",
+        "babel-loader": "^9.1.2",
+        "dotenv": "^16.0.3",
+        "fork-ts-checker-webpack-plugin": "^8.0.0",
+        "react-hot-loader": "^4.13.1"
+    }
+}

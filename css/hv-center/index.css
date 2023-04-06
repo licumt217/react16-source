@@ -1,0 +1,172 @@
+body{
+    padding: 0;
+    margin: 0;
+}
+/* =========== 001 =============== */
+.flex .parent {
+    background: gray;
+    display: flex;
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex .child {
+    background: sienna;
+    width: 400px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+}
+
+/* ============= 002 =============== */
+.flex-sub .parent {
+    background: gray;
+    display: flex;
+    height: 200px;
+}
+
+.flex-sub .child {
+    background: sienna;
+    /* 给子项设置 margin:auto 也能实现水平垂直居中 */
+    margin:auto;
+    width: 400px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+}
+
+
+/* ============= 003 =============== */
+.ab-position .parent {
+    background: gray;
+    height: 200px;
+    position: relative;
+}
+
+.ab-position .child {
+    background: sienna;
+    width: 400px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    position: absolute;
+    left:50%;
+    top:50%;
+    transform: translate(-50%,-50%);
+}
+
+/* ============= 004 =============== */
+.table-cell .parent {
+    background: gray;
+    height: 200px;
+    width: 100vw;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table-cell .child {
+    background: sienna;
+    width: 400px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* ============= 005 =============== */
+.grid .parent {
+    background: gray;
+    height: 200px;
+    width: 100vw;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid .child {
+    background: sienna;
+    width: 400px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+}
+
+/* ============= 006 =============== */
+.grid-sub .parent {
+    background: gray;
+    height: 200px;
+    width: 100vw;
+    display: grid;
+}
+
+.grid-sub .child {
+    background: sienna;
+    width: 400px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    margin:auto;
+}
+
+/* ============= 007 =============== */
+.after .parent {
+    background: gray;
+    height: 200px;
+    width: 100vw;
+    text-align: center;
+}
+.after .parent::after{
+    content: "";
+    line-height: 200px;
+}
+
+.after .child {
+    background: sienna;
+    width: 400px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* ============= 008 =============== */
+.sub-position0 .parent {
+    background: gray;
+    height: 200px;
+    width: 100vw;
+    position: relative;
+}
+
+.sub-position0 .child {
+    background: sienna;
+    width: 400px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    position: absolute;
+    left:0;
+    right: 0;
+    top:0;
+    bottom:0;
+    margin:auto;
+}
+
+/* ============= 009 =============== */
+.water-center .parent {
+    background: gray;
+    height: 200px;
+    width: 100vw;
+}
+
+.water-center .child {
+    background: sienna;
+    width: 400px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    margin:0 auto;
+}
+
+

@@ -368,3 +368,166 @@ var hammingDistance = function (x, y) {
     }
     return count;
 };
+
+/**
+ * 012 
+ * 二叉树前序遍历
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+var preorderTraversal = function (root) {
+    let res = [];
+
+    function f(root) {
+        if (root === null) {
+            return;
+        }
+        res.push(root.val);
+        if (root.left || root.right) {
+            f(root.left);
+            f(root.right);
+        }
+    }
+
+    f(root);
+    return res;
+};
+
+/**
+ * 013
+ * 二叉树的中序遍历
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+var inorderTraversal = function (root) {
+    let res = [];
+    function f(root) {
+        if (root === null) {
+            return;
+        }
+        f(root.left);
+        res.push(root.val);
+        f(root.right);
+    }
+    f(root);
+    return res;
+};
+
+/**
+ * 014
+ * 二叉树后续遍历
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+var postorderTraversal = function (root) {
+    let res = []
+    function f(root) {
+        if (root === null) {
+            return;
+        }
+        f(root.left);
+        f(root.right);
+        res.push(root.val);
+    }
+    f(root);
+    return res;
+};
+
+/**
+ * 015
+ * 二叉树的层序遍历
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[][]}
+ */
+var levelOrder = function (root) {
+    if (!root) {
+        return []
+    }
+    let res = [];
+
+    function f(nodeArray) {
+        if (nodeArray.length === 0) {
+            return;
+        }
+        let curValueArray = [];
+        let nextLayerNodeArray = []
+        for (let i = 0, len = nodeArray.length; i < len; i++) {
+            let node = nodeArray[i];
+            curValueArray.push(node.val);
+            node.left && nextLayerNodeArray.push(node.left);
+            node.right && nextLayerNodeArray.push(node.right);
+        }
+        res.push(curValueArray);
+        f(nextLayerNodeArray);
+    }
+
+    f([root]);
+    return res;
+};
+
+/**
+ * 016
+ * 二叉树的最大深度
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var maxDepth = function (root) {
+    function dfs(root) {
+        if (!root) {
+            return 0;
+        }
+        return Math.max(dfs(root.left), dfs(root.right)) + 1;
+    }
+    return dfs(root);
+};
+
+/**
+ * 017
+ * 是否是对称二叉树
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+var isSymmetric = function (root) {
+    function isD(l, r) {
+        if (!l && !r) {
+            return true;
+        }
+        if (!l || !r) {
+            return false;
+        }
+        return l.val === r.val && isD(l.left, r.right) && isD(l.right, r.left);
+    }
+    return isD(root.left, root.right);
+};

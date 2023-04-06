@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .parent {
+            border: 10px solid red;
+            min-height: 10px;
+            display: flow-root;
+            /* 触发BFC */
+
+        }
+
+        .child {
+            width: 300px;
+            height: 100px;
+            background: green;
+            float: left;
+        }
+
+        .parent2 {
+            border: 10px solid red;
+            min-height: 10px;
+        }
+
+        .child21 {
+            width: 300px;
+            height: 100px;
+            background: green;
+            margin-bottom: 10px;
+        }
+
+        .child22 {
+            width: 300px;
+            height: 100px;
+            background: pink;
+            margin-top: 10px;
+            display: inline-block;
+            /*触发BFC，导致外边距合并消失*/
+        }
+
+        .parent3 {
+            border: 1px solid red;
+            min-height: 10px;
+        }
+
+        .child31 {
+            width: 300px;
+            height: 100px;
+            background: green;
+            float: left;
+        }
+
+        .child32 {
+            height: 100px;
+            background: pink;
+            border: 5px solid blue;
+            display: flow-root;
+            /*触发BFC*/
+        }
+    </style>
+</head>
+
+<body>
+
+    <h3>BFC</h3>
+
+    <h4>父元素高度塌陷</h4>
+    <div class="parent">
+        <div class="child">
+
+        </div>
+    </div>
+
+    <h4>外边距合并</h4>
+    <div class="parent2">
+        <div class="child21">
+
+        </div>
+        <div class="child22">
+
+        </div>
+    </div>
+
+    <h4>兄弟之间划清界限</h4>
+    <div class="parent3">
+        <div class="child31">
+            left
+        </div>
+        <div class="child32">
+            right
+        </div>
+    </div>
+</body>
+
+</html>

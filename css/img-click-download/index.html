@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片点击下载，而不是点击预览</title>
+    <style>
+        img {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 我们平时在网站中的图片，假如我们要下载，如下写：
+    <a href="haorooms博客.jpg">下载</a>
+    我们点击下载按钮，只会预览“haorooms博客.jpg”这张图片，并不会出现下载框，另存为那种？那么我们如何做呢？
+    我们只需要如下写
+    <a href="haorooms博客.jpg" download>下载</a>
+    就可以下载了。
+    不但如次，我们还可以指定文件名称，如下写法：
+    <a href="haorooms博客.jpg" download="haoroom前端博客图片下载">下载</a> -->
+
+    <img src="icon.jpg" />
+
+    <a href="icon.jpg">预览</a>
+
+    <a href="icon.jpg" download>下载</a>
+    <a href="icon.jpg" download="图片下载。。。">下载带自定义名字</a>
+</body>
+
+</html>

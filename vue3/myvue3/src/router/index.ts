@@ -1,20 +1,7 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import ParkManageRouter from './park-manage'
-import PropertyMangeRouter from './property-manage'
-import BusinessCenterRouter from './business-center'
-import FinanceCenterRouter from './finance-center'
-import OperationRouter from './operation'
-import OperationDataRouter from './operation-data'
-import ParkingOrderRouter from './parking-order'
-import YztRouter from './yzt'
-import HardwareCenterRouter from './hardware-center'
-import KefuRouter from './kefu'
-
-Vue.use(Router)
 
 /* Layout */
-import Layout from '@/layout'
 
 /**
  * Note: 路由配置项
@@ -36,111 +23,13 @@ import Layout from '@/layout'
 
 // 公共路由
 export const constantRoutes = [
-    {
-        path: '/redirect',
-        component: Layout,
-        hidden: true,
-        children: [
-            {
-                path: '/redirect/:path(.*)',
-                component: () => import('@/views/redirect')
-            }
-        ]
-    },
-    {
-        path: '/login',
-        component: () => import('@/views/login'),
-        hidden: true
-    },
-    {
-        path: '/404',
-        component: () => import('@/views/error/404'),
-        hidden: true
-    },
-    {
-        path: '/401',
-        component: () => import('@/views/error/401'),
-        hidden: true
-    },
-    {
-        path: '',
-        component: Layout,
-        redirect: 'index',
-        children: [
-            {
-                path: 'index',
-                component: () => import('@/views/index'),
-                name: '首页',
-                meta: { title: '首页', icon: 'dashboard', noCache: true, affix: true }
-            }
-        ]
-    },
-    {
-        path: '/user',
-        component: Layout,
-        hidden: true,
-        redirect: 'noredirect',
-        children: [
-            {
-                path: 'profile',
-                component: () => import('@/views/system/user/profile/index'),
-                name: 'Profile',
-                meta: { title: '个人中心', icon: 'user' }
-            }
-        ]
-    },
-    {
-        path: '/dict',
-        component: Layout,
-        hidden: true,
-        children: [
-            {
-                path: 'type/data/:dictId(\\d+)',
-                component: () => import('@/views/system/dict/data'),
-                name: 'Data',
-                meta: { title: '字典数据', icon: '' }
-            }
-        ]
-    },
-    {
-        path: '/job',
-        component: Layout,
-        hidden: true,
-        children: [
-            {
-                path: 'log',
-                component: () => import('@/views/monitor/job/log'),
-                name: 'JobLog',
-                meta: { title: '调度日志' }
-            }
-        ]
-    },
-    {
-        path: '/gen',
-        component: Layout,
-        hidden: true,
-        children: [
-            {
-                path: 'edit',
-                component: () => import('@/views/tool/gen/editTable'),
-                name: 'GenEdit',
-                meta: { title: '修改生成配置' }
-            }
-        ]
-    },
-    ...ParkManageRouter,
-    ...PropertyMangeRouter,
-    ...BusinessCenterRouter,
-    ...OperationRouter,
-    ...OperationDataRouter,
-    ...FinanceCenterRouter,
-    ...ParkingOrderRouter,
-    ...YztRouter,
-    ...HardwareCenterRouter,
-    ...KefuRouter
-]
 
-export default new Router({
-    scrollBehavior: () => ({ y: 0 }),
+    ...ParkManageRouter,
+];
+
+
+
+export default createRouter({
+    history: createWebHashHistory(),
     routes: constantRoutes
 })

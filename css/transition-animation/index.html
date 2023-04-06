@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .parent {
+            width: 500px;
+            height: 100px;
+            background: sienna;
+            transition-property: all;
+            transition-duration: 2s;
+            transition-timing-function: ease-in-out;
+            transition-delay: 1s;
+            /* transition: width 1s ease 0s; */
+        }
+
+        .parent:hover {
+            width: 250px;
+            transform: scale(2);
+        }
+
+        .child {
+            width: 500px;
+            height: 100px;
+            background: sienna;
+            animation-name: ani;
+            animation-duration: 0.8s;
+            animation-timing-function: ease;
+            animation-delay: 200ms;
+            /* 动画执行的次数，可以是数字，或者关键字（infinate）; */
+            animation-iteration-count: 1;
+            /* alternate(奇数次超前运行，偶数次后退运行)。 */
+            animation-direction: alternate;
+            /* 告诉浏览器将元素的格式保持为动画结束时候的样子。 */
+            /* 默认情况下，CSS 动画在第一个关键帧播放完之前不会影响元素，在最后一个关键帧完成后停止影响元素。animation-fill-mode 属性可重写该行为。 */
+            /* none 默认值。动画在动画执行之前和之后不会应用动画中的任何样式到目标元素。 */
+            /* forwards 在动画结束后（由 animation-iteration-count动画次数决定），元素将应用动画结束时属性值 */
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes ani {
+            from {
+                transform: none;
+            }
+
+            to {
+                transform: translateX(100px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h3>transition动画</h3>
+    <div class="parent">
+
+
+    </div>
+    <h3>animation动画</h3>
+    <div class="child"></div>
+</body>
+
+</html>

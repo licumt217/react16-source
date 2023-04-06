@@ -11,10 +11,16 @@
 <body>
 
     <div id="app">
-        <button @click="show=!show">show</button>
+        <!-- <button @click="show=!show">show</button>
         <div v-if="show">
             <async-c></async-c>
-        </div>
+        </div> -->
+
+        <ul>
+            <li v-for="(item,index) in list" :key="index">
+                <input type="text" /><button @click="remove(index)">删除{{item.id}}</button>
+            </li>
+        </ul>
     </div>
 
 
@@ -34,9 +40,19 @@
         const app = new Vue({
             data: {
                 show: false,
+                list: [
+                    {
+                        id: 1
+                    },
+                    { id: 2 },
+                    { id: 3 }
+                ]
             },
             methods: {
                 handle() {
+                },
+                remove(index) {
+                    this.list.splice(index, 1)
                 }
             }
         }).$mount("#app");

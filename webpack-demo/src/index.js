@@ -1,27 +1,15 @@
-/**
- * 
- */
-import { createApp } from 'vue';//vue3中没有全局Vue
-
-
-import 'normalize.css/normalize.css';
+console.log("index...");
 
 
 
+var div = document.createElement("div");
+div.innerHTML = "点击我"
+div.onclick = function () {
+    import('./test.js').then(({ default: c }) => {
+        console.log('content:' + c)
+    })
+}
 
+document.body.appendChild(div);
 
-
-
-
-
-
-
-
-import App from './App.vue'
-import router from './routers'
-
-
-
-createApp(App)
-    .use(router)
-    .mount("#app");
+console.log("index...end")

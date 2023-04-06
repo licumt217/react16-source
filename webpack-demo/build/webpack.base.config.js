@@ -90,7 +90,7 @@ module.exports = {
     },
     optimization: {
         //告知 webpack 使用 TerserPlugin 或其它在 optimization.minimizer定义的插件压缩 bundle。
-        minimize: true,
+        minimize: false,
         //允许你通过提供一个或多个定制过的 TerserPlugin 实例，覆盖默认压缩工具(minimizer)
         minimizer: [new TerserPlugin({
             extractComments: false //默认true，会抽取注释到生成的独立的文件中 .LICENSE.txt

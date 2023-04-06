@@ -1,0 +1,243 @@
+body{
+    padding: 0;
+    margin: 0;
+}
+
+/* ========= flex-direction ============= */
+.flex-direction-container{
+    display: flex;
+    margin-left:5em;
+}
+.flex-direction-container>section{
+    margin:5px;
+}
+.flex-direction-container .flex-direction .parent{
+    width: 320px;
+    height: 320px;
+    background: gray;
+    display: flex;
+}
+
+.flex-direction-container .flex-direction .child{
+    width:80px;
+    height: 80px;
+    background: sienna;
+    box-sizing: border-box;
+    border:1px solid gray;
+}
+
+.flex-direction-container .flex-direction .parent-row{
+    flex-direction: row;
+}
+
+.flex-direction-container .flex-direction .parent-row-reverse{
+    flex-direction: row-reverse;
+}
+
+.flex-direction-container .flex-direction .parent-column{
+    flex-direction: column;
+}
+
+.flex-direction-container .flex-direction .parent-column-reverse{
+    flex-direction: column-reverse;
+}
+
+
+/* ========= flex-wrap ============= */
+.flex-wrap-container{
+    display: flex;
+    margin-left:5em;
+}
+.flex-wrap-container>section{
+    margin:5px;
+}
+.flex-wrap-container .flex-container .parent{
+    width: 320px;
+    height: 160px;
+    background: gray;
+    display: flex;
+}
+
+.flex-wrap-container .flex-container .child{
+    width:80px;
+    height: 80px;
+    background: sienna;
+    box-sizing: border-box;
+    border:1px solid gray;
+}
+
+.flex-wrap-container .flex-container .parent-nowrap{
+    flex-wrap: nowrap;
+}
+
+.flex-wrap-container .flex-container .parent-wrap{
+    flex-wrap: wrap;
+}
+
+.flex-wrap-container .flex-container .parent-wrap-reverse{
+    flex-wrap: wrap-reverse;
+}
+
+
+/* ========= justify-content ============= */
+.flex-justify-content-container{
+    display: flex;
+    margin-left:5em;
+}
+.flex-justify-content-container>section{
+    margin:5px;
+}
+.flex-justify-content-container .flex-container .parent{
+    width: 320px;
+    height: 160px;
+    background: gray;
+    display: flex;
+}
+
+.flex-justify-content-container .flex-container .child{
+    width:80px;
+    height: 80px;
+    background: sienna;
+    box-sizing: border-box;
+    border:1px solid gray;
+}
+
+.flex-justify-content-container .flex-container .parent-start{
+    justify-content: start;
+}
+.flex-justify-content-container .flex-container .parent-end{
+    justify-content: end;
+}
+.flex-justify-content-container .flex-container .parent-center{
+    justify-content: center;
+}
+.flex-justify-content-container .flex-container .parent-space-between{
+    justify-content: space-between;
+}
+.flex-justify-content-container .flex-container .parent-space-around{
+    justify-content: space-around;
+}
+
+
+/* ========= align-items ============= */
+.flex-align-items-container{
+    display: flex;
+    margin-left:5em;
+}
+.flex-align-items-container>section{
+    margin:5px;
+}
+.flex-align-items-container .flex-container .parent{
+    width: 320px;
+    height: 160px;
+    background: gray;
+    display: flex;
+}
+
+.flex-align-items-container .flex-container .child{
+    width:80px;
+    height: 80px;
+    background: sienna;
+    box-sizing: border-box;
+    border:1px solid gray;
+}
+
+.flex-align-items-container .flex-container .child:first-child{
+    height: 80px;
+}
+.flex-align-items-container .flex-container .child:nth-child(2){
+    height: 60px;
+}
+.flex-align-items-container .flex-container .child:last-child{
+    height: 40px;
+}
+
+.flex-align-items-container .flex-container .parent-start{
+    align-items: flex-start;
+}
+.flex-align-items-container .flex-container .parent-end{
+    align-items: flex-end;
+}
+.flex-align-items-container .flex-container .parent-center{
+    align-items: center;
+}
+.flex-align-items-container .flex-container .parent-baseline{
+    align-items: baseline;
+}
+.flex-align-items-container .flex-container .parent-stretch{
+    align-items: stretch;
+}
+
+
+
+/* ========= align-content ============= */
+.flex-align-content-container{
+    display: flex;
+    margin-left:5em;
+}
+.flex-align-content-container>section{
+    margin:5px;
+}
+.flex-align-content-container .flex-container .parent{
+    width: 320px;
+    height: 240px;
+    background: gray;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-align-content-container .flex-container .child{
+    width:80px;
+    height: 80px;
+    background: sienna;
+    box-sizing: border-box;
+    border:1px solid gray;
+}
+
+
+.flex-align-content-container .flex-container .parent-start{
+    align-content: flex-start;
+}
+.flex-align-content-container .flex-container .parent-end{
+    align-content: flex-end;
+}
+.flex-align-content-container .flex-container .parent-center{
+    align-content: center;
+}
+.flex-align-content-container .flex-container .parent-stretch{
+    align-content: stretch;
+}
+.flex-align-content-container .flex-container .parent-space-between{
+    align-content: space-between;
+}
+.flex-align-content-container .flex-container .parent-space-around{
+    align-content: space-around;
+}
+
+/* ========== 项目属性 ======================= */
+/* ========= order ============= */
+.item-order-container{
+    display: flex;
+    margin-left:5em;
+}
+.item-order-container>section{
+    margin:5px;
+}
+.item-order-container .flex-container .parent{
+    width: 640px;
+    height: 240px;
+    background: gray;
+    display: flex;
+}
+
+.item-order-container .flex-container .child{
+    width:80px;
+    height: 80px;
+    background: sienna;
+    box-sizing: border-box;
+    border:1px solid gray;
+}
+
+
+
+

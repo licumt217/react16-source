@@ -8,12 +8,12 @@ const webpackConfig = merge(baseWebpackConfig, {
         publicPath: ''
     },
     // devtool: 'eval',//webpack + loader处理后的代码。有列信息
-    devtool: 'eval-source-map',//源码。有列信息
+    // devtool: 'eval-source-map',//源码。有列信息
     // devtool: 'eval-cheap-source-map',//loader处理后的代码
     // devtool: 'eval-cheap-module-source-map',//源码
-    devServer: {
-        static: './dist'
-    },
+    // devServer: {
+    //     static: './dist'
+    // },
     module: {
         rules: [
             {

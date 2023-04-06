@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    1111111111111
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("ready!")
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("ready2!")
+        });
+
+        window.addEventListener("load", function () {
+            console.log("onload3")
+        });
+        window.addEventListener("load", function () {
+            console.log("onload13")
+        });
+
+        window.onload = function () {
+            console.log("onload!")
+        }
+        window.onload = function () {
+            console.log("onload!2")
+        }
+        function handle(e) {
+            debugger
+        }
+        debugger
+    </script>
+    2222222222222
+    <div onclick="handle(event)">
+
+        <button>点击</button>
+    </div>
+
+
+</body>
+
+</html>
