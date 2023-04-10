@@ -8,49 +8,68 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 48px;
-    line-height: 48px;
 
-}
+    .btn-wrapper {
+        flex: 1;
+        text-align: center;
 
-.btn-exit,
-.btn-commit {
-    width: 50%;
-    text-align: center;
-    line-height: 48px;
-    height: 100%;
+        .d-btn {
+            width: 80%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            user-select: none;
+            letter-spacing: 1rem;
+            text-indent: 1rem;
+            border-radius: 20px;
+            box-sizing: border-box;
+        }
 
-    button {
-        width: 60%;
-        height: 40px;
-        font-size: 18px;
-        border-radius: 5px;
-        background-color: #1a416a;
-        color: #fff;
-        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-        transition: background-color 0.3s ease;
+        .d-btn-3d {
+            color: #fff;
+            background-color: #f1c40f;
+            text-shadow: -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0);
+            box-shadow: 0px 8px 0px 0px #f39c12;
+            transition: all .5s;
+
+            &:hover {
+                background-color: #fcdc5e;
+            }
+
+            &:active {
+                transform: translate(0, 4px);
+                box-shadow: 0px 1px 0px 0px #f39c12;
+            }
+        }
+
+
+        .d-btn-gray {
+            color: #fff;
+            background-color: #e5d9a8;
+            text-shadow: -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0),
+                -2px 2px 2px rgb(209 132 0);
+            box-shadow: 0px 8px 0px 0px #dad0c1;
+            transition: all .5s;
+
+            &:hover {
+                background-color: #ebd993;
+            }
+
+            &:active {
+                transform: translate(0, 4px);
+                box-shadow: 0px 1px 0px 0px #c09b5e;
+            }
+        }
     }
-
-    button:hover {
-        background-color: #0062cc;
-    }
-
-    button:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.25);
-    }
-
-}
-
-
-.btn-exit {
-    button {
-        background-color: gray;
-    }
-
-    button:hover {
-        background-color: gray;
-    }
-
-
 }

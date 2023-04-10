@@ -7,11 +7,15 @@ export default function QuestionBtns({ onSubmit }
     return (
         <div className={css['container-wraper']}>
             <div className={css.container}>
-                <div className={css['btn-exit']}>
-                    <button>退出</button>
+                <div className={css['btn-wrapper']}>
+                    <div className={` ${css['d-btn']} ${css['d-btn-gray']}`} >
+                        退出
+                    </div>
                 </div>
-                <div className={css['btn-commit']}>
-                    <button onClick={onSubmit}>提交</button>
+                <div className={css['btn-wrapper']}>
+                    <div onClick={onSubmit} className={` ${css['d-btn']} ${css['d-btn-3d']}`} >
+                        提交
+                    </div>
                 </div>
             </div>
         </div>

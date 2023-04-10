@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import QuestionTitle from '../../components/QuestionTitle';
-import QuestionItem from '../../components/QuestionItem';
 import QuestionForm from '../../components/QuestionForm';
+import css from './index.module.scss';
 
 function QuestionPane() {
     const [selectedOption, setSelectedOption] = useState(null);
@@ -24,8 +24,8 @@ function QuestionPane() {
     ]
 
     return (
-        <div>
-            <QuestionTitle>这是一个带问号的题目？</QuestionTitle>
+        <div className={css.container}>
+            <QuestionTitle index={1}>这是一个带问号的题目这是一个带问号的题目这是一个带问号的题目这是一个带问号的题目？</QuestionTitle>
             <QuestionForm
                 option={selectedOption}
                 itemArray={itemArray}
