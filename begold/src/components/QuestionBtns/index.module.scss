@@ -1,0 +1,56 @@
+.container-wraper {
+    position: absolute;
+    width: 100%;
+    bottom: 2em;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    line-height: 48px;
+
+}
+
+.btn-exit,
+.btn-commit {
+    width: 50%;
+    text-align: center;
+    line-height: 48px;
+    height: 100%;
+
+    button {
+        width: 60%;
+        height: 40px;
+        font-size: 18px;
+        border-radius: 5px;
+        background-color: #1a416a;
+        color: #fff;
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0062cc;
+    }
+
+    button:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.25);
+    }
+
+}
+
+
+.btn-exit {
+    button {
+        background-color: gray;
+    }
+
+    button:hover {
+        background-color: gray;
+    }
+
+
+}

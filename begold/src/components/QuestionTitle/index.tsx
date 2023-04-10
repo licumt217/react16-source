@@ -1,7 +1,7 @@
 import React from 'react'
-
+import css from './index.module.scss'
 export default function QuestionTitle({ children }: { children: string }) {
     return (
-        <h3>{children}</h3>
+        <div className={css.container}>{children}</div>
     )
 }

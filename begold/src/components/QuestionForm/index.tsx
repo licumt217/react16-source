@@ -1,6 +1,7 @@
 import React from 'react'
 import QuestionItem from '../QuestionItem'
-// import css from './index.module.less'
+import QuestionBtns from '../QuestionBtns'
+
 export default function QuestionForm({ onSubmit, option, itemArray, onChange }
     : {
         onSubmit: (event: any) => void,
@@ -22,20 +23,8 @@ export default function QuestionForm({ onSubmit, option, itemArray, onChange }
             <QuestionItem value='D' option={option} onChange={onChange}>
                 D、{itemArray[3]}
             </QuestionItem>
-            <div className="container">
-                <div className="column1">
-                    <button>退出</button>
-                </div>
-                <div className="column2">
-                    <button onClick={onSubmit}>提交</button>
-                </div>
-            </div>
 
-
-
-
-
-
+            <QuestionBtns onSubmit={onSubmit} />
 
         </form>
     )

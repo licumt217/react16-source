@@ -17,9 +17,9 @@ function QuestionPane() {
     };
 
     const itemArray = [
-        '选项A',
+        '选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A',
         '选项B',
-        '选项C',
+        '选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A选项A',
         '选项D'
     ]
 
