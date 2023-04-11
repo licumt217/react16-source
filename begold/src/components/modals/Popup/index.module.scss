@@ -1,0 +1,99 @@
+    .pane {
+        box-sizing: border-box;
+        position: fixed;
+        z-index: 11;
+        width: 100%;
+        max-width: 500px;
+        left: 0px;
+        right: 0px;
+        bottom: 0;
+        margin-left: auto;
+        margin-right: auto;
+        background: #FFF;
+        color: #333;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
+        will-change: transform;
+        padding-top: 15px;
+        border-radius: 20px 20px 0 0;
+        user-select: none;
+        transition: all 300ms;
+        // transform: translateY(62vh) translateZ(0px);
+        bottom: -38vh;
+        height: 38vh;
+        cursor: grab;
+
+        // transition: initial;
+        .draggable {
+            padding: 5px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            height: 30px;
+            z-index: -1;
+            top: 0;
+            bottom: initial;
+
+            .move {
+                margin: 0 auto;
+                height: 5px;
+                background: var(--cupertino-pane-move-background, #c0c0c0);
+                width: 36px;
+                border-radius: 4px;
+            }
+        }
+
+        .close-btn {
+            width: 26px;
+            height: 26px;
+            position: absolute;
+            background: var(--cupertino-pane-destroy-button-background, #ebebeb);
+            fill: var(--cupertino-pane-icon-close-color, #7a7a7e);
+            right: 20px;
+            z-index: 14;
+            border-radius: 100%;
+            top: 16px;
+        }
+
+        .content {
+            padding: 0 20px;
+            display: block;
+            transition: opacity 300ms ease 0s;
+            overflow: hidden;
+            overscroll-behavior: none;
+            height: 846.75px;
+        }
+    }
+
+    .mask {
+        transition: all 300ms ease 0s;
+        background-color: rgba(0, 0, 0, 0);
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        top: 0;
+        z-index: -1;
+
+    }
+
+    .mask-show {
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 10;
+    }
+
+    .mask-hide {
+        background-color: rgba(0, 0, 0, 0);
+        z-index: -1;
+    }
+
+    .content-show {
+        transform: translateY(-38vh);
+    }
+
+    .content-hide {
+        transform: translateY(38vh);
+    }

@@ -1,0 +1,42 @@
+$color: rgba(255, 255, 0, .7);
+
+.star-five {
+    position: absolute;
+    display: inline-block;
+    color: $color;
+    width: 0px;
+    height: 0px;
+    border-right: 20px solid transparent;
+    border-bottom: 14px solid $color;
+    border-left: 20px solid transparent;
+    transform: rotate(50deg);
+}
+
+.star-five:before {
+    border-bottom: 16px solid $color;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    position: absolute;
+    height: 0;
+    width: 0;
+    top: -9px;
+    left: -13px;
+    display: block;
+    content: '';
+    transform: rotate(-35deg);
+}
+
+.star-five:after {
+    position: absolute;
+    display: block;
+    color: $color;
+    top: 3px;
+    left: -21px;
+    width: 0px;
+    height: 0px;
+    border-right: 20px solid transparent;
+    border-bottom: 14px solid $color;
+    border-left: 20px solid transparent;
+    transform: rotate(-70deg);
+    content: '';
+}

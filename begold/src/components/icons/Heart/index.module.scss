@@ -1,0 +1,29 @@
+$color:red;
+$baseSize:4;
+
+.heart {
+    position: absolute;
+    width: $baseSize*10px;
+    height: $baseSize*9px;
+    top: $baseSize*1px;
+}
+
+.heart:before,
+.heart:after {
+    position: absolute;
+    content: "";
+    left: $baseSize*5px;
+    top: 0;
+    width: $baseSize*5px;
+    height: $baseSize*8px;
+    background: $color;
+    border-radius: $baseSize*5px $baseSize*5px 0 0;
+    transform: rotate(-45deg);
+    transform-origin: 0 100%;
+}
+
+.heart:after {
+    left: 0;
+    transform: rotate(45deg);
+    transform-origin: 100% 100%;
+}
