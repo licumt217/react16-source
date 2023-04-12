@@ -2069,10 +2069,24 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^18.0.33":
+"@types/react-weui@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/@types/react-weui/-/react-weui-1.0.0.tgz#54b163b365759f5f54b480e82379304166817834"
+  integrity sha512-lFECuOpqhvW7+bwVjZSH7pFyEhrjL6evWph1mjIHJjgIfB5jE2TfW/Dvss6O2gaf9TTO2c+aKaX8l+H0hDPNSA==
+
+"@types/react@*":
   version "18.0.33"
   resolved "https://registry.npmmirror.com/@types/react/-/react-18.0.33.tgz#a1575160cb4376787c2f5fe0312302f824baa61e"
   integrity sha512-sHxzVxeanvQyQ1lr8NSHaj0kDzcNiGpILEVt69g9S31/7PfMvNCKLKcsHw4lYKjs3cGNJjXSP4mYzX43QlnjNA==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^18.0.34":
+  version "18.0.34"
+  resolved "https://registry.npmmirror.com/@types/react/-/react-18.0.34.tgz#e553444a578f023e6e1ac499514688fb80b0a984"
+  integrity sha512-NO1UO8941541CJl1BeOXi8a9dNKFK09Gnru5ZJqkm4Q3/WoQJtHvmwt0VX0SB9YCEwe7TfSSxDuaNmx6H2BAIQ==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -2512,6 +2526,11 @@ ajv@^8.0.0, ajv@^8.6.0, ajv@^8.8.0:
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
+
+animate.css@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.npmmirror.com/animate.css/-/animate.css-4.1.1.tgz#614ec5a81131d7e4dc362a58143f7406abd68075"
+  integrity sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ==
 
 ansi-escapes@^4.2.1, ansi-escapes@^4.3.1:
   version "4.3.2"
@@ -9074,6 +9093,11 @@ websocket-extensions@>=0.1.1:
   version "0.1.4"
   resolved "https://registry.npmmirror.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
   integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
+
+weui@^2.5.16:
+  version "2.5.16"
+  resolved "https://registry.npmmirror.com/weui/-/weui-2.5.16.tgz#c784f857b9d299a7306bb617b263900daab66661"
+  integrity sha512-d6BLlTzmWPnLmD9ZC4VW7CjTaNlwIRjRZn4R1fGjl/2WUEK+SBNZNmXQRvFh5F1ZDeOKeMSWXe/lllanOOiqPQ==
 
 whatwg-encoding@^1.0.5:
   version "1.0.5"

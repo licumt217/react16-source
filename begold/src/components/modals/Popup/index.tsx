@@ -42,6 +42,10 @@ const Popup: ForwardRefRenderFunction<IPopup> = function (props, ref) {
                 <div className={css.content}>
                     <h1>{title}</h1>
                     <div>{content}</div>
+                    <section className='x'>
+                        <div>取消</div>
+                        <div>确定</div>
+                    </section>
                 </div>
             </div>
             <div className={`${css.mask} ${visible ? css['mask-show'] : css['mask-hide']}`} ></div>

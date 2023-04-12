@@ -4,6 +4,7 @@ import QuestionForm from '../../components/QuestionForm';
 import FiveStar from '../../components/icons/FiveStar';
 import css from './index.module.scss';
 import usePopup from '../../hooks/usePopup';
+import Dialog2 from '../../components/weui/Dialog2';
 
 const QuestionTitle = React.lazy(() => import('../../components/QuestionTitle'));
 
@@ -80,20 +81,21 @@ function QuestionPane() {
         <>
             {
                 question && (
-                    <div className={css.container}>
-                        <FiveStar />
-                        <Suspense fallback={"loading..."}>
-                            <QuestionTitle index={question.index}>{question.title}</QuestionTitle>
-                        </Suspense>
-                        <QuestionForm
-                            option={selectedOption}
-                            itemArray={question.answerArray}
-                            onChange={handleOptionChange}
-                            onSubmit={handleSubmit}
-                        />
+                    // <div className={css.container}>
+                    //     <FiveStar />
+                    //     <Suspense fallback={"loading..."}>
+                    //         <QuestionTitle index={question.index}>{question.title}</QuestionTitle>
+                    //     </Suspense>
+                    //     <QuestionForm
+                    //         option={selectedOption}
+                    //         itemArray={question.answerArray}
+                    //         onChange={handleOptionChange}
+                    //         onSubmit={handleSubmit}
+                    //     />
 
 
-                    </div>
+                    // </div>
+                    <Dialog2 />
                 )
             }
         </>
