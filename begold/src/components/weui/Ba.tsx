@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useRef, useState } from 'react'
 import useHalfDialog from '../../hooks/useHalfDialog'
 import useDialog from '../../hooks/useDialog'
 import DialogContext from '../../context/DialogContext';
@@ -6,6 +6,8 @@ import HalfDialogContext from '../../context/HalfDialogContext';
 import usePopup from '../../hooks/usePopup';
 import useModalTip from '../../hooks/useModalTip';
 import useLoading from '../../hooks/useLoading';
+import useAgreementDialog from '../../hooks/useAgreementDialog';
+import Toast from './Toast';
 
 export default function Ba() {
 
@@ -33,10 +35,12 @@ export default function Ba() {
     //     // });
     // }, [dd]);
 
-    const mmm = useHalfDialog();
-    const a = useLoading();
+    const mmm = useAgreementDialog();
 
-    console.log(a, 555)
+    const [visible, setVisible] = useState(false);
+
+    const ref = useRef<any>(null);
+
 
 
 
@@ -44,8 +48,14 @@ export default function Ba() {
     return (
         <>
             <div onClick={() => {
-                a.show()
-            }}>flsjfls</div>
+                console.log(555, ref.current)
+                ref.current && ref.current.text && ref.current.loading({
+                    message: "雷锋牢骚雷锋牢骚雷锋牢骚雷锋牢骚"
+                });
+            }}>fjlsjfslf</div>
+            <Toast ref={ref} />
+
+
         </>
     )
 

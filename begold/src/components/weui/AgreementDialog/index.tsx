@@ -4,22 +4,20 @@ import A from '../A';
 import { IEmptyFunction } from '../../../utils';
 interface IShow {
     title: string,
-    subTitle?: string,
+    desc?: string,
     content: string,
-    withButton?: boolean,
     okText?: string,
     cancelText?: string,
     onOk?: IEmptyFunction,
     onCancel?: IEmptyFunction
 }
-export interface IHalfDialog {
+export interface IAgreementDialog {
     show: ({
         title,
-        subTitle,
+        desc,
         content,
-        withButton = false,
-        okText = "确定",
-        cancelText = "取消",
+        okText,
+        cancelText,
         onOk,
         onCancel
     }: IShow) => void;
@@ -27,16 +25,15 @@ export interface IHalfDialog {
 }
 const common_animate_class = `animate__animated animate__faster `;
 
-export default React.memo(React.forwardRef(function HalfDialog(props, ref) {
+export default React.memo(React.forwardRef(function AgreementDialog(props, ref) {
 
     const containerRef = useRef(null);
 
     const [title, setTitle] = useState("");
-    const [subTitle, setSubTitle] = useState("");
+    const [desc, setDesc] = useState("");
     const [content, setContent] = useState("");
     const [okText, setOkText] = useState("");
     const [cancelText, setCancelText] = useState("");
-    const [withButton, setWithButton] = useState(false);
     const [classname, setClassname] = useState("");
     const [modalClassname, setModalClassname] = useState("");
 
@@ -49,24 +46,30 @@ export default React.memo(React.forwardRef(function HalfDialog(props, ref) {
         return {
             show({
                 title,
-                subTitle = "",
+                desc = "",
                 content,
-                withButton = false,
-                okText = "确定",
+                okText = "同意并完成",
                 cancelText = "取消",
-                onOk = hide,
-                onCancel = hide
+                onOk,
+                onCancel
 
             }: IShow) {
 
+                console.log(5)
+
                 setTitle(title);
                 setContent(content);
-                setSubTitle(subTitle)
+                setDesc(desc)
                 setOkText(okText)
                 setCancelText(cancelText)
-                setWithButton(withButton)
-                okCallbackRef.current = onOk;
-                cancelCallbackRef.current = onCancel;
+                okCallbackRef.current = () => {
+                    onOk && onOk();
+                    hide();
+                };
+                cancelCallbackRef.current = () => {
+                    onCancel && onCancel();
+                    hide();
+                };
                 show();
             },
             hide
@@ -103,42 +106,63 @@ export default React.memo(React.forwardRef(function HalfDialog(props, ref) {
         }, 1000)
     }
 
+    const CloseIcon = <button className="js_close weui-btn_icon weui-wa-hotarea">
+        关闭<i className="weui-icon-close-thin"></i>
+    </button>;
+
+    const ReturnIcon = <button className="weui-btn_icon weui-wa-hotarea">
+        返回<i className="weui-icon-back-arrow-thin"></i>
+    </button>;
+
+    const SlideDownCloseIcon = <button onClick={hide} className="js_close weui-btn_icon weui-wa-hotarea">
+        关闭<i className="weui-icon-slide-down"></i></button>
+
+    const More = <div className="weui-half-screen-dialog__hd__side">
+        <button className="weui-btn_icon weui-wa-hotarea">更多<i className="weui-icon-more"></i></button>
+    </div>
+
     return (
-        <div
+        <div className="js_dialog_wrap"
             style={{ display: "none" }}
-            className={`js_dialog_wrap weui-half-screen-dialog_show `}
             ref={containerRef}
+            aria-labelledby="js_title2"
             role="dialog"
             aria-modal="false"
-            aria-hidden="true" >
+            aria-hidden="true"
+        >
+
             <div className={`js_close weui-mask  ${common_animate_class} ${modalClassname}`} onClick={hide}></div>
-            <div className={`weui-half-screen-dialog ${common_animate_class}  ${classname}  `} >
+            <div
+                className={`weui-half-screen-dialog js_dialog  weui-half-screen-dialog_bottom-fixed ${common_animate_class}  ${classname}  `}
+            >
                 <div className="weui-half-screen-dialog__hd">
+
                     <div className="weui-half-screen-dialog__hd__side">
-                        <button className="js_close weui-btn_icon weui-wa-hotarea" onClick={hide}>
-                            <i className="weui-icon-close-thin"></i>
-                        </button>
-                    </div>
-                    <div className="weui-half-screen-dialog__hd__main">
-                        <strong className="weui-half-screen-dialog__title" >{title}</strong>
-                        <span className="weui-half-screen-dialog__subtitle">{subTitle}</span>
+                        {SlideDownCloseIcon}
                     </div>
 
+                    <div className="weui-half-screen-dialog__hd__main">
+                        <strong className="weui-half-screen-dialog__title" >{title}</strong>
+                    </div>
                 </div>
                 <div className="weui-half-screen-dialog__bd">
-                    {content}
-                </div>
-                {
-                    withButton && (
-                        <div className="weui-half-screen-dialog__ft" style={{ paddingBottom: 30 }}>
-                            <div className="weui-half-screen-dialog__btn-area">
-                                <A className="js_close weui-btn weui-btn_default" onClick={cancelCallbackRef.current}>{cancelText}</A>
-                                <A className="js_close weui-btn weui-btn_primary" onClick={okCallbackRef.current}>{okText}</A>
-                            </div>
+                    <div className="weui-bottom-fixed-opr-page" >
+                        <div className="weui-bottom-fixed-opr-page__content" >
+                            <p className="weui-half-screen-dialog__desc">
+                                {desc}
+                            </p>
+                            <p className="weui-half-screen-dialog__tips" style={{ paddingBottom: 50 }}>
+                                {content}
+                            </p>
                         </div>
-                    )
-                }
+                        <div className="weui-bottom-fixed-opr">
+                            <A role="button" className="js_close weui-btn weui-btn_primary" onClick={okCallbackRef.current}>{okText}</A>
+                            <A role="button" className="js_close weui-btn weui-btn_default" onClick={cancelCallbackRef.current}>{cancelText}</A>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     )
 }))
