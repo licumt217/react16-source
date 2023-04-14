@@ -1,15 +1,15 @@
 import { useContext, useMemo } from 'react';
-import { IModalTip } from '../components/weui/ModalTip';
-import ModalTipContext from '../context/ModalTipContext';
+import { IHalfDialog } from '../components/weui/HalfDialog';
+import HalfDialogContext from '../context/HalfDialogContext';
 import { EmptyFunction } from '../utils';
-export default function useModalTip(): IModalTip {
-    const context = useContext(ModalTipContext);
+export default function useHalfDialog() {
+    const context = useContext(HalfDialogContext);
 
     const op = useMemo(() => {
         return {
             show: context?.show || EmptyFunction,
             hide: context?.hide || EmptyFunction,
-        } as IModalTip
+        } as IHalfDialog
     }, [context]);
 
     return op;

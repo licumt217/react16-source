@@ -7,27 +7,29 @@ export interface IDialog {
         content,
         okText = "确定",
         cancelText = "取消",
-        onOk
+        onOk,
+        onCancel
     }: {
         title: string,
         content: string,
         okText?: string,
         cancelText?: string,
-        onOk?: ICallback
+        onOk?: ICallback,
+        onCancel?: ICallback
     }) => void;
     hide: () => void
 }
 
-export default React.forwardRef(function Dialog(props, ref) {
+export default React.memo(React.forwardRef(function Dialog(props, ref) {
 
     const containerRef = useRef(null);
-    const container = containerRef.current as any;
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [okText, setOkText] = useState("");
     const [cancelText, setCancelText] = useState("");
     const onOkRef = useRef<ICallback | null>();
+    const onCancelRef = useRef<ICallback | null>();
 
     useImperativeHandle(ref, () => {
         return {
@@ -36,13 +38,15 @@ export default React.forwardRef(function Dialog(props, ref) {
                 content,
                 okText = "确定",
                 cancelText = "取消",
-                onOk
+                onOk,
+                onCancel
             }: {
                 title: string,
                 content: string,
                 okText?: string,
                 cancelText?: string,
-                onOk?: ICallback
+                onOk?: ICallback,
+                onCancel?: ICallback
             }) {
                 setTitle(title);
                 setContent(content);
@@ -51,6 +55,11 @@ export default React.forwardRef(function Dialog(props, ref) {
                 if (onOk) {
                     onOkRef.current = onOk;
                 }
+                if (onCancel) {
+                    onCancelRef.current = onCancel;
+                }
+
+
 
                 show();
             },
@@ -58,18 +67,29 @@ export default React.forwardRef(function Dialog(props, ref) {
         }
     })
 
+    const getContainer = () => {
+        return containerRef.current as any;
+    }
+
     const show = () => {
-        container.style.display = "block";
+        getContainer().style.display = "block";
     }
 
     const hide = () => {
-        container.style.display = "none";
+        getContainer().style.display = "none";
         onOkRef.current = null;
     }
 
     const onOk = () => {
         if (onOkRef.current) {
             onOkRef.current();
+        }
+        hide();
+    }
+
+    const onCancel = () => {
+        if (onCancelRef.current) {
+            onCancelRef.current();
         }
         hide();
     }
@@ -82,10 +102,10 @@ export default React.forwardRef(function Dialog(props, ref) {
                 <div className="weui-dialog__hd"><strong className="weui-dialog__title" id="js_title1">{title}</strong></div>
                 <div className="weui-dialog__bd">{content}</div>
                 <div className="weui-dialog__ft">
-                    <A role="button" className="weui-dialog__btn weui-dialog__btn_default" onClick={hide}>{cancelText}</A>
+                    <A role="button" className="weui-dialog__btn weui-dialog__btn_default" onClick={onCancel}>{cancelText}</A>
                     <A role="button" className="weui-dialog__btn weui-dialog__btn_primary" onClick={onOk}>{okText}</A>
                 </div>
             </div>
         </div>
     )
-})
+}))

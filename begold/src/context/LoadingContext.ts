@@ -1,10 +1,8 @@
 
 
 import React from "react"
-const LoadingContext = React.createContext({
-    value: false,
-    change: (loading: boolean) => { }
-});
+import { ILoading } from "../components/weui/Loading";
+const LoadingContext = React.createContext<ILoading | null>(null);
 
 export default LoadingContext;
 

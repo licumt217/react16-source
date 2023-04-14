@@ -53,4 +53,4 @@ const Popup: ForwardRefRenderFunction<IPopup> = function (props, ref) {
     )
 }
 
-export default React.forwardRef(Popup)
+export default React.memo(React.forwardRef(Popup))

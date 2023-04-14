@@ -2,13 +2,15 @@ import React from 'react'
 import QuestionItem from '../QuestionItem'
 import QuestionBtns from '../QuestionBtns'
 
-export default function QuestionForm({ onSubmit, option, itemArray, onChange }
+export default React.memo(function QuestionForm({ onSubmit, option, itemArray, onChange }
     : {
         onSubmit: (event: any) => void,
         option: string | null,
         itemArray: Array<string>,
         onChange: (event: any) => void
     }) {
+
+    console.log("QuestionForm.......")
     return (
         <form>
             <QuestionItem value='A' option={option} onChange={onChange}>
@@ -28,4 +30,4 @@ export default function QuestionForm({ onSubmit, option, itemArray, onChange }
 
         </form>
     )
-}
+})

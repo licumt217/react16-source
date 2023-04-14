@@ -14,7 +14,7 @@ export interface IModalTip {
     hide: () => void
 }
 
-export default React.forwardRef(function ModalTip(props, ref) {
+export default React.memo(React.forwardRef(function ModalTip(props, ref) {
 
     const containerRef = useRef(null);
     const container = containerRef.current as any;
@@ -46,14 +46,19 @@ export default React.forwardRef(function ModalTip(props, ref) {
         }
     })
 
+    const getContainer = () => {
+        return containerRef.current as any;
+    }
+
     const show = () => {
-        container.style.display = "block";
+        getContainer().style.display = "block";
     }
 
     const hide = () => {
-        container.style.display = "none";
+        getContainer().style.display = "none";
         onOkRef.current = null;
     }
+
 
     const onOk = () => {
         if (onOkRef.current) {
@@ -82,4 +87,4 @@ export default React.forwardRef(function ModalTip(props, ref) {
         </div>
 
     )
-})
+}))
