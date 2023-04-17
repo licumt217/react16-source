@@ -9,6 +9,8 @@ import useLoading from '../../hooks/useLoading';
 import useAgreementDialog from '../../hooks/useAgreementDialog';
 import Toast from './Toast';
 
+import Icon from './Icon';
+
 export default function Ba() {
 
     // const popupContext = useContext(DialogContext);
@@ -45,15 +47,14 @@ export default function Ba() {
 
 
 
+
     return (
         <>
-            <div onClick={() => {
-                console.log(555, ref.current)
-                ref.current && ref.current.text && ref.current.loading({
-                    message: "雷锋牢骚雷锋牢骚雷锋牢骚雷锋牢骚"
-                });
-            }}>fjlsjfslf</div>
-            <Toast ref={ref} />
+            <Icon type='success' />
+            <Icon type='tip' />
+            <Icon type='warn' />
+            <Icon type='redwarn' />
+            <Icon type='wait' />
 
 
         </>
